@@ -4,7 +4,7 @@ add <- function(a,b){
 
 
 plt <- function() { 
-    mat <- rnorm(1000)
+    mat <- rnorm(10)
     filename <- "images/plot.png"
     png (filename)
     hist(mat)

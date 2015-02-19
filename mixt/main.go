@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"text/template"
 
-	"bitbucket.org/vdumeaux/mixt/src/controllers"
+	"bitbucket.org/vdumeaux/mixt/mixt/controllers"
 
 	"github.com/gorilla/mux"
 )
 
 var indexTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html", "views/index.html", "views/footer.html"))
+	"views/header.html", "views/navbar.html", "views/panels.html",
+	"views/index.html", "views/footer.html"))
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	indexTemplate.Execute(w, nil)

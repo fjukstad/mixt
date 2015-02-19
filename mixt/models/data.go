@@ -50,7 +50,7 @@ func Hist(d *dataset.Dataset) (string, error) {
 
 	httpPort := id + 1
 
-	httpURL := split[0] + "://" + split[1] + ":" + strconv.Itoa(httpPort)
+	httpURL := split[0] + ":" + split[1] + ":" + strconv.Itoa(httpPort)
 
 	baseURL := httpURL + "/"
 	url := baseURL + response[0]

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"text/template"
 
-	"bitbucket.org/vdumeaux/mixt/src/models"
+	"bitbucket.org/vdumeaux/mixt/mixt/models"
 
 	"github.com/fjukstad/kvik/dataset"
 	"github.com/gorilla/mux"
@@ -17,8 +17,8 @@ import (
 var d *dataset.Dataset
 
 var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html", "views/module.html",
-	"views/footer.html"))
+	"views/header.html", "views/navbar.html", "views/panels.html",
+	"views/module.html", "views/footer.html"))
 
 type Module struct {
 	Name string

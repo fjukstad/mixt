@@ -80,3 +80,16 @@ func GetTissues() ([]string, error) {
 	}
 	return response, nil
 }
+
+func GetModules(tissue string) ([]string, error) {
+	command := "getModules(\"" + tissue + "\")"
+	resp, err := d.Call(command)
+	if err != nil {
+		return []string{""}, err
+	}
+	response := utils.PrepareResponse(resp)
+	for i, r := range response {
+		response[i] = strings.Trim(r, "\"")
+	}
+	return response, nil
+}

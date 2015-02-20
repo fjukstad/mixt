@@ -12,7 +12,7 @@ plt <- function() {
     return (filename)
 }  
 
-getModules <- function() {
+getModules <- function(tissue) {
     return (c("red","green","blue","purple"))
 }
 

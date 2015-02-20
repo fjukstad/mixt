@@ -1,6 +1,18 @@
 {{ define "content" }} 
     <div class="container">
-        <h1>Modules</h1> 
+        <div class="row" 
+            <h1>Modules</h1> 
+            <p> 
+                Select one or more modules from the list below and click
+                <i>start</i> to start exploring the different modules 
+            </p>
+        </div> 
+
+        <div class="row">
+                {{range .Modules}}
+                    {{ . }} 
+                {{ end }} 
+        </div> 
     </div> 
 
     <div class="container-fluid">

@@ -13,6 +13,10 @@
           border-radius: 0 !important;
 }
 
+.navbar a {
+    padding-left:2em;
+}
+
 #topnav {
     margin-bottom:0px
 } 
@@ -32,3 +36,9 @@ span.glyphicon-cog {
     padding-right: 1em;
     padding-top: 1em;
 }
+
+.ui-widget i {
+    padding-top:0.7em;
+    padding-right:1.2em;
+}
+

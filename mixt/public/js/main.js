@@ -11,7 +11,7 @@ $(function() {
         panel.open()
     }); 
 
-    $("#settings-icon").mouseleave(function(){
+    $("#settings-icon").click(function(){
+        panel.toggle()
     }); 
-
 }); 

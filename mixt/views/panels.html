@@ -1,7 +1,9 @@
 {{ define "panels" }} 
 <div class="alternate" id="settings-panel">
     <select class="form-control">
-        <option> first </option> 
+        {{range .Tissues}}
+        <option> {{.}} </option> 
+        {{ end }} 
     </select>
 </div> 
 {{ end }} 

@@ -41,4 +41,6 @@ span.glyphicon-cog {
     padding-top:0.7em;
     padding-right:1.2em;
 }
-
+td#comp{
+ cursor: pointer; cursor: hand;
+}

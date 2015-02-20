@@ -23,6 +23,11 @@ type Module struct {
 	URL  string
 }
 
+type Modules struct {
+	Modules []Module
+	Tissues []string
+}
+
 func loadModule(name string) Module {
 	imgurl, err := mixt.Hist()
 	if err != nil {
@@ -45,12 +50,15 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ModulesHandler(w http.ResponseWriter, r *http.Request) {
+	tissues, err := mixt.GetTissues()
+	if err != nil {
+		fmt.Println("Could not get modules")
+		http.Error(w, err.Error(), 500)
+	}
 
-	modulesTemplate.Execute(w, nil)
-}
+	m := Modules{nil, tissues}
 
-type Modules struct {
-	Names []string
+	modulesTemplate.Execute(w, m)
 }
 
 func InitModules() error {

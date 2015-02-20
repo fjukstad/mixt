@@ -74,7 +74,9 @@ func GetTissues() ([]string, error) {
 	if err != nil {
 		return []string{""}, err
 	}
-
 	response := utils.PrepareResponse(resp)
+	for i, r := range response {
+		response[i] = strings.Trim(r, "\"")
+	}
 	return response, nil
 }

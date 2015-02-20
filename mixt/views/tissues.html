@@ -1,0 +1,37 @@
+{{ define "content" }}
+    <div class="container">
+        <div class="row">
+            <h2> Available Tissues  </h2> 
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <th>
+                    </th>
+                    {{range .T}}
+                    <th>
+                        {{.Name}}
+                    </th> 
+                    {{end}}
+                </thead>
+                {{range .T}}
+                <tr>
+                    <th>
+                        {{.Name}}
+                    </th>
+                    {{range .Comparisons}}
+                        {{ if . }}
+                        <td class="success" id="comp" comp={{.}}></td>
+                        {{else}}
+                            <td class="active" id="no-comp" ></td>
+                        {{end}}
+                    {{end}}
+                </tr> 
+                {{end}}
+            </table>
+        </div> 
+    </div>
+
+   <script src="/public/js/comparisons.js" type="text/javascript" charset="utf-8"></script>
+   
+{{ end }} 

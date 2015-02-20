@@ -5,8 +5,10 @@
     </head>
     <body>
         {{template "navbar" . }}
-        {{template "content" . }}
-        {{template "panels" . }}
+        <div class="main">         
+            {{template "content" . }}
+            {{template "panels" . }}
+        </div> 
         <footer id="footer">
             {{template "footer" . }}
         </footer>

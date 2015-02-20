@@ -1,8 +1,17 @@
 $(function() {
     var panel = $('.alternate').scotchPanel({
         clickSelector: '.toggle-panels',        
-        containerSelector: '.main', // Make this appear on the entire screen
+        containerSelector: '.main', 
         direction: 'left',
-        distanceX: '30%',
+        distanceX: '10%',
     });
+
+
+    $("#settings-icon").mouseenter(function(){
+        panel.open()
+    }); 
+
+    $("#settings-icon").mouseleave(function(){
+    }); 
+
 }); 

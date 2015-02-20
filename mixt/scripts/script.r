@@ -11,3 +11,9 @@ plt <- function() {
     dev.off()
     return (filename)
 }  
+
+getModules <- function() {
+    return (c("red","green","blue","purple"))
+}
+
+

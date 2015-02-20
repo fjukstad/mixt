@@ -1,0 +1,34 @@
+#settings-panel { 
+    background-color: #f1f1f1;
+}
+
+.container-fluid { 
+    padding-left:0px;
+}
+
+.navbar { 
+    background-color: #f1f1f1;
+  -webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+          border-radius: 0 !important;
+}
+
+#topnav {
+    margin-bottom:0px
+} 
+
+#settings-icon {
+    background-color: #f1f1f1;
+    width: 2em;
+    height: 2em;
+    
+    border-bottom-right-radius:25%;
+} 
+span.glyphicon-cog {
+    font-size: 1.8em;
+}
+.ui-widget { 
+    float: right;
+    padding-right: 1em;
+    padding-top: 1em;
+}

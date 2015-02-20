@@ -11,6 +11,9 @@ $(function() {
         }
         $.getJSON("/search/"+request.term, function( data, status, xhr ) {
             console.log(data)
+            if(data.Terms === null){ 
+                return
+            }
             var genes  = data.Terms; 
             for(var i = 0; i < genes.length; i++){
                 gene = genes[i]

@@ -19,6 +19,9 @@ var d *dataset.Dataset
 var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/header.html", "views/navbar.html", "views/panels.html",
 	"views/module.html", "views/footer.html"))
+var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
+	"views/header.html", "views/navbar.html", "views/panels.html",
+	"views/moduleshtml", "views/footer.html"))
 
 type Module struct {
 	Name string

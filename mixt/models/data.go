@@ -56,3 +56,14 @@ func Hist(d *dataset.Dataset) (string, error) {
 	url := baseURL + response[0]
 	return url, nil
 }
+
+func GetGenes(d *dataset.Dataset) ([]string, error) {
+	command := "getGenes()"
+	resp, err := d.Call(command)
+	if err != nil {
+		return []string{""}, err
+	}
+
+	response := utils.PrepareResponse(resp)
+	return response, nil
+}

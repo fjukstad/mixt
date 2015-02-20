@@ -41,8 +41,8 @@ func main() {
 	r.HandleFunc("/", HomeHandler)
 	r.HandleFunc("/modules/{tissue}", controllers.ListModules)
 	r.HandleFunc("/module/{tissue}/{name}", controllers.ModuleHandler)
-
 	r.HandleFunc("/public/{folder}/{file}", PublicHandler)
+	r.HandleFunc(`/search/{term}`, controllers.SearchHandler)
 
 	err := controllers.InitModules()
 	if err != nil {

@@ -16,4 +16,8 @@ getModules <- function() {
     return (c("red","green","blue","purple"))
 }
 
+getGenes <- function() { 
+    return (c("BRCA1", "BRCA2", "ESR1"))
+}
+
 

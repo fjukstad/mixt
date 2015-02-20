@@ -1,0 +1,24 @@
+{{ define "content" }}
+    <div class="container">
+        <div class="row">
+            <h2> Search returned the following results</h2>
+        </div>
+            
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <th>
+                       Gene
+                    </th>
+                </thead>
+                {{range .Genes}}
+                <tr>
+                    <td>
+                        {{.}}
+                    </td>
+                </tr> 
+                {{end}}
+            </table>
+        </div> 
+    </div>
+{{ end }} 

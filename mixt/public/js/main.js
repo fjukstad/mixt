@@ -14,4 +14,5 @@ $(function() {
     $("#settings-icon").click(function(){
         panel.toggle()
     }); 
+
 }); 

@@ -1,27 +1,22 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"text/template"
 
-	"bitbucket.org/vdumeaux/mixt/mixt/models"
+	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 
-	"github.com/fjukstad/kvik/dataset"
 	"github.com/gorilla/mux"
 )
-
-// Dataset where do our analyses
-var d *dataset.Dataset
 
 var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/header.html", "views/navbar.html", "views/panels.html",
 	"views/module.html", "views/footer.html"))
-var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
+
+var modulesTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/header.html", "views/navbar.html", "views/panels.html",
-	"views/moduleshtml", "views/footer.html"))
+	"views/modules.html", "views/footer.html"))
 
 type Module struct {
 	Name string
@@ -29,7 +24,7 @@ type Module struct {
 }
 
 func loadModule(name string) Module {
-	imgurl, err := models.Hist(d)
+	imgurl, err := mixt.Hist()
 	if err != nil {
 		return Module{"", ""}
 	}
@@ -49,29 +44,17 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 	moduleTemplate.Execute(w, module)
 }
 
+func ModulesHandler(w http.ResponseWriter, r *http.Request) {
+
+	modulesTemplate.Execute(w, nil)
+}
+
 type Modules struct {
 	Names []string
 }
 
-func ListModules(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	tissue := vars["tissue"]
-
-	fmt.Println("Listing modules for", tissue)
-
-	m := Modules{Names: []string{"module a", "module b", "module c"}}
-	modules, _ := json.Marshal(m)
-
-	res, _ := models.Add(d, 2, 3)
-	log.Println(res)
-
-	w.Write(modules)
-}
-
 func InitModules() error {
-	var err error
-	d, err = models.Init()
+	err := mixt.Init()
 	if err != nil {
 		fmt.Println("error:", err)
 		return err

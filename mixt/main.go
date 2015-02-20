@@ -39,10 +39,16 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
-	r.HandleFunc("/modules/{tissue}", controllers.ListModules)
+	r.HandleFunc("/modules", controllers.ModulesHandler)
 	r.HandleFunc("/module/{tissue}/{name}", controllers.ModuleHandler)
+
 	r.HandleFunc("/public/{folder}/{file}", PublicHandler)
-	r.HandleFunc(`/search/{term}`, controllers.SearchHandler)
+
+	r.HandleFunc("/search/{term}", controllers.SearchHandler)
+
+	r.HandleFunc("/gene/{genes}", controllers.GeneHandler)
+
+	r.HandleFunc("/tissues/", controllers.TissuesHandler)
 
 	err := controllers.InitModules()
 	if err != nil {

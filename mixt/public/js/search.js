@@ -28,17 +28,7 @@ $(function() {
 
     $('input#search').bind("enterKey", function(e){
         searchterm = $('input#search').val()
-        entry = cache[searchterm]
-        if(typeof entry === 'undefined'){
-            swal({
-                title: "Could not find what you we're searching for, sorry!",
-                text: "You searched for '"+searchterm+"'",
-                type: "warning"
-            }) 
-            return
-        } else { 
-            //window.location = window.location.origin+"/pathway/"+id
-        }
+        window.location = window.location.origin+"/gene/"+searchterm
     });
 
     $('input#search').keyup(function(e){

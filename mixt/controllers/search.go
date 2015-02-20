@@ -6,9 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"bitbucket.org/vdumeaux/mixt/mixt/models"
+	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 
-	"github.com/fjukstad/kvik/dataset"
 	"github.com/fjukstad/kvik/utils"
 	"github.com/gorilla/mux"
 )
@@ -16,31 +15,31 @@ import (
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	term := vars["term"]
-
-	genes, err := models.GetGenes(d)
+	result, err := SearchForGene(term)
 	if err != nil {
 		fmt.Println("Search went bad:", err)
 		http.Error(w, err.Error(), 500)
+	}
+	res := utils.SearchResponse{result}
+	b, _ := json.Marshal(res)
+	w.Write(b)
+}
+
+func SearchForGene(searchTerm string) ([]string, error) {
+
+	genes, err := mixt.GetGenes()
+	if err != nil {
+		return []string{}, err
 	}
 
 	var result []string
 	for _, gene := range genes {
 		a := strings.ToLower(gene)
-		b := strings.ToLower(term)
+		b := strings.ToLower(searchTerm)
 		if strings.Contains(a, b) {
 			geneFmt := strings.Trim(gene, "\"")
 			result = append(result, geneFmt)
 		}
 	}
-
-	fmt.Println(genes, term)
-
-	res := utils.SearchResponse{result}
-	b, _ := json.Marshal(res)
-	w.Write(b)
-
-}
-
-func InitSearch(dataset *dataset.Dataset) {
-	d = dataset
+	return result, nil
 }

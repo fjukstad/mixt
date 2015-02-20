@@ -1,4 +1,4 @@
-package models
+package mixt
 
 import (
 	"strconv"
@@ -9,18 +9,18 @@ import (
 )
 
 var workerAddr string
+var d *dataset.Dataset
 
-func Init() (*dataset.Dataset, error) {
+func Init() error {
 	ip := "localhost"
 	port := ":8888"
 	filename := "scripts/script.r"
 	var err error
-	var d *dataset.Dataset
 	d, workerAddr, err = dataset.Init(ip, port, filename)
-	return d, err
+	return err
 }
 
-func Add(d *dataset.Dataset, a, b int) ([]string, error) {
+func Add(a, b int) ([]string, error) {
 	command := "add(3,2)"
 	resp, err := d.Call(command)
 	if err != nil {
@@ -31,7 +31,7 @@ func Add(d *dataset.Dataset, a, b int) ([]string, error) {
 	return response, nil
 }
 
-func Hist(d *dataset.Dataset) (string, error) {
+func Hist() (string, error) {
 	command := "plt()"
 	resp, err := d.Call(command)
 	if err != nil {
@@ -57,8 +57,19 @@ func Hist(d *dataset.Dataset) (string, error) {
 	return url, nil
 }
 
-func GetGenes(d *dataset.Dataset) ([]string, error) {
+func GetGenes() ([]string, error) {
 	command := "getGenes()"
+	resp, err := d.Call(command)
+	if err != nil {
+		return []string{""}, err
+	}
+
+	response := utils.PrepareResponse(resp)
+	return response, nil
+}
+
+func GetTissues() ([]string, error) {
+	command := "getTissues()"
 	resp, err := d.Call(command)
 	if err != nil {
 		return []string{""}, err

@@ -20,4 +20,6 @@ getGenes <- function() {
     return (c("BRCA1", "BRCA2", "ESR1"))
 }
 
-
+getTissues <- function() {
+    return (c("Blood", "Biopsy"))
+}

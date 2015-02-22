@@ -1,9 +1,10 @@
 {{ define "panels" }} 
 <div class="alternate" id="settings-panel">
-    <select class="form-control">
+    <select class="form-control" id="tissue-select">
         {{range .Tissues}}
         <option> {{.}} </option> 
         {{ end }} 
     </select>
 </div> 
+<script src="/public/js/panels.js" type="text/javascript" charset="utf-8"></script>
 {{ end }} 

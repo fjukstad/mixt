@@ -25,16 +25,19 @@ type Modules struct {
 
 func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name := vars["name"]
+	modules := vars["modules"]
 	tissue := vars["tissue"]
-	fmt.Println(name, tissue)
+	fmt.Println(modules, tissue)
 
 	moduleTemplate.Execute(w, nil)
 }
 
 func ModulesHandler(w http.ResponseWriter, r *http.Request) {
 
-	modules, err := mixt.GetModules("blood")
+	vars := mux.Vars(r)
+	tissue := vars["tissue"]
+
+	modules, err := mixt.GetModules(tissue)
 	if err != nil {
 		fmt.Println("Could not get modules")
 		http.Error(w, err.Error(), 503)

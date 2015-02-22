@@ -39,8 +39,8 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
-	r.HandleFunc("/modules", controllers.ModulesHandler)
-	r.HandleFunc("/module/{tissue}/{name}", controllers.ModuleHandler)
+	r.HandleFunc("/modules/{tissue}", controllers.ModulesHandler)
+	r.HandleFunc("/modules/{tissue}/{modules}", controllers.ModuleHandler)
 
 	r.HandleFunc("/public/{folder}/{file}", PublicHandler)
 

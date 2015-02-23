@@ -1,6 +1,7 @@
 package mixt
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -31,14 +32,24 @@ func Add(a, b int) ([]string, error) {
 	return response, nil
 }
 
-func Hist() (string, error) {
-	command := "plt()"
+func Heatmap(tissue, module string) (string, error) {
+	command := "heatmap(\"" + tissue + "\",\"" + module + "\")"
 	resp, err := d.Call(command)
 	if err != nil {
 		return "", err
 	}
 
 	response := utils.PrepareResponse(resp)
+	url, err := getUrl(response[0])
+
+	if err != nil {
+		return "", err
+	}
+
+	return url, nil
+}
+
+func getUrl(ending string) (string, error) {
 	newWorker := strings.Replace(workerAddr, "tcp", "http", -1)
 
 	split := strings.Split(newWorker, ":")
@@ -51,9 +62,8 @@ func Hist() (string, error) {
 	httpPort := id + 1
 
 	httpURL := split[0] + ":" + split[1] + ":" + strconv.Itoa(httpPort)
-
 	baseURL := httpURL + "/"
-	url := baseURL + response[0]
+	url := baseURL + ending
 	return url, nil
 }
 
@@ -116,6 +126,7 @@ func GetModules(tissue string) ([]Module, error) {
 	var modules []Module
 	response := utils.PrepareResponse(resp)
 	for _, r := range response {
+		fmt.Println(r)
 		name := strings.Trim(r, "\"")
 		modules = append(modules, Module{name, "", nil, nil})
 	}
@@ -124,12 +135,27 @@ func GetModules(tissue string) ([]Module, error) {
 
 func GetModule(name string, tissue string) (Module, error) {
 
-	url, err := Hist()
+	url, err := Heatmap(tissue, name)
 	if err != nil {
 		return Module{}, err
 	}
 
+	GetGeneList(name, tissue)
+
 	module := Module{name, url, nil, nil}
 	return module, nil
 
+}
+
+func GetGeneList(module, tissue string) ([]Gene, error) {
+	command := "getGeneList(\"" + module + "\",\"" + tissue + "\")"
+	resp, err := d.Call(command)
+	if err != nil {
+		fmt.Println(err)
+		return []Gene{}, err
+	}
+	response := utils.PrepareResponse(resp)
+	fmt.Println(getUrl(response[0]))
+
+	return []Gene{}, nil
 }

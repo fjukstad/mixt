@@ -5,24 +5,74 @@ library(Hmisc) # for 'capitalize()'
 ### Get functions etc. 
 source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/bresat.R", chdir=TRUE)
 source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/heatmap.R", chdir=TRUE)
+source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt/utils.r")
 # library(parallel)
 
+modulesFilename <- "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/modules-complete.Rdata"
+if(file.exists(modulesFilename)){ 
+  load(modulesFilename)
+} else {
+  ### Load datasets 
+  load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/cc.blood-biopsy-Modules.RData") # modules
+  load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/CC-Biopsy-Expressions.RData")   # gene expression and others 
+  
+  
+  names(cc.biopsy)<-c("blood", "biopsy")
+  names(cc.biopsy.modules)<-c("blood", "biopsy")
+  modules <- load.modules(cc.biopsy, cc.biopsy.modules)
+  
+  
+  # Ranksum
+  modules$blood$bresat <- lapply(modules$blood$modules[-1], function(mod) {
+    sig.ranksum(modules$blood$exprs, ns=mod, full.return=TRUE)
+  })
+  modules$biopsy$bresat <- lapply(modules$biopsy$modules[-1], function(mod) {
+    sig.ranksum(modules$biopsy$exprs, ns=mod, full.return=TRUE)
+  })
+  
+  
+  ### roi function
+  roi<-NULL
+  
+  for (tissue in c("blood", "biopsy"))
+  {
+    module.names <- names(modules[[tissue]]$bresat)
+    roi[[tissue]]<- mclapply(module.names, function(module) {
+      random.ranks(modules[[tissue]]$bresat[[module]])
+    })
+    names(roi[[tissue]])<-module.names
+  }  
+  
+  for (tissue in c("blood", "biopsy"))
+  {
+    module.names <- names(modules[[tissue]]$bresat)
+    for (module in module.names){
+      modules[[tissue]]$bresat[[module]]$roi<-roi[[tissue]][[module]]
+    }
+  }
+  
+  ### define roi categories
+  roi.cat<-NULL
+  for (tissue in c("blood", "biopsy"))
+  {
+    module.names <- names(modules[[tissue]]$bresat)
+    roi.cat[[tissue]]<- mclapply(module.names, function(module) {
+      define.roi.regions(modules[[tissue]]$bresat[[module]],modules[[tissue]]$bresat[[module]]$roi)
+    })
+    names(roi.cat[[tissue]])<-module.names
+  }  
+  for (tissue in c("blood", "biopsy"))
+  {
+    module.names <- names(modules[[tissue]]$bresat)
+    for (module in module.names){
+      modules[[tissue]]$bresat[[module]]$roi.cat<-roi.cat[[tissue]][[module]]
+    }
+  }  
+  save(modules,file=modulesFilename)
+}
 
-### Load datasets 
-load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/cc.blood-biopsy-Modules.RData") # modules
-load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/CC-Biopsy-Expressions.RData")   # gene expression and others 
 
-source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt/utils.r")
-names(cc.biopsy)<-c("blood", "biopsy")
-names(cc.biopsy.modules)<-c("blood", "biopsy")
-modules <- load.modules(cc.biopsy, cc.biopsy.modules)
 
-modules$blood$bresat <- lapply(modules$blood$modules[-1], function(mod) {
-  sig.ranksum(modules$blood$exprs, ns=mod, full.return=TRUE)
-})
-modules$biopsy$bresat <- lapply(modules$biopsy$modules[-1], function(mod) {
-  sig.ranksum(modules$biopsy$exprs, ns=mod, full.return=TRUE)
-})
 
 
 ### Set Kvik option so that the output is readable in Kvik 

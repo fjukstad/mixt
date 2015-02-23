@@ -1,17 +1,13 @@
 {{ define "content" }}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-1 col-md-1 col-lg-1 img-rounded">
-                <div id="settings-icon"> 
-                  <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span>
-              </div> 
-            </div>
-            <div class="col-sm-11 col-md-11 col-lg-11">
-                <div class="module"> 
-                    <p> Viewing module {{.Name}} </p> 
-                    <img src={{.URL}}></img>
+    <div class="container">
+        {{ range .Modules }} 
+            <div class="row"> 
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <h2> {{.Name}} </h2> 
+                    <img src={{.HeatmapUrl}}></img>
+                    </hr>
                 </div>
             </div>
-        </div> 
+        {{ end }} 
     </div>
 {{ end }} 

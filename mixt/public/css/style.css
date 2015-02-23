@@ -2,6 +2,10 @@
     background-color: #f1f1f1;
 }
 
+.container { 
+    overflow: auto
+}
+
 .container-fluid { 
     padding-left:0px;
 }

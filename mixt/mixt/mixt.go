@@ -81,15 +81,55 @@ func GetTissues() ([]string, error) {
 	return response, nil
 }
 
-func GetModules(tissue string) ([]string, error) {
+type Module struct {
+	Name       string
+	HeatmapUrl string
+	Genes      []Gene
+	Signatures []Signature
+}
+
+type Gene struct {
+	Name        string
+	Correlation float64
+	K           float64
+	Kin         float64
+	Updown      string
+}
+
+type Signature struct {
+	Name       string
+	Size       int
+	PValue     float64
+	Common     []string
+	PValueUp   float64
+	ComnonUp   []string
+	PValueDown float64
+	CommonDown []string
+}
+
+func GetModules(tissue string) ([]Module, error) {
 	command := "getModules(\"" + tissue + "\")"
 	resp, err := d.Call(command)
 	if err != nil {
-		return []string{""}, err
+		return []Module{}, err
 	}
+	var modules []Module
 	response := utils.PrepareResponse(resp)
-	for i, r := range response {
-		response[i] = strings.Trim(r, "\"")
+	for _, r := range response {
+		name := strings.Trim(r, "\"")
+		modules = append(modules, Module{name, "", nil, nil})
 	}
-	return response, nil
+	return modules, nil
+}
+
+func GetModule(name string, tissue string) (Module, error) {
+
+	url, err := Hist()
+	if err != nil {
+		return Module{}, err
+	}
+
+	module := Module{name, url, nil, nil}
+	return module, nil
+
 }

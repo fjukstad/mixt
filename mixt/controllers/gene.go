@@ -5,6 +5,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/fjukstad/kvik/genecards"
 	"github.com/gorilla/mux"
 )
 
@@ -27,4 +28,15 @@ func GeneHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	res := Genes{result}
 	geneTemplate.Execute(w, res)
+}
+
+func GeneSummaryHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	geneName := vars["gene"]
+
+	summary := genecards.Summary(geneName)
+
+	w.Write([]byte(summary))
+
 }

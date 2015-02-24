@@ -78,7 +78,8 @@ options(width=10000)
 ### Where to store images
 imgpath <- "images"
 dir.create(imgpath,showWarnings = FALSE)
-
+tablePath <- "tables"
+dir.create(tablePath,showWarnings = FALSE)
 
 plt <- function() { 
     mat <- rnorm(10)
@@ -91,16 +92,24 @@ plt <- function() {
 }  
 
 heatmap <- function(tissue,module) { 
-  filename <- paste(imgpath, "/heatmap-",tissue,"-",module,".png",sep="")
-  if(file.exists(modulesFilename)){
-    return (filename)
+  pngFilename <- paste(imgpath, "/heatmap-",tissue,"-",module,".png",sep="")
+  if(file.exists(pngFilename)){
+    return (pngFilename)
   } else {
-    png(filename)
+    png(pngFilename)
     plot.new()
     create.modules.heatmap(modules[[tissue]]$bresat[[module]],modules[[tissue]]$clinical,
                            title=capitalize(paste(tissue, module)))
     dev.off()
-    return (filename)
+    
+    pdfFilename <- paste(imgpath, "/heatmap-",tissue,"-",module,".pdf",sep="")
+    pdf(pdfFilename)
+    plot.new()
+    create.modules.heatmap(modules[[tissue]]$bresat[[module]],modules[[tissue]]$clinical,
+                           title=capitalize(paste(tissue, module)))
+    dev.off()
+    
+    return (pngFilename)
   } 
 }
 
@@ -117,16 +126,18 @@ getTissues <- function() {
 }
 
 getGeneList <- function(tissue,module){
-    genes <- modules[[tissue]]$bresat[[module]]$gene.order
-    up.dn <- modules[[tissue]]$bresat[[module]]$up.dn
-    res <- matrix(c(genes,up.dn), nrow=length(genes))
-    colnames(res) <- c("Gene", "up.dn")
-    path <- "tables"
-    dir.create(path)
-    filename <- paste(path,"/genelist-",tissue,"-",module,".csv",sep="")
-    write.table(res, filename, sep=",",row.names=FALSE) 
+  filename <- paste(tablePath,"/genelist-",tissue,"-",module,".csv",sep="")
+  if(file.exists(filename)){
+    return (filename)
+  } 
+  
+  genes <- modules[[tissue]]$bresat[[module]]$gene.order
+  up.dn <- modules[[tissue]]$bresat[[module]]$up.dn
+  res <- matrix(c(genes,up.dn), nrow=length(genes))
+  colnames(res) <- c("Gene", "up.dn")
+  write.table(res, filename, sep=",",row.names=FALSE) 
     
-    return(filename) 
+  return(filename) 
 } 
 
 

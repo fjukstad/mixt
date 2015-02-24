@@ -49,6 +49,8 @@ func Heatmap(tissue, module string) (string, error) {
 		return "", err
 	}
 
+	url = strings.TrimSuffix(url, ".png")
+
 	return url, nil
 }
 
@@ -129,7 +131,6 @@ func GetModules(tissue string) ([]Module, error) {
 	var modules []Module
 	response := utils.PrepareResponse(resp)
 	for _, r := range response {
-		fmt.Println(r)
 		name := strings.Trim(r, "\"")
 		modules = append(modules, Module{name, "", nil, nil})
 	}
@@ -187,9 +188,6 @@ func GetGeneList(module, tissue string) ([]Gene, error) {
 			line += 1
 			continue
 		}
-		fmt.Println(record)
-		fmt.Println(record[0])
-		fmt.Println(record[1])
 
 		name := record[0]
 		var updown string
@@ -207,8 +205,6 @@ func GetGeneList(module, tissue string) ([]Gene, error) {
 
 		genes = append(genes, g)
 	}
-
-	fmt.Println(getUrl(response[0]))
 
 	return genes, nil
 }

@@ -4,7 +4,9 @@
             <div class="row" id="module"> 
                 <div class="col-sm-6 col-md-6 col-lg-6">
                     <!-- <h2> {{.Name}} </h2> -->
-                    <img src={{.HeatmapUrl}} id="module-heatmap"></img>
+                    <a href="{{.HeatmapUrl}}.pdf">
+                        <img src={{.HeatmapUrl}}.png id="module-heatmap"></img>
+                    </a>
                     </hr>
                 </div>
                 <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
@@ -20,7 +22,13 @@
                         <tbody class="list">
                              {{ range .Genes }} 
                                  <tr> 
-                                     <td class="name"> {{.Name}} </td>
+                                     <td class="name" data-toggle="tooltip"
+                                         data-placement="left" id="{{.Name}}">
+                                         <a
+                                             href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">
+                                            {{.Name}}
+                                         </a>
+                                     </td>
                                      <td class="correlation"> {{.Correlation}} </td> 
                                      <td class="k"> {{.K}} </td> 
                                      <td class="kin"> {{.Kin}} </td> 

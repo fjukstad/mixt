@@ -47,6 +47,7 @@ func main() {
 	r.HandleFunc("/search/{term}", controllers.SearchHandler)
 
 	r.HandleFunc("/gene/{genes}", controllers.GeneHandler)
+	r.HandleFunc("/gene/summary/{gene}", controllers.GeneSummaryHandler)
 
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissue1}/{tissue2}", controllers.TissueComparisonHandler)

@@ -46,8 +46,6 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		result = append(result, m)
 	}
-	fmt.Println(modules)
-	fmt.Println(result)
 
 	moduleTemplate.Execute(w, Modules{result})
 }

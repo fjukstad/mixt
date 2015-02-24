@@ -1,0 +1,9 @@
+#genes {
+    height: 500px;
+}
+
+#module {
+    padding-bottom:2em;
+    border-bottom: 1px solid #ccc;
+    margin-top: 2em;
+}

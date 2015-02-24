@@ -1,7 +1,10 @@
 package mixt
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -140,22 +143,72 @@ func GetModule(name string, tissue string) (Module, error) {
 		return Module{}, err
 	}
 
-	GetGeneList(name, tissue)
+	genes, err := GetGeneList(name, tissue)
+	if err != nil {
+		return Module{}, err
+	}
 
-	module := Module{name, url, nil, nil}
+	module := Module{name, url, genes, nil}
 	return module, nil
 
 }
 
 func GetGeneList(module, tissue string) ([]Gene, error) {
-	command := "getGeneList(\"" + module + "\",\"" + tissue + "\")"
+	command := "getGeneList(\"" + tissue + "\",\"" + module + "\")"
 	resp, err := d.Call(command)
 	if err != nil {
 		fmt.Println(err)
 		return []Gene{}, err
 	}
 	response := utils.PrepareResponse(resp)
+	url, _ := getUrl(response[0])
+
+	listResp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+		return []Gene{}, err
+	}
+
+	reader := csv.NewReader(listResp.Body)
+
+	var genes []Gene
+	line := 0
+	for {
+		record, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			fmt.Println("Error:", err)
+			return []Gene{}, nil
+		}
+
+		if line == 0 {
+			line += 1
+			continue
+		}
+		fmt.Println(record)
+		fmt.Println(record[0])
+		fmt.Println(record[1])
+
+		name := record[0]
+		var updown string
+		if record[1] == "-1" {
+			updown = "down"
+		} else {
+			updown = "up"
+		}
+
+		g := Gene{Name: name,
+			Correlation: 0,
+			K:           0,
+			Kin:         0,
+			Updown:      updown}
+
+		genes = append(genes, g)
+	}
+
 	fmt.Println(getUrl(response[0]))
 
-	return []Gene{}, nil
+	return genes, nil
 }

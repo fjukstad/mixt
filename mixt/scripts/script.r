@@ -72,9 +72,6 @@ if(file.exists(modulesFilename)){
 }
 
 
-
-
-
 ### Set Kvik option so that the output is readable in Kvik 
 options(width=10000) 
 
@@ -95,19 +92,23 @@ plt <- function() {
 
 heatmap <- function(tissue,module) { 
   filename <- paste(imgpath, "/heatmap-",tissue,"-",module,".png",sep="")
-  png(filename)
-  plot.new()
-  create.modules.heatmap(modules[[tissue]]$bresat[[module]],modules[[tissue]]$clinical,
-                         title=capitalize(paste(tissue, module)))
-  dev.off()
-  return (filename)
+  if(file.exists(modulesFilename)){
+    return (filename)
+  } else {
+    png(filename)
+    plot.new()
+    create.modules.heatmap(modules[[tissue]]$bresat[[module]],modules[[tissue]]$clinical,
+                           title=capitalize(paste(tissue, module)))
+    dev.off()
+    return (filename)
+  } 
 }
 
 getModules <- function(tissue) {
     return (names(modules[[tissue]]$modules))
 }
 
-getGenes <- function() { 
+getGenes <- function(tissue, module) {  
     return (c("BRCA1", "BRCA2", "ESR1"))
 }
 
@@ -115,19 +116,15 @@ getTissues <- function() {
     return (names(modules))
 }
 
-getGeneList <- function(module,tissue){ 
-    genes <- matrix(c("BRCA1", "BRCA2", "ESR1",
-                      0.8, 0.89, 0.7,
-                      0.7, 0.81, 0.61,
-                      1, 0.99, 0.97,
-                      "up", "up", "up"),
-                    nrow=3, byrow=FALSE)
-    colnames(genes) <- c("Gene","Correlation", "k", "kin", "up/down")
-    
+getGeneList <- function(tissue,module){
+    genes <- modules[[tissue]]$bresat[[module]]$gene.order
+    up.dn <- modules[[tissue]]$bresat[[module]]$up.dn
+    res <- matrix(c(genes,up.dn), nrow=length(genes))
+    colnames(res) <- c("Gene", "up.dn")
     path <- "tables"
     dir.create(path)
     filename <- paste(path,"/genelist-",tissue,"-",module,".csv",sep="")
-    write.table(genes, filename, sep=",",row.names=FALSE) 
+    write.table(res, filename, sep=",",row.names=FALSE) 
     
     return(filename) 
 } 

@@ -5,6 +5,8 @@ import (
 	"strings"
 	"text/template"
 
+	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
+
 	"github.com/fjukstad/kvik/genecards"
 	"github.com/gorilla/mux"
 )
@@ -24,6 +26,7 @@ func GeneHandler(w http.ResponseWriter, r *http.Request) {
 	var result []string
 	for _, gene := range genes {
 		hits, _ := SearchForGene(gene)
+		mixt.GetAllModules(gene)
 		result = append(result, hits...)
 	}
 	res := Genes{result}

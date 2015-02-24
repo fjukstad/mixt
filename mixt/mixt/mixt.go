@@ -73,14 +73,62 @@ func getUrl(ending string) (string, error) {
 }
 
 func GetGenes() ([]string, error) {
-	command := "getGenes()"
+	command := "getAllGenes()"
 	resp, err := d.Call(command)
 	if err != nil {
 		return []string{""}, err
 	}
 
 	response := utils.PrepareResponse(resp)
-	return response, nil
+	url, err := getUrl(response[0])
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	listResp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+		return []string{}, err
+	}
+
+	reader := csv.NewReader(listResp.Body)
+
+	var genes []string
+	line := 0
+	for {
+		record, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			fmt.Println("Error:", err)
+			return []string{}, nil
+		}
+
+		if line == 0 {
+			line += 1
+			continue
+		}
+
+		name := record[0]
+		genes = append(genes, name)
+	}
+
+	fmt.Println(url)
+
+	return genes, nil
+}
+
+func GetAllModules(gene string) {
+	command := "getAllModules(" + gene + ")"
+
+	resp, err := d.Call(command)
+	if err != nil {
+		return []string{""}, err
+	}
+	response := utils.PrepareResponse(resp)
+	fmt.Println(response)
 }
 
 func GetTissues() ([]string, error) {

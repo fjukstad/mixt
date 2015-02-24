@@ -117,8 +117,57 @@ getModules <- function(tissue) {
     return (names(modules[[tissue]]$modules))
 }
 
-getGenes <- function(tissue, module) {  
-    return (c("BRCA1", "BRCA2", "ESR1"))
+getAllGenes <- function(){
+  filename = paste(tablePath,"/genes.csv",sep="")
+  if(!file.exists(filename)){
+    getAllGenesAndModules()
+  }
+  
+  genesAndModules = read.csv(filename)
+  g = genesAndModules$gene
+  genes = matrix(g)
+  colnames(genes) = c("gene")
+  geneFilename = paste(tablePath,"/all-genes.csv",sep="")
+  write.table(genes, geneFilename, sep=",",row.names=FALSE) 
+  return(geneFilename)
+}
+
+getAllModules <- function(gene) {
+  filename = paste(tablePath,"/genes.csv",sep="")
+  genesAndModules = read.csv(filename)
+  View(genesAndModules)
+  g = genesAndModules[gene,]
+  View(g)
+}
+
+getAllGenesAndModules <- function() {
+  filename = paste(tablePath,"/genes.csv",sep="")
+  if(file.exists(filename)){
+    return (filename)
+  } 
+  res <- NULL
+  tissues <- c("blood", "biopsy")
+  for (tissue in tissues){
+    for(module in names(modules[[tissue]]$modules)) {
+      if(module == "grey"){
+        next 
+      }
+      gs <- modules[[tissue]]$bresat[[module]]$gene.order
+      for(gene in gs){
+        if(length(res[[gene]])==0) {
+          res[[gene]] = list()
+          res[[gene]][["blood"]] = NA
+          res[[gene]][["biopsy"]] = NA
+        }
+        res[[gene]][[tissue]] = c(module)
+      }
+    }
+  }
+  genes = matrix(unlist(res), nrow=length(names(res)))
+  genes = cbind(names(res), genes)
+  colnames(genes) <-  c("gene",tissues)
+  write.table(genes, filename, sep=",",row.names=FALSE) 
+  return (filename)
 }
 
 getTissues <- function() {

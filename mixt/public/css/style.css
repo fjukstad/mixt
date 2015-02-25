@@ -52,3 +52,8 @@ td#comp{
 select#module-select {
     height: 50%;
 }
+
+span#download-link {
+    float: right;
+    margin-right: 30%;
+}

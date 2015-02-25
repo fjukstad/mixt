@@ -152,6 +152,7 @@ type Module struct {
 	HeatmapUrl string
 	Genes      []Gene
 	Signatures []Signature
+	Url        string
 }
 
 type Gene struct {
@@ -183,47 +184,49 @@ func GetModules(tissue string) ([]Module, error) {
 	response := utils.PrepareResponse(resp)
 	for _, r := range response {
 		name := strings.Trim(r, "\"")
-		modules = append(modules, Module{name, "", nil, nil})
+		if name != "grey" {
+			modules = append(modules, Module{name, "", nil, nil, ""})
+		}
+
 	}
 	return modules, nil
 }
 
 func GetModule(name string, tissue string) (Module, error) {
 
-	url, err := Heatmap(tissue, name)
+	heatmapUrl, err := Heatmap(tissue, name)
 	if err != nil {
 		return Module{}, err
 	}
 
-	genes, err := GetGeneList(name, tissue)
+	genes, url, err := GetGeneList(name, tissue)
 	if err != nil {
 		return Module{}, err
 	}
 
-	module := Module{name, url, genes, nil}
+	module := Module{name, heatmapUrl, genes, nil, url}
 	return module, nil
 
 }
 
-func GetGeneList(module, tissue string) ([]Gene, error) {
+func GetGeneList(module, tissue string) (genes []Gene, url string, err error) {
 	command := "getGeneList(\"" + tissue + "\",\"" + module + "\")"
 	resp, err := d.Call(command)
 	if err != nil {
 		fmt.Println(err)
-		return []Gene{}, err
+		return []Gene{}, "", err
 	}
 	response := utils.PrepareResponse(resp)
-	url, _ := getUrl(response[0])
+	url, _ = getUrl(response[0])
 
 	listResp, err := http.Get(url)
 	if err != nil {
 		fmt.Println(err)
-		return []Gene{}, err
+		return []Gene{}, "", err
 	}
 
 	reader := csv.NewReader(listResp.Body)
 
-	var genes []Gene
 	line := 0
 	for {
 		record, err := reader.Read()
@@ -232,7 +235,7 @@ func GetGeneList(module, tissue string) ([]Gene, error) {
 			break
 		} else if err != nil {
 			fmt.Println("Error:", err)
-			return []Gene{}, nil
+			return []Gene{}, "", nil
 		}
 
 		if line == 0 {
@@ -257,5 +260,5 @@ func GetGeneList(module, tissue string) ([]Gene, error) {
 		genes = append(genes, g)
 	}
 
-	return genes, nil
+	return genes, url, nil
 }

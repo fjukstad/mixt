@@ -10,12 +10,26 @@
                     <th>
                        Gene
                     </th>
+                    <th>
+                        Summary
+                    </th>
+                    {{ range .Tissues }}
+                        <th> {{.}} </th>
+                    {{end}}
                 </thead>
                 {{range .Genes}}
                 <tr>
-                    <td>
-                        {{.}}
+                    <td class="col-md-2">
+                        {{.Name}}
                     </td>
+                    <td class="col-md-3"> {{.Summary}} </td>
+                    {{ range $index, $name := .Modules }}
+                    <td class="col-md-2">
+                        <a href="http://localhost:8080/modules/biopsy/{{$name}}">
+                            {{$name}}
+                        </a>
+                    </td>
+                    {{ end }} 
                 </tr> 
                 {{end}}
             </table>

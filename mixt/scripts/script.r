@@ -135,9 +135,10 @@ getAllGenes <- function(){
 getAllModules <- function(gene) {
   filename = paste(tablePath,"/genes.csv",sep="")
   genesAndModules = read.csv(filename)
-  View(genesAndModules)
-  g = genesAndModules[gene,]
-  View(g)
+  id = match(gene,genesAndModules$gene)
+  g = genesAndModules[id,]
+  d = c(lapply(g,as.character))
+  return(c(d$blood, d$biopsy))
 }
 
 getAllGenesAndModules <- function() {

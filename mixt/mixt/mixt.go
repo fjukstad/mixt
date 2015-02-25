@@ -120,15 +120,18 @@ func GetGenes() ([]string, error) {
 	return genes, nil
 }
 
-func GetAllModules(gene string) {
-	command := "getAllModules(" + gene + ")"
+func GetAllModules(gene string) ([]string, error) {
+	command := "getAllModules(\"" + gene + "\")"
 
 	resp, err := d.Call(command)
 	if err != nil {
 		return []string{""}, err
 	}
 	response := utils.PrepareResponse(resp)
-	fmt.Println(response)
+	for i, r := range response {
+		response[i] = strings.Trim(r, "\"")
+	}
+	return response, nil
 }
 
 func GetTissues() ([]string, error) {

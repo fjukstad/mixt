@@ -25,11 +25,15 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-func SearchForGene(searchTerm string) ([]string, error) {
+var genes []string
 
-	genes, err := mixt.GetGenes()
-	if err != nil {
-		return []string{}, err
+func SearchForGene(searchTerm string) ([]string, error) {
+	var err error
+	if len(genes) < 1 {
+		genes, err = mixt.GetGenes()
+		if err != nil {
+			return []string{}, err
+		}
 	}
 
 	var result []string

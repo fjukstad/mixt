@@ -3,8 +3,6 @@
         <div class="row">
             <h2> The search returned {{len .Genes}} results</h2>
         </div>
-        {{ .Tissues }} 
-            
         <div class="row">
             <table class="table table-hover">
                 <thead>
@@ -23,7 +21,6 @@
                     <td class="col-md-2">
                         {{.Name}}
                     </td>
-
                     <td class="col-md-3"> {{.Summary}}  </td>
                     {{ range $index, $name := .Modules }}
                     <td class="col-md-2">

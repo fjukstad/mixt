@@ -5,72 +5,13 @@ library(Hmisc) # for 'capitalize()'
 ### Get functions etc. 
 source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/bresat.R", chdir=TRUE)
 source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/heatmap.R", chdir=TRUE)
-source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt/utils.r")
-# library(parallel)
+source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt/utils.r", chdir=TRUE)
 
+rawModulesFilename <- "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/cc.blood-biopsy-Modules.RData"
+exprsFilename <-  "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/CC-Biopsy-Expressions.RData"
 modulesFilename <- "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/modules-complete.Rdata"
-if(file.exists(modulesFilename)){ 
-  load(modulesFilename)
-} else {
-  ### Load datasets 
-  load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/cc.blood-biopsy-Modules.RData") # modules
-  load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/CC-Biopsy-Expressions.RData")   # gene expression and others 
-  
-  
-  names(cc.biopsy)<-c("blood", "biopsy")
-  names(cc.biopsy.modules)<-c("blood", "biopsy")
-  modules <- load.modules(cc.biopsy, cc.biopsy.modules)
-  
-  
-  # Ranksum
-  modules$blood$bresat <- lapply(modules$blood$modules[-1], function(mod) {
-    sig.ranksum(modules$blood$exprs, ns=mod, full.return=TRUE)
-  })
-  modules$biopsy$bresat <- lapply(modules$biopsy$modules[-1], function(mod) {
-    sig.ranksum(modules$biopsy$exprs, ns=mod, full.return=TRUE)
-  })
-  
-  
-  ### roi function
-  roi<-NULL
-  
-  for (tissue in c("blood", "biopsy"))
-  {
-    module.names <- names(modules[[tissue]]$bresat)
-    roi[[tissue]]<- mclapply(module.names, function(module) {
-      random.ranks(modules[[tissue]]$bresat[[module]])
-    })
-    names(roi[[tissue]])<-module.names
-  }  
-  
-  for (tissue in c("blood", "biopsy"))
-  {
-    module.names <- names(modules[[tissue]]$bresat)
-    for (module in module.names){
-      modules[[tissue]]$bresat[[module]]$roi<-roi[[tissue]][[module]]
-    }
-  }
-  
-  ### define roi categories
-  roi.cat<-NULL
-  for (tissue in c("blood", "biopsy"))
-  {
-    module.names <- names(modules[[tissue]]$bresat)
-    roi.cat[[tissue]]<- mclapply(module.names, function(module) {
-      define.roi.regions(modules[[tissue]]$bresat[[module]],modules[[tissue]]$bresat[[module]]$roi)
-    })
-    names(roi.cat[[tissue]])<-module.names
-  }  
-  for (tissue in c("blood", "biopsy"))
-  {
-    module.names <- names(modules[[tissue]]$bresat)
-    for (module in module.names){
-      modules[[tissue]]$bresat[[module]]$roi.cat<-roi.cat[[tissue]][[module]]
-    }
-  }  
-  save(modules,file=modulesFilename)
-}
 
+modules <- loadModulesAndROI(rawModulesFilename,exprsFilename,modulesFilename)
 
 ### Set Kvik option so that the output is readable in Kvik 
 options(width=10000) 
@@ -78,20 +19,16 @@ options(width=10000)
 ### Where to store images
 imgpath <- "images"
 dir.create(imgpath,showWarnings = FALSE)
+### Directory to store tables (output as csv files)
 tablePath <- "tables"
 dir.create(tablePath,showWarnings = FALSE)
 
-plt <- function() { 
-    mat <- rnorm(10)
-    filename <- paste(imgpath,"/plot.png",sep="")
-    
-    png (filename)
-    hist(mat)
-    dev.off()
-    return (filename)
-}  
-
-heatmap <- function(tissue,module) { 
+### Generate heatmap plot for the given tissue and module. If the heatmap
+### already exists, it finds the appropriate png file where it is supposed
+### to store a new one, it returns this file. This heat map function
+### generates both a png and a pdf. All plots are stored in the path
+### given by 'imgpath'
+heatmap <- function(tissue,module,imgpath="images") { 
   pngFilename <- paste(imgpath, "/heatmap-",tissue,"-",module,".png",sep="")
   if(file.exists(pngFilename)){
     return (pngFilename)
@@ -113,11 +50,14 @@ heatmap <- function(tissue,module) {
   } 
 }
 
+### Returns a list of modules found for the given tissue
 getModules <- function(tissue) {
     return (names(modules[[tissue]]$modules))
 }
 
-getAllGenes <- function(){
+### Returns the location of a csv files containing a list of all genes found in 
+### all modules across all tissues. 
+getAllGenes <- function(tablePath="tables"){
   filename = paste(tablePath,"/genes.csv",sep="")
   if(!file.exists(filename)){
     getAllGenesAndModules()
@@ -132,6 +72,7 @@ getAllGenes <- function(){
   return(geneFilename)
 }
 
+### Get all modules a specific gene is found in. 
 getAllModules <- function(gene) {
   filename = paste(tablePath,"/genes.csv",sep="")
   genesAndModules = read.csv(filename)
@@ -141,6 +82,8 @@ getAllModules <- function(gene) {
   return(c(d$blood, d$biopsy))
 }
 
+### Retrieves all genes and the modules they participate in. 
+### Writes it to a file so that we can read it later. 
 getAllGenesAndModules <- function() {
   filename = paste(tablePath,"/genes.csv",sep="")
   if(file.exists(filename)){
@@ -171,10 +114,13 @@ getAllGenesAndModules <- function() {
   return (filename)
 }
 
+### Get available tissues
 getTissues <- function() {
     return (names(modules))
 }
 
+### Get a list of genes for a specific module and tissue. Results are 
+### written to a csv file and its location is returned. 
 getGeneList <- function(tissue,module){
   filename <- paste(tablePath,"/genelist-",tissue,"-",module,".csv",sep="")
   if(file.exists(filename)){

@@ -28,7 +28,7 @@ var s = securecookie.New(
 	securecookie.GenerateRandomKey(32))
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	if getUsername(r) == "" {
+	if controllers.GetUsername(r) == "" {
 		outsideTemplate.Execute(w, nil)
 		return
 	}
@@ -56,44 +56,6 @@ type Error struct {
 	Error string
 }
 
-func startSession(username string, w http.ResponseWriter) error {
-	val := map[string]string{"username": username}
-	encoded, err := s.Encode("session", val)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	cookie := &http.Cookie{
-		Name:   "session",
-		Value:  encoded,
-		Path:   "/",
-		MaxAge: 86400, // max age one day
-	}
-	http.SetCookie(w, cookie)
-	return nil
-}
-
-func getUsername(r *http.Request) string {
-	cookie, err := r.Cookie("session")
-
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-
-	var val map[string]string
-
-	err = s.Decode("session", cookie.Value, &val)
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-
-	username := val["username"]
-	return username
-
-}
-
 type Config struct {
 	Login struct {
 		Username string
@@ -109,7 +71,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if username != "" && password != "" {
 		if username == cfg.Login.Username && password == cfg.Login.Password {
-			err := startSession(username, w)
+			err := controllers.StartSession(username, w)
 			if err != nil {
 				fmt.Println(err)
 				http.Error(w, err.Error(), 503)

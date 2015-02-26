@@ -13,6 +13,11 @@ import (
 )
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
+	if !LoggedIn(r) {
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
 	vars := mux.Vars(r)
 	term := vars["term"]
 	result, err := SearchForGene(term)

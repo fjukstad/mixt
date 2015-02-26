@@ -28,6 +28,13 @@ type Gene struct {
 }
 
 func GeneHandler(w http.ResponseWriter, r *http.Request) {
+
+	if !LoggedIn(r) {
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
+	fmt.Println("GENEHANDLER WHAT ARE YOU DOING?")
 	vars := mux.Vars(r)
 	term := vars["genes"]
 	genes := strings.Split(term, " ")
@@ -68,6 +75,10 @@ func GeneHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GeneSummaryHandler(w http.ResponseWriter, r *http.Request) {
+	if !LoggedIn(r) {
+		http.Redirect(w, r, "/", 302)
+		return
+	}
 
 	vars := mux.Vars(r)
 	geneName := vars["gene"]

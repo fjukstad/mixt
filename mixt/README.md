@@ -10,7 +10,6 @@ the [Go programming language](http://golang.org) using bits and pieces from the
 statistical analyses in R and information about genes from
 [GeneCards](http://genecards.org). 
 
-
 ![Screenshot of a module view in MIxT](screenshot.png) 
 
 ## System 
@@ -29,20 +28,20 @@ genes we have integrated it with Gene Summaries from GeneCards.
 
 The web application follows the typical [Model-view-controller
 (MVC)](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
-pattern. You'll find views in the [views](/views) directory, controllers in the
-[controllers](/controllers) directory and the model in the [mixt](/mixt) folder.
+pattern. You'll find views in the [views](views) directory, controllers in the
+[controllers](controllers) directory and the model in the [mixt](mixt) folder.
 Other resources such as Javascript or CSS files are located in the
-[public](/public) folder.
+[public](public) folder.
 
 The views are built using the [template
 package](http://golang.org/pkg/text/template/) in go (Note that when we're
 talking about go we are talking about the programming language go, not Gene
 Ontology (GO)). 
 
-Most interesting about the web application is the [script.r](/scripts/script.r)
+Most interesting about the web application is the [script.r](scripts/script.r)
 file. This file contains the necessary R functions to provide the web
 application with results from the analyses. As an example, take a look at the
-`heatmap` function in the [script.r](/scripts/script.r) file. This file
+`heatmap` function in the [script.r](scripts/script.r) file. This file
 generates a heatmap (both png and pdf) and returns the filename of the heatmap.
 The web application can then retrieve the generated plot and present it to the
 user. 
@@ -79,7 +78,7 @@ output files it generates. For example, it serves heatmap images and gene list
 tables out of this web server. 
 
 When the web application starts up it contacts the master and requests for it to
-start up a worker. The web application sends the [script.r](/scripts/script.r)
+start up a worker. The web application sends the [script.r](scripts/script.r)
 file along with the request. The worker starts up by sourcing this file so that
 it can execute any of the functions included in the file. It then waits for
 incoming function calls and executes them as they arrive. 

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"text/template"
 
+	"code.google.com/p/gcfg"
+
 	"bitbucket.org/vdumeaux/mixt/mixt/controllers"
 
 	"github.com/gorilla/mux"
@@ -26,12 +28,12 @@ var s = securecookie.New(
 	securecookie.GenerateRandomKey(32))
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	if getUsername(r) != "" {
-		indexTemplate.Execute(w, nil)
+	if getUsername(r) == "" {
+		outsideTemplate.Execute(w, nil)
 		return
 	}
 
-	outsideTemplate.Execute(w, nil)
+	indexTemplate.Execute(w, nil)
 }
 
 func PublicHandler(w http.ResponseWriter, r *http.Request) {
@@ -92,13 +94,21 @@ func getUsername(r *http.Request) string {
 
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+type Config struct {
+	Login struct {
+		Username string
+		Password string
+	}
+}
 
+var cfg Config
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
 	if username != "" && password != "" {
-		if username == "test" && password == "test" {
+		if username == cfg.Login.Username && password == cfg.Login.Password {
 			err := startSession(username, w)
 			if err != nil {
 				fmt.Println(err)
@@ -114,7 +124,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	err := gcfg.ReadFileInto(&cfg, "config.gcfg")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	r := mux.NewRouter()
+
 	r.HandleFunc("/", HomeHandler)
 
 	r.HandleFunc("/login", LoginHandler)
@@ -132,7 +149,7 @@ func main() {
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissue1}/{tissue2}", controllers.TissueComparisonHandler)
 
-	err := controllers.InitModules()
+	err = controllers.InitModules()
 	if err != nil {
 		log.Panic(err)
 	}

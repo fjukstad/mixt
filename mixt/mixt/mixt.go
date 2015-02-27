@@ -16,11 +16,14 @@ var workerAddr string
 var d *dataset.Dataset
 
 func Init() error {
+	var err error
 	ip := "localhost"
 	port := ":8888"
 	filename := "scripts/script.r"
-	var err error
-	d, workerAddr, err = dataset.Init(ip, port, filename)
+	d, workerAddr, err = dataset.RequestNewWorker(ip, port, filename)
+	//workerAddr = "tcp://localhost:5000"
+	//fmt.Println("connecting to worker at", workerAddr)
+	//d, err = dataset.ConnectToRunningWorker(workerAddr)
 	return err
 }
 

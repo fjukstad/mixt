@@ -1,0 +1,21 @@
+{{ define "content" }} 
+<div class="container"> 
+          <h1> Please log in </h1> </br>
+        <p>
+            <form method="post" action="/login" id="login">
+            {{if .Error }}
+                <div class="form-group has-error">
+                <p> {{ .Error }} </p>
+            {{ else }} 
+                <div class="form-group">
+            {{ end }} 
+                    <label class="control-label" for="username">User name</label>
+                    <input type="text" id="username" name="username">
+                    <label class="control-label" for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                    <button type="submit" class="btn btn-default">Login</button>
+                </div>
+           </form>
+       </p>
+   </div>
+{{ end }} 

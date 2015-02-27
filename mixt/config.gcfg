@@ -1,0 +1,5 @@
+# Replace username and password with what ever you want
+# the username/password combination on the web page to be
+[Login]
+username = test
+password = test

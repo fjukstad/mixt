@@ -5,25 +5,13 @@ library(Hmisc) # for 'capitalize()'
 ### Get functions etc. 
 source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/bresat.R", chdir=TRUE)
 source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/heatmap.R", chdir=TRUE)
-# library(parallel)
+source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt/utils.r", chdir=TRUE)
 
+rawModulesFilename <- "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/cc.blood-biopsy-Modules.RData"
+exprsFilename <-  "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/CC-Biopsy-Expressions.RData"
+modulesFilename <- "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/modules-complete.Rdata"
 
-### Load datasets 
-load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/cc.blood-biopsy-Modules.RData") # modules
-load("/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/CC-Biopsy-Expressions.RData")   # gene expression and others 
-
-source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt/utils.r")
-names(cc.biopsy)<-c("blood", "biopsy")
-names(cc.biopsy.modules)<-c("blood", "biopsy")
-modules <- load.modules(cc.biopsy, cc.biopsy.modules)
-
-modules$blood$bresat <- lapply(modules$blood$modules[-1], function(mod) {
-  sig.ranksum(modules$blood$exprs, ns=mod, full.return=TRUE)
-})
-modules$biopsy$bresat <- lapply(modules$biopsy$modules[-1], function(mod) {
-  sig.ranksum(modules$biopsy$exprs, ns=mod, full.return=TRUE)
-})
-
+modules <- loadModulesAndROI(rawModulesFilename,exprsFilename,modulesFilename)
 
 ### Set Kvik option so that the output is readable in Kvik 
 options(width=10000) 
@@ -31,55 +19,121 @@ options(width=10000)
 ### Where to store images
 imgpath <- "images"
 dir.create(imgpath,showWarnings = FALSE)
+### Directory to store tables (output as csv files)
+tablePath <- "tables"
+dir.create(tablePath,showWarnings = FALSE)
 
-
-plt <- function() { 
-    mat <- rnorm(10)
-    filename <- paste(imgpath,"/plot.png",sep="")
-    
-    png (filename)
-    hist(mat)
+### Generate heatmap plot for the given tissue and module. If the heatmap
+### already exists, it finds the appropriate png file where it is supposed
+### to store a new one, it returns this file. This heat map function
+### generates both a png and a pdf. All plots are stored in the path
+### given by 'imgpath'
+heatmap <- function(tissue,module,imgpath="images") { 
+  pngFilename <- paste(imgpath, "/heatmap-",tissue,"-",module,".png",sep="")
+  if(file.exists(pngFilename)){
+    return (pngFilename)
+  } else {
+    png(pngFilename)
+    plot.new()
+    create.modules.heatmap(modules[[tissue]]$bresat[[module]],modules[[tissue]]$clinical,
+                           title=capitalize(paste(tissue, module)))
     dev.off()
-    return (filename)
-}  
-
-heatmap <- function(tissue,module) { 
-  filename <- paste(imgpath, "/heatmap-",tissue,"-",module,".png",sep="")
-  png(filename)
-  plot.new()
-  create.modules.heatmap(modules[[tissue]]$bresat[[module]],modules[[tissue]]$clinical,
-                         title=capitalize(paste(tissue, module)))
-  dev.off()
-  return (filename)
+    
+    pdfFilename <- paste(imgpath, "/heatmap-",tissue,"-",module,".pdf",sep="")
+    pdf(pdfFilename)
+    plot.new()
+    create.modules.heatmap(modules[[tissue]]$bresat[[module]],modules[[tissue]]$clinical,
+                           title=capitalize(paste(tissue, module)))
+    dev.off()
+    
+    return (pngFilename)
+  } 
 }
 
+### Returns a list of modules found for the given tissue
 getModules <- function(tissue) {
     return (names(modules[[tissue]]$modules))
 }
 
-getGenes <- function() { 
-    return (c("BRCA1", "BRCA2", "ESR1"))
+### Returns the location of a csv files containing a list of all genes found in 
+### all modules across all tissues. 
+getAllGenes <- function(tablePath="tables"){
+  filename = paste(tablePath,"/genes.csv",sep="")
+  if(!file.exists(filename)){
+    getAllGenesAndModules()
+  }
+  
+  genesAndModules = read.csv(filename)
+  g = genesAndModules$gene
+  genes = matrix(g)
+  colnames(genes) = c("gene")
+  geneFilename = paste(tablePath,"/all-genes.csv",sep="")
+  write.table(genes, geneFilename, sep=",",row.names=FALSE) 
+  return(geneFilename)
 }
 
+### Get all modules a specific gene is found in. 
+getAllModules <- function(gene) {
+  filename = paste(tablePath,"/genes.csv",sep="")
+  genesAndModules = read.csv(filename)
+  id = match(gene,genesAndModules$gene)
+  g = genesAndModules[id,]
+  d = c(lapply(g,as.character))
+  return(c(d$blood, d$biopsy))
+}
+
+### Retrieves all genes and the modules they participate in. 
+### Writes it to a file so that we can read it later. 
+getAllGenesAndModules <- function() {
+  filename = paste(tablePath,"/genes.csv",sep="")
+  if(file.exists(filename)){
+    return (filename)
+  } 
+  res <- NULL
+  tissues <- c("blood", "biopsy")
+  for (tissue in tissues){
+    for(module in names(modules[[tissue]]$modules)) {
+      if(module == "grey"){
+        next 
+      }
+      gs <- modules[[tissue]]$bresat[[module]]$gene.order
+      for(gene in gs){
+        if(length(res[[gene]])==0) {
+          res[[gene]] = list()
+          res[[gene]][["blood"]] = NA
+          res[[gene]][["biopsy"]] = NA
+        }
+        res[[gene]][[tissue]] = c(module)
+      }
+    }
+  }
+  genes = matrix(unlist(res), nrow=length(names(res)))
+  genes = cbind(names(res), genes)
+  colnames(genes) <-  c("gene",tissues)
+  write.table(genes, filename, sep=",",row.names=FALSE) 
+  return (filename)
+}
+
+### Get available tissues
 getTissues <- function() {
     return (names(modules))
 }
 
-getGeneList <- function(module,tissue){ 
-    genes <- matrix(c("BRCA1", "BRCA2", "ESR1",
-                      0.8, 0.89, 0.7,
-                      0.7, 0.81, 0.61,
-                      1, 0.99, 0.97,
-                      "up", "up", "up"),
-                    nrow=3, byrow=FALSE)
-    colnames(genes) <- c("Gene","Correlation", "k", "kin", "up/down")
+### Get a list of genes for a specific module and tissue. Results are 
+### written to a csv file and its location is returned. 
+getGeneList <- function(tissue,module){
+  filename <- paste(tablePath,"/genelist-",tissue,"-",module,".csv",sep="")
+  if(file.exists(filename)){
+    return (filename)
+  } 
+  
+  genes <- modules[[tissue]]$bresat[[module]]$gene.order
+  up.dn <- modules[[tissue]]$bresat[[module]]$up.dn
+  res <- matrix(c(genes,up.dn), nrow=length(genes))
+  colnames(res) <- c("Gene", "up.dn")
+  write.table(res, filename, sep=",",row.names=FALSE) 
     
-    path <- "tables"
-    dir.create(path)
-    filename <- paste(path,"/genelist-",tissue,"-",module,".csv",sep="")
-    write.table(genes, filename, sep=",",row.names=FALSE) 
-    
-    return(filename) 
+  return(filename) 
 } 
 
 

@@ -48,3 +48,12 @@ span.glyphicon-cog {
 td#comp{
  cursor: pointer; cursor: hand;
 }
+
+select#module-select {
+    height: 50%;
+}
+
+span#download-link {
+    float: right;
+    margin-right: 30%;
+}

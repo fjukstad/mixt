@@ -3,19 +3,32 @@
         <div class="row">
             <h2> The search returned {{len .Genes}} results</h2>
         </div>
-            
         <div class="row">
             <table class="table table-hover">
                 <thead>
                     <th>
                        Gene
                     </th>
+                    <th>
+                        Summary
+                    </th>
+                    {{ range .Tissues }}
+                        <th> {{.}} </th>
+                    {{end}}
                 </thead>
                 {{range .Genes}}
                 <tr>
-                    <td>
-                        {{.}}
+                    <td class="col-md-2">
+                        {{.Name}}
                     </td>
+                    <td class="col-md-3"> {{.Summary}}  </td>
+                    {{ range $index, $name := .Modules }}
+                    <td class="col-md-2">
+                        <a href="/modules/{{index $.Tissues $index}}/{{$name}}">
+                            {{$name}} 
+                        </a>
+                    </td>
+                    {{ end }} 
                 </tr> 
                 {{end}}
             </table>

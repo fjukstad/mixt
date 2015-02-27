@@ -1,7 +1,10 @@
 package mixt
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -46,6 +49,8 @@ func Heatmap(tissue, module string) (string, error) {
 		return "", err
 	}
 
+	url = strings.TrimSuffix(url, ".png")
+
 	return url, nil
 }
 
@@ -68,13 +73,64 @@ func getUrl(ending string) (string, error) {
 }
 
 func GetGenes() ([]string, error) {
-	command := "getGenes()"
+	command := "getAllGenes()"
 	resp, err := d.Call(command)
 	if err != nil {
 		return []string{""}, err
 	}
 
 	response := utils.PrepareResponse(resp)
+	url, err := getUrl(response[0])
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	listResp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+		return []string{}, err
+	}
+
+	reader := csv.NewReader(listResp.Body)
+
+	var genes []string
+	line := 0
+	for {
+		record, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			fmt.Println("Error:", err)
+			return []string{}, nil
+		}
+
+		if line == 0 {
+			line += 1
+			continue
+		}
+
+		name := record[0]
+		genes = append(genes, name)
+	}
+
+	fmt.Println(url)
+
+	return genes, nil
+}
+
+func GetAllModules(gene string) ([]string, error) {
+	command := "getAllModules(\"" + gene + "\")"
+
+	resp, err := d.Call(command)
+	if err != nil {
+		return []string{""}, err
+	}
+	response := utils.PrepareResponse(resp)
+	for i, r := range response {
+		response[i] = strings.Trim(r, "\"")
+	}
 	return response, nil
 }
 
@@ -96,6 +152,7 @@ type Module struct {
 	HeatmapUrl string
 	Genes      []Gene
 	Signatures []Signature
+	Url        string
 }
 
 type Gene struct {
@@ -126,36 +183,82 @@ func GetModules(tissue string) ([]Module, error) {
 	var modules []Module
 	response := utils.PrepareResponse(resp)
 	for _, r := range response {
-		fmt.Println(r)
 		name := strings.Trim(r, "\"")
-		modules = append(modules, Module{name, "", nil, nil})
+		if name != "grey" {
+			modules = append(modules, Module{name, "", nil, nil, ""})
+		}
+
 	}
 	return modules, nil
 }
 
 func GetModule(name string, tissue string) (Module, error) {
 
-	url, err := Heatmap(tissue, name)
+	heatmapUrl, err := Heatmap(tissue, name)
 	if err != nil {
 		return Module{}, err
 	}
 
-	GetGeneList(name, tissue)
+	genes, url, err := GetGeneList(name, tissue)
+	if err != nil {
+		return Module{}, err
+	}
 
-	module := Module{name, url, nil, nil}
+	module := Module{name, heatmapUrl, genes, nil, url}
 	return module, nil
 
 }
 
-func GetGeneList(module, tissue string) ([]Gene, error) {
-	command := "getGeneList(\"" + module + "\",\"" + tissue + "\")"
+func GetGeneList(module, tissue string) (genes []Gene, url string, err error) {
+	command := "getGeneList(\"" + tissue + "\",\"" + module + "\")"
 	resp, err := d.Call(command)
 	if err != nil {
 		fmt.Println(err)
-		return []Gene{}, err
+		return []Gene{}, "", err
 	}
 	response := utils.PrepareResponse(resp)
-	fmt.Println(getUrl(response[0]))
+	url, _ = getUrl(response[0])
 
-	return []Gene{}, nil
+	listResp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+		return []Gene{}, "", err
+	}
+
+	reader := csv.NewReader(listResp.Body)
+
+	line := 0
+	for {
+		record, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			fmt.Println("Error:", err)
+			return []Gene{}, "", nil
+		}
+
+		if line == 0 {
+			line += 1
+			continue
+		}
+
+		name := record[0]
+		var updown string
+		if record[1] == "-1" {
+			updown = "down"
+		} else {
+			updown = "up"
+		}
+
+		g := Gene{Name: name,
+			Correlation: 0,
+			K:           0,
+			Kin:         0,
+			Updown:      updown}
+
+		genes = append(genes, g)
+	}
+
+	return genes, url, nil
 }

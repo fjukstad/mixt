@@ -1,21 +1,38 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"text/template"
 
+	"code.google.com/p/gcfg"
+
 	"bitbucket.org/vdumeaux/mixt/mixt/controllers"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/securecookie"
 )
+
+var outsideTemplate = template.Must(template.ParseFiles("views/base.html",
+	"views/header.html", "views/outside-navbar.html", "views/panels.html",
+	"views/outside-index.html", "views/footer.html"))
 
 var indexTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/header.html", "views/navbar.html", "views/panels.html",
 	"views/index.html", "views/footer.html"))
 
+var s = securecookie.New(
+	securecookie.GenerateRandomKey(64),
+	securecookie.GenerateRandomKey(32))
+
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	if controllers.GetUsername(r) == "" {
+		outsideTemplate.Execute(w, nil)
+		return
+	}
+
 	indexTemplate.Execute(w, nil)
 }
 
@@ -35,10 +52,52 @@ func PublicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type Error struct {
+	Error string
+}
+
+type Config struct {
+	Login struct {
+		Username string
+		Password string
+	}
+}
+
+var cfg Config
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	if username != "" && password != "" {
+		if username == cfg.Login.Username && password == cfg.Login.Password {
+			err := controllers.StartSession(username, w)
+			if err != nil {
+				fmt.Println(err)
+				http.Error(w, err.Error(), 503)
+				return
+			}
+			http.Redirect(w, r, "/", 302)
+		}
+	}
+	e := Error{"Wrong username or password"}
+	outsideTemplate.Execute(w, e)
+}
+
 func main() {
 
+	err := gcfg.ReadFileInto(&cfg, "config.gcfg")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	r := mux.NewRouter()
+
 	r.HandleFunc("/", HomeHandler)
+
+	r.HandleFunc("/login", LoginHandler)
+
 	r.HandleFunc("/modules/{tissue}", controllers.ModulesHandler)
 	r.HandleFunc("/modules/{tissue}/{modules}", controllers.ModuleHandler)
 
@@ -47,11 +106,12 @@ func main() {
 	r.HandleFunc("/search/{term}", controllers.SearchHandler)
 
 	r.HandleFunc("/gene/{genes}", controllers.GeneHandler)
+	r.HandleFunc("/gene/summary/{gene}", controllers.GeneSummaryHandler)
 
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissue1}/{tissue2}", controllers.TissueComparisonHandler)
 
-	err := controllers.InitModules()
+	err = controllers.InitModules()
 	if err != nil {
 		log.Panic(err)
 	}

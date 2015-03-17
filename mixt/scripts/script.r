@@ -1,15 +1,18 @@
-#setwd("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt")
-
 library(Hmisc) # for 'capitalize()'
 
-### Get functions etc. 
-source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/bresat.R", chdir=TRUE)
-source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/src/heatmap.R", chdir=TRUE)
-source("/Users/bjorn/pepi/guest.bci/bjorn/mixt/experiments/exp_mixt/utils.r", chdir=TRUE)
+# Where data and scripts are stored 
+datadir <- "/home/bjorn/mixt/data"
+scriptdir <- "/home/bjorn/mixt/src"
 
-rawModulesFilename <- "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/cc.blood-biopsy-Modules.RData"
-exprsFilename <-  "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/CC-Biopsy-Expressions.RData"
-modulesFilename <- "/Users/bjorn/pepi/guest.bci/bjorn/mixt/data/modules-complete.Rdata"
+# Get helper scripts 
+source(paste0(scriptdir, "/bresat.R"), chdir=TRUE)
+source(paste0(scriptdir, "/heatmap.R"), chdir=TRUE)
+source(paste0(scriptdir, "/mixt-utils.r"), chdir=TRUE)
+
+# Get datafiles 
+rawModulesFilename <- paste0(datadir, "/cc.blood-biopsy-Modules.RData")
+exprsFilename <-  paste0(datadir, "/CC-Biopsy-Expressions.RData")
+modulesFilename <-paste0(datadir, "/modules-complete-pepi.RData")
 
 modules <- loadModulesAndROI(rawModulesFilename,exprsFilename,modulesFilename)
 

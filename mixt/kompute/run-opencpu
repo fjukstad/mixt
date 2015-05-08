@@ -1,0 +1,1 @@
+docker run -t -p 80:80 -v /home/core/mixt/mixt/kompute/home/rstudio:/home/rstudio  --name opencpu 11f2838cbe7d

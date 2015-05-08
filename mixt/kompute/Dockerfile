@@ -58,7 +58,7 @@ VOLUME /home/rstudio
 VOLUME /home/data
 
 # Set up passwords and that
-RUN htpasswd -b -c /etc/http.passwd biopsy@mcgill van-mi-ka-al
+RUN htpasswd -b -c /etc/http.passwd biopsy@mcgill password
 
 # different config etc etc
 ADD rstudio.conf /etc/apache2/sites-enabled/rstudio.conf 

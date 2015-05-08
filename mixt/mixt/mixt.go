@@ -69,7 +69,8 @@ func getUrl(ending string) (string, error) {
 
 	httpPort := id + 1
 
-	httpURL := split[0] + ":" + split[1] + ":" + strconv.Itoa(httpPort)
+	//	httpURL := split[0] + ":" + split[1] + ":" +
+	httpURL := "http://docker0.bci.mcgill.ca" + strconv.Itoa(httpPort)
 	baseURL := httpURL + "/"
 	url := baseURL + ending
 	return url, nil

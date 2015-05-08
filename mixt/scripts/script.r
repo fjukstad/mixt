@@ -1,13 +1,14 @@
 library(Hmisc) # for 'capitalize()'
 
 # Where data and scripts are stored 
-datadir <- "/home/bjorn/mixt/data"
-scriptdir <- "/home/bjorn/mixt/src"
+datadir <- "/go/src/bitbucket.org/vdumeaux/mixt/data"
+scriptdir <- "/go/src/bitbucket.org/vdumeaux/mixt/src"
 
 # Get helper scripts 
 source(paste0(scriptdir, "/bresat.R"), chdir=TRUE)
 source(paste0(scriptdir, "/heatmap.R"), chdir=TRUE)
 source(paste0(scriptdir, "/mixt-utils.r"), chdir=TRUE)
+source(paste0(scriptdir, "/modules.R"), chdir=TRUE)
 
 # Get datafiles 
 rawModulesFilename <- paste0(datadir, "/cc.blood-biopsy-Modules.RData")

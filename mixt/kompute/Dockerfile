@@ -8,7 +8,7 @@ RUN \
   useradd -ms /bin/bash builder && \
   apt-get update && \
   apt-get -y dist-upgrade && \
-  apt-get install -y wget make devscripts apache2-prefork-dev apache2-mpm-prefork libapreq2-dev r-base r-base-dev libapparmor-dev libcurl4-openssl-dev libprotobuf-dev libprotoc-dev xvfb xauth xfonts-base curl libssl-dev pkg-config
+  apt-get install -y wget make devscripts apache2-prefork-dev apache2-mpm-prefork libapreq2-dev r-base r-base-dev libapparmor-dev libcurl4-openssl-dev libprotobuf-dev libprotoc-dev xvfb xauth xfonts-base curl libssl-dev pkg-config libxml2-dev
 
 USER builder
 
@@ -45,7 +45,6 @@ ADD deps.r /tmp/deps.r
 WORKDIR /tmp/
 RUN R --vanilla < deps.r
 
-
 # Apache ports (without caching)
 EXPOSE 80
 EXPOSE 443
@@ -54,11 +53,12 @@ EXPOSE 8004
 # Add r server config file to only accept connections on localhost
 # ADD rserver.conf /etc/rstudio/rserver.conf 
 
-VOLUME /home/rstudio
-VOLUME /home/data
+VOLUME /home/rstudio                    # home directory of rstudio user
+VOLUME /home/data                       # mcgill data dir 
+VOLUME /usr/local/lib/R/site-library    # r pkg install location
 
 # Set up passwords and that
-RUN htpasswd -b -c /etc/http.passwd biopsy@mcgill password
+RUN htpasswd -b -c /etc/http.passwd biopsy@mcgill van-mi-ka-al
 
 # different config etc etc
 ADD rstudio.conf /etc/apache2/sites-enabled/rstudio.conf 
@@ -66,8 +66,18 @@ ADD rstudio.conf /etc/apache2/sites-available/rstudio.conf
 ADD opencpu.conf /etc/apache2/sites-enabled/opencpu.conf 
 ADD opencpu.conf /etc/apache2/sites-available/opencpu.conf 
 
+# install path for r packages 
 ADD rsession.conf /etc/rstudio/rsession.conf
 
+# add empty apache html page
+ADD index.html /var/www/html/index.html
+
+# fix permissions to the shared r pkg location so that we can read/write
+# to it from the docker host 
+RUN chmod -R g+w /usr/local/lib/R/site-library
+
+# fix group permissions so that the rstudio user is in the Hallett group and can
+# read/write to the data dir
 RUN groupadd -g 1001 Hallett
 RUN usermod -g 1001 rstudio
 

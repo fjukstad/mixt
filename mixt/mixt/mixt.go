@@ -2,101 +2,52 @@ package mixt
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
-	"strconv"
 	"strings"
 
-	"github.com/fjukstad/kvik/dataset"
-	"github.com/fjukstad/kvik/utils"
+	"github.com/fjukstad/kvik/kompute"
 )
 
-var workerAddr string
-var d *dataset.Dataset
+var komp *kompute.Kompute
 
-func Init() error {
-	var err error
-	ip := "localhost"
-	port := ":8888"
-	filename := "scripts/script.r"
-	d, workerAddr, err = dataset.RequestNewWorker(ip, port, filename)
+func Init(addr, username, password string) {
+	komp = kompute.NewKompute(addr, username, password)
+	//filename := "scripts/script.r"
+	// d, workerAddr, err = dataset.RequestNewWorker(ip, port, filename)
 	//workerAddr = "tcp://localhost:5000"
 	//fmt.Println("connecting to worker at", workerAddr)
 	//d, err = dataset.ConnectToRunningWorker(workerAddr)
-	return err
-}
-
-func Add(a, b int) ([]string, error) {
-	command := "add(3,2)"
-	resp, err := d.Call(command)
-	if err != nil {
-		return []string{}, err
-	}
-
-	response := utils.PrepareResponse(resp)
-	return response, nil
+	return
 }
 
 func Heatmap(tissue, module string) (string, error) {
-	command := "heatmap(\"" + tissue + "\",\"" + module + "\")"
-	resp, err := d.Call(command)
+	session, err := komp.Call("mixt/R/heatmap", `{"tissue": `+"\""+tissue+"\""+`,
+					"module":`+"\""+module+"\""+`}`)
+
 	if err != nil {
+		fmt.Println(session, err)
 		return "", err
 	}
 
-	response := utils.PrepareResponse(resp)
-	url, err := getUrl(response[0])
+	plotUrl := session.Graphics
 
-	if err != nil {
-		return "", err
-	}
+	// Since we don't have a dns thing for opencpu
+	plotUrl = strings.Replace(plotUrl, "opencpu", "docker0.bci.mcgill.ca", -1)
 
-	url = strings.TrimSuffix(url, ".png")
-
-	return url, nil
-}
-
-func getUrl(ending string) (string, error) {
-	newWorker := strings.Replace(workerAddr, "tcp", "http", -1)
-
-	split := strings.Split(newWorker, ":")
-	id, err := strconv.Atoi(split[2])
-
-	if err != nil {
-		return "", err
-	}
-
-	httpPort := id + 1
-
-	//	httpURL := split[0] + ":" + split[1] + ":" +
-	httpURL := "http://docker0.bci.mcgill.ca" + strconv.Itoa(httpPort)
-	baseURL := httpURL + "/"
-	url := baseURL + ending
-	return url, nil
+	return plotUrl, nil
 }
 
 func GetGenes() ([]string, error) {
-	command := "getAllGenes()"
-	resp, err := d.Call(command)
+	resp, err := komp.Rpc("mixt/R/getAllGenes", "", "csv")
 	if err != nil {
+		fmt.Println("error:", err)
 		return []string{""}, err
 	}
 
-	response := utils.PrepareResponse(resp)
-	url, err := getUrl(response[0])
-
-	if err != nil {
-		return []string{}, err
-	}
-
-	listResp, err := http.Get(url)
-	if err != nil {
-		fmt.Println(err)
-		return []string{}, err
-	}
-
-	reader := csv.NewReader(listResp.Body)
+	body := strings.NewReader(resp)
+	reader := csv.NewReader(body)
 
 	var genes []string
 	line := 0
@@ -119,36 +70,41 @@ func GetGenes() ([]string, error) {
 		genes = append(genes, name)
 	}
 
-	fmt.Println(url)
-
 	return genes, nil
 }
 
 func GetAllModules(gene string) ([]string, error) {
-	command := "getAllModules(\"" + gene + "\")"
-
-	resp, err := d.Call(command)
+	resp, err := komp.Rpc("mixt/R/getAllModules", "", "json")
 	if err != nil {
+		fmt.Println("error:", err)
 		return []string{""}, err
 	}
-	response := utils.PrepareResponse(resp)
-	for i, r := range response {
-		response[i] = strings.Trim(r, "\"")
+
+	moduleNames := make([]string, 0)
+	err = json.Unmarshal([]byte(resp), &moduleNames)
+	if err != nil {
+		fmt.Println("cannot unmarshal json response", err)
+		return nil, err
 	}
-	return response, nil
+
+	return moduleNames, nil
 }
 
 func GetTissues() ([]string, error) {
-	command := "getTissues()"
-	resp, err := d.Call(command)
+	resp, err := komp.Rpc("mixt/R/getAllTissues", "", "json")
 	if err != nil {
+		fmt.Println("error:", err)
 		return []string{""}, err
 	}
-	response := utils.PrepareResponse(resp)
-	for i, r := range response {
-		response[i] = strings.Trim(r, "\"")
+
+	tissues := make([]string, 0)
+	err = json.Unmarshal([]byte(resp), &tissues)
+	if err != nil {
+		fmt.Println("cannot unmarshal json response", err)
+		return nil, err
 	}
-	return response, nil
+
+	return tissues, nil
 }
 
 type Module struct {
@@ -178,25 +134,42 @@ type Signature struct {
 	CommonDown []string
 }
 
-func GetModules(tissue string) ([]Module, error) {
-	command := "getModules(\"" + tissue + "\")"
-	resp, err := d.Call(command)
-	if err != nil {
-		return []Module{}, err
-	}
-	var modules []Module
-	response := utils.PrepareResponse(resp)
-	for _, r := range response {
-		name := strings.Trim(r, "\"")
-		if name != "grey" {
-			modules = append(modules, Module{name, "", nil, nil, ""})
-		}
+type Response struct {
+	Item string
+}
 
+func GetModules(tissue string) ([]Module, error) {
+	resp, err := komp.Rpc("mixt/R/getModules", `{"tissue" : `+"\""+tissue+"\""+`}`, "json")
+	if err != nil {
+		fmt.Println("error:", err)
+		return nil, err
 	}
+
+	moduleNames := make([]string, 0)
+	err = json.Unmarshal([]byte(resp), &moduleNames)
+	if err != nil {
+		fmt.Println("cannot unmarshal json response", err)
+		return nil, err
+	}
+
+	var modules []Module
+	for _, moduleName := range moduleNames {
+		m, err := GetModule(moduleName, tissue)
+		if err != nil {
+			fmt.Println("cannot get module", moduleName, err)
+			return nil, err
+		}
+		modules = append(modules, m)
+	}
+
 	return modules, nil
 }
 
 func GetModule(name string, tissue string) (Module, error) {
+
+	if name == "grey" {
+		return Module{}, nil
+	}
 
 	heatmapUrl, err := Heatmap(tissue, name)
 	if err != nil {
@@ -214,22 +187,16 @@ func GetModule(name string, tissue string) (Module, error) {
 }
 
 func GetGeneList(module, tissue string) (genes []Gene, url string, err error) {
-	command := "getGeneList(\"" + tissue + "\",\"" + module + "\")"
-	resp, err := d.Call(command)
-	if err != nil {
-		fmt.Println(err)
-		return []Gene{}, "", err
-	}
-	response := utils.PrepareResponse(resp)
-	url, _ = getUrl(response[0])
+	resp, err := komp.Rpc("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
+					"module":`+"\""+module+"\""+`}`, "csv")
 
-	listResp, err := http.Get(url)
 	if err != nil {
-		fmt.Println(err)
-		return []Gene{}, "", err
+		fmt.Println(resp, err)
+		return nil, "", err
 	}
 
-	reader := csv.NewReader(listResp.Body)
+	body := strings.NewReader(resp)
+	reader := csv.NewReader(body)
 
 	line := 0
 	for {

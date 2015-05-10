@@ -81,12 +81,3 @@ func ModulesHandler(w http.ResponseWriter, r *http.Request) {
 	m := ModulesOverview{modules, tissues}
 	modulesTemplate.Execute(w, m)
 }
-
-func InitModules() error {
-	err := mixt.Init()
-	if err != nil {
-		fmt.Println("error:", err)
-		return err
-	}
-	return nil
-}

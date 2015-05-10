@@ -8,9 +8,12 @@ import (
 
 	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 
-	"github.com/fjukstad/kvik/utils"
 	"github.com/gorilla/mux"
 )
+
+type SearchResponse struct {
+	Terms []string
+}
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	if !LoggedIn(r) {
@@ -25,7 +28,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Search went bad:", err)
 		http.Error(w, err.Error(), 500)
 	}
-	res := utils.SearchResponse{result}
+	res := SearchResponse{result}
 	b, _ := json.Marshal(res)
 	w.Write(b)
 }

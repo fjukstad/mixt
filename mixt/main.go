@@ -10,6 +10,7 @@ import (
 	"code.google.com/p/gcfg"
 
 	"bitbucket.org/vdumeaux/mixt/mixt/controllers"
+	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
@@ -111,13 +112,16 @@ func main() {
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissue1}/{tissue2}", controllers.TissueComparisonHandler)
 
-	err = controllers.InitModules()
-	if err != nil {
-		log.Panic(err)
-	}
+	addr := "opencpu:80"
+	username := "biopsy@mcgill"
+	password := "van-mi-ka-al"
+
+	mixt.Init(addr, username, password)
 
 	http.Handle("/", r)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Starting mixt app on port 9090")
+
+	log.Fatal(http.ListenAndServe(":9090", nil))
 
 }

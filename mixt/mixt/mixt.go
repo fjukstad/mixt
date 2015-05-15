@@ -74,7 +74,7 @@ func GetGenes() ([]string, error) {
 }
 
 func GetAllModules(gene string) ([]string, error) {
-	resp, err := komp.Rpc("mixt/R/getAllModules", "", "json")
+	resp, err := komp.Rpc("mixt/R/getAllModules", `{"gene": `+"\""+gene+"\""+`}`, "json")
 	if err != nil {
 		fmt.Println("error:", err)
 		return []string{""}, err
@@ -187,9 +187,15 @@ func GetModule(name string, tissue string) (Module, error) {
 }
 
 func GetGeneList(module, tissue string) (genes []Gene, url string, err error) {
-	resp, err := komp.Rpc("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
-					"module":`+"\""+module+"\""+`}`, "csv")
+	session, err := komp.Call("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
+					"module":`+"\""+module+"\""+`}`)
 
+	if err != nil {
+		fmt.Println(session, err)
+		return nil, "", err
+	}
+
+	resp, err := session.GetResult(komp, "csv")
 	if err != nil {
 		fmt.Println(resp, err)
 		return nil, "", err
@@ -230,6 +236,9 @@ func GetGeneList(module, tissue string) (genes []Gene, url string, err error) {
 
 		genes = append(genes, g)
 	}
+
+	url = session.GetUrl("csv")
+	url = strings.Replace(url, "opencpu", "docker0.bci.mcgill.ca", -1)
 
 	return genes, url, nil
 }

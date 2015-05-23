@@ -1,0 +1,5 @@
+#! /bin/sh
+cd  /go/src/bitbucket.org/vdumeaux/mixt
+git raw init
+git raw add-store mixt /home/data/repositories/MIxT_store/
+git raw fix

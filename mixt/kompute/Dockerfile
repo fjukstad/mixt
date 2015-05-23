@@ -47,15 +47,20 @@ RUN R --vanilla < deps.r
 
 # Apache ports (without caching)
 EXPOSE 80
-EXPOSE 443
-EXPOSE 8004
+#EXPOSE 443
+#EXPOSE 8004
 
 # Add r server config file to only accept connections on localhost
 # ADD rserver.conf /etc/rstudio/rserver.conf 
 
-VOLUME /home/rstudio                    # home directory of rstudio user
-VOLUME /home/data                       # mcgill data dir 
-VOLUME /usr/local/lib/R/site-library    # r pkg install location
+RUN mkdir -p /home/rstudio
+RUN mkdir -p /home/data
+RUN mkdir -p /usr/local/lib/R/site-library 
+
+# fix permissions to the shared r pkg location so that we can read/write
+# to it from the docker host 
+RUN chmod -R g+w /usr/local/lib/R/site-library
+RUN chmod -R g+w /home/rstudio
 
 # Set up passwords and that
 RUN htpasswd -b -c /etc/http.passwd biopsy@mcgill van-mi-ka-al
@@ -72,20 +77,31 @@ ADD rsession.conf /etc/rstudio/rsession.conf
 # add empty apache html page
 ADD index.html /var/www/html/index.html
 
-# fix permissions to the shared r pkg location so that we can read/write
-# to it from the docker host 
-RUN chmod -R g+w /usr/local/lib/R/site-library
-
 # fix group permissions so that the rstudio user is in the Hallett group and can
 # read/write to the data dir
 RUN groupadd -g 1001 Hallett
 RUN usermod -g 1001 rstudio
+
+
+# Git RAW
+RUN apt-get -y install python3
+ADD https://raw.githubusercontent.com/fjukstad/git-raw/master/git-raw /bin/git-raw
+RUN chmod +x /bin/git-raw
+
+ADD git-raw-fix /bin/git-raw-fix
+RUN chmod +x /bin/git-raw-fix
+
+RUN chmod 755 /bin/git-raw 
 
 # Create users that can use rstudio etc
 # RUN useradd -s /bin/bash -d /home/bjorn -u 501 -g 20 bjorn
 # RUN echo 'bjorn:test' | chpasswd
 # RUN addgroup bjorn staff
 # RUN mkdir /home/bjorn && chown bjorn:staff /home/bjorn
+
+# VOLUME /home/rstudio                    # home directory of rstudio user
+# VOLUME /home/data                       # mcgill data dir 
+# VOLUME /usr/local/lib/R/site-library    # r pkg install location
 
 # Define default command.
 CMD service opencpu restart && rstudio-server restart && \

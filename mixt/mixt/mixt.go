@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/fjukstad/kvik/kompute"
 )
@@ -108,11 +109,11 @@ func GetTissues() ([]string, error) {
 }
 
 type Module struct {
-	Name       string
-	HeatmapUrl string
-	Genes      []Gene
-	Signatures []Signature
-	Url        string
+	Name             string
+	HeatmapUrl       string
+	Genes            []Gene
+	EnrichmentScores []EnrichmentScore
+	Url              string
 }
 
 type Gene struct {
@@ -121,17 +122,6 @@ type Gene struct {
 	K           float64
 	Kin         float64
 	Updown      string
-}
-
-type Signature struct {
-	Name       string
-	Size       int
-	PValue     float64
-	Common     []string
-	PValueUp   float64
-	ComnonUp   []string
-	PValueDown float64
-	CommonDown []string
 }
 
 type Response struct {
@@ -152,16 +142,27 @@ func GetModules(tissue string) ([]Module, error) {
 		return nil, err
 	}
 
+	fmt.Println(moduleNames)
+
 	var modules []Module
-	for _, moduleName := range moduleNames {
-		m, err := GetModule(moduleName, tissue)
-		if err != nil {
-			fmt.Println("cannot get module", moduleName, err)
-			return nil, err
-		}
-		modules = append(modules, m)
+
+	resChan := make(chan Module, 1)
+
+	for i, _ := range moduleNames {
+		go func(i int) {
+			m, err := GetModule(moduleNames[i], tissue)
+			if err != nil {
+				fmt.Println("cannot get module", moduleNames[i], err)
+				resChan <- Module{}
+				return
+			}
+			resChan <- m
+		}(i)
 	}
 
+	for m := range resChan {
+		modules = append(modules, m)
+	}
 	return modules, nil
 }
 
@@ -173,31 +174,46 @@ func GetModule(name string, tissue string) (Module, error) {
 
 	heatmapUrl, err := Heatmap(tissue, name)
 	if err != nil {
+		fmt.Println("heatmap")
 		return Module{}, err
 	}
+
+	time.Sleep(100 * time.Millisecond)
 
 	genes, url, err := GetGeneList(name, tissue)
 	if err != nil {
+		fmt.Println("ghenelist")
 		return Module{}, err
 	}
 
-	module := Module{name, heatmapUrl, genes, nil, url}
+	scores, err := GetEnrichmentScores(name, tissue)
+	if err != nil {
+		fmt.Println("Could not get enrichment scores")
+		return Module{}, err
+	}
+
+	module := Module{name, heatmapUrl, genes, scores, url}
 	return module, nil
 
 }
 
-func GetGeneList(module, tissue string) (genes []Gene, url string, err error) {
+func GetGeneList(module, tissue string) (genes []Gene, url string,
+	err error) {
 	session, err := komp.Call("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
 					"module":`+"\""+module+"\""+`}`)
 
 	if err != nil {
+		fmt.Println("SESSION ERROR")
 		fmt.Println(session, err)
 		return nil, "", err
 	}
+	time.Sleep(10 * time.Millisecond)
 
 	resp, err := session.GetResult(komp, "csv")
 	if err != nil {
+		fmt.Println("GETRESULT", session.Url, session.Result)
 		fmt.Println(resp, err)
+
 		return nil, "", err
 	}
 
@@ -241,4 +257,48 @@ func GetGeneList(module, tissue string) (genes []Gene, url string, err error) {
 	url = strings.Replace(url, "opencpu", "docker0.bci.mcgill.ca", -1)
 
 	return genes, url, nil
+}
+
+type EnrichmentScore struct {
+	Set          string  `json:"set"`
+	Name         string  `json:"_row"`
+	Size         int     `json:"sig.size"`
+	UpDownCommon int     `json:"updn.common"`
+	UpDownPvalue float64 `json:"updn.p"`
+	UpCommon     int     `json:"up.common"`
+	UpPvalue     float64 `json:"up.p"`
+	DownCommon   int     `json:"dn.common"`
+	DownPvalue   float64 `json:"dn.p"`
+}
+
+func GetEnrichmentScores(module, tissue string) (scores []EnrichmentScore,
+	err error) {
+
+	session, err := komp.Call("mixt/R/getEnrichmentScores",
+		`{"tissue": `+"\""+tissue+"\""+`,
+					"module":`+"\""+module+"\""+`}`)
+
+	if err != nil {
+		fmt.Println(session, err)
+		return nil, err
+	}
+
+	time.Sleep(10 * time.Millisecond)
+
+	resp, err := session.GetResult(komp, "json")
+	if err != nil {
+		fmt.Println(resp, err)
+		return nil, err
+	}
+
+	res := []byte(resp)
+
+	err = json.Unmarshal(res, &scores)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return scores, nil
+
 }

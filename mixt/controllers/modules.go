@@ -38,21 +38,22 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 	mods := vars["modules"]
 	tissue := vars["tissue"]
 
-	modules := strings.Split(mods, "+")
+	moduleString := strings.Split(mods, "+")
 
-	var result []mixt.Module
+	var modules []mixt.Module
 
-	for _, module := range modules {
+	for _, module := range moduleString {
 		m, err := mixt.GetModule(module, tissue)
 		if err != nil {
 			fmt.Println("Could not get module")
 			http.Error(w, err.Error(), 503)
 			return
 		}
-		result = append(result, m)
+		modules = append(modules, m)
+
 	}
 
-	moduleTemplate.Execute(w, Modules{result})
+	moduleTemplate.Execute(w, Modules{modules})
 }
 
 func ModulesHandler(w http.ResponseWriter, r *http.Request) {

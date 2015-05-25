@@ -120,8 +120,8 @@ func main() {
 
 	http.Handle("/", r)
 
-	fmt.Println("Starting mixt app on port 9090")
+	fmt.Println("Starting mixt app on port 8004")
 
-	log.Fatal(http.ListenAndServe(":9090", nil))
+	log.Fatal(http.ListenAndServe(":8004", nil))
 
 }

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"time"
 
 	"github.com/fjukstad/kvik/kompute"
 )
@@ -15,11 +14,6 @@ var komp *kompute.Kompute
 
 func Init(addr, username, password string) {
 	komp = kompute.NewKompute(addr, username, password)
-	//filename := "scripts/script.r"
-	// d, workerAddr, err = dataset.RequestNewWorker(ip, port, filename)
-	//workerAddr = "tcp://localhost:5000"
-	//fmt.Println("connecting to worker at", workerAddr)
-	//d, err = dataset.ConnectToRunningWorker(workerAddr)
 	return
 }
 
@@ -74,7 +68,7 @@ func GetGenes() ([]string, error) {
 	return genes, nil
 }
 
-func GetAllModules(gene string) ([]string, error) {
+func GetAllModuleNames(gene string) ([]string, error) {
 	resp, err := komp.Rpc("mixt/R/getAllModules", `{"gene": `+"\""+gene+"\""+`}`, "json")
 	if err != nil {
 		fmt.Println("error:", err)
@@ -139,30 +133,38 @@ func GetModules(tissue string) ([]Module, error) {
 	err = json.Unmarshal([]byte(resp), &moduleNames)
 	if err != nil {
 		fmt.Println("cannot unmarshal json response", err)
+		fmt.Println(resp)
 		return nil, err
+
 	}
 
 	fmt.Println(moduleNames)
 
 	var modules []Module
 
-	resChan := make(chan Module, 1)
+	resChan := make(chan Module)
 
 	for i, _ := range moduleNames {
 		go func(i int) {
-			m, err := GetModule(moduleNames[i], tissue)
-			if err != nil {
-				fmt.Println("cannot get module", moduleNames[i], err)
-				resChan <- Module{}
-				return
-			}
+			/*
+				m, err := GetModule(moduleNames[i], tissue)
+
+				if err != nil {
+					fmt.Println("cannot get module", moduleNames[i], err)
+					resChan <- Module{}
+					return
+				}
+			*/
+			m := Module{moduleNames[i], "", nil, nil, ""}
 			resChan <- m
 		}(i)
 	}
 
-	for m := range resChan {
+	for range moduleNames {
+		m := <-resChan
 		modules = append(modules, m)
 	}
+
 	return modules, nil
 }
 
@@ -178,7 +180,6 @@ func GetModule(name string, tissue string) (Module, error) {
 		return Module{}, err
 	}
 
-	time.Sleep(100 * time.Millisecond)
 
 	genes, url, err := GetGeneList(name, tissue)
 	if err != nil {
@@ -194,7 +195,6 @@ func GetModule(name string, tissue string) (Module, error) {
 
 	module := Module{name, heatmapUrl, genes, scores, url}
 	return module, nil
-
 }
 
 func GetGeneList(module, tissue string) (genes []Gene, url string,
@@ -207,7 +207,6 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 		fmt.Println(session, err)
 		return nil, "", err
 	}
-	time.Sleep(10 * time.Millisecond)
 
 	resp, err := session.GetResult(komp, "csv")
 	if err != nil {
@@ -282,8 +281,6 @@ func GetEnrichmentScores(module, tissue string) (scores []EnrichmentScore,
 		fmt.Println(session, err)
 		return nil, err
 	}
-
-	time.Sleep(10 * time.Millisecond)
 
 	resp, err := session.GetResult(komp, "json")
 	if err != nil {

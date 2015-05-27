@@ -43,7 +43,7 @@ func GeneHandler(w http.ResponseWriter, r *http.Request) {
 		hits, _ := SearchForGene(gene)
 		for _, h := range hits {
 
-			modules, err := mixt.GetAllModules(h)
+			modules, err := mixt.GetAllModuleNames(h)
 			if err != nil {
 				fmt.Println("Could not get modules for ", h)
 				http.Error(w, err.Error(), 503)

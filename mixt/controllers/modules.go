@@ -71,7 +71,7 @@ func ModulesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 503)
 		return
 	}
-
+	fmt.Println("tissues")
 	tissues, err := mixt.GetTissues()
 	if err != nil {
 		fmt.Println("Could not get tissues")

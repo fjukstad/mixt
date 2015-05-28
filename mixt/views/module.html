@@ -64,13 +64,13 @@
                                  <tr> 
                                      <td class="score-name"> {{.Name}}  </td> 
                                      <td class="set"> {{.Set}} </td> 
-                                     <td class="size"> {{.Size}} </td> 
-                                     <td class="common"> {{.UpDownCommon}} </td> 
-                                     <td class="p-value"> {{.UpDownPvalue}} </td> 
-                                     <td class="common"> {{.UpCommon}} </td> 
-                                     <td class="p-value"> {{.UpPvalue}} </td> 
-                                     <td class="common"> {{.DownCommon}} </td> 
-                                     <td class="p-value"> {{.DownPvalue}} </td> 
+                                     <td class="size" data-sort-method='numeric'> {{.Size}} </td> 
+                                     <td class="common" data-sort-method='numeric'> {{.UpDownCommon}} </td> 
+                                     <td class="p-value" data-sort-method='numeric'> {{.UpDownPvalue}} </td> 
+                                     <td class="common" data-sort-method='numeric'> {{.UpCommon}} </td> 
+                                     <td class="p-value" data-sort-method='numeric'> {{.UpPvalue}} </td> 
+                                     <td class="common" data-sort-method='numeric'> {{.DownCommon}} </td> 
+                                     <td class="p-value" data-sort-method='numeric'> {{.DownPvalue}} </td> 
                                  </tr>
                             {{ end }} 
                         </tbody> 
@@ -82,6 +82,8 @@
         {{ end }} 
     </div>
    <script src="/public/js/list.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/public/js/tablesort.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
    <script src="/public/js/module.js" type="text/javascript" charset="utf-8"></script>
    <link rel="stylesheet" type="text/css" href="/public/css/module.css"> 
 {{ end }} 

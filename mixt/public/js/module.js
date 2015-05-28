@@ -20,4 +20,8 @@ $(function(){
                 console.log(d)
             }); 
         }); 
+
+
+ new Tablesort(document.getElementById('score-table'));
+ new Tablesort(document.getElementById('gene-table'));
 });

@@ -138,8 +138,6 @@ func GetModules(tissue string) ([]Module, error) {
 
 	}
 
-	fmt.Println(moduleNames)
-
 	var modules []Module
 
 	resChan := make(chan Module)
@@ -203,9 +201,15 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 					"module":`+"\""+module+"\""+`}`)
 
 	if err != nil {
-		fmt.Println("SESSION ERROR")
+		fmt.Println("Call failed one time, trying again. ")
 		fmt.Println(session, err)
-		return nil, "", err
+		
+		session, err = komp.Call("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
+					"module":`+"\""+module+"\""+`}`)
+		if err != nil {
+			fmt.Println("Call failed for the second time :( ")
+			return nil, "", err
+		}
 	}
 
 	resp, err := session.GetResult(komp, "csv")
@@ -278,8 +282,15 @@ func GetEnrichmentScores(module, tissue string) (scores []EnrichmentScore,
 					"module":`+"\""+module+"\""+`}`)
 
 	if err != nil {
+		fmt.Println("Call failed, trying again.") 
 		fmt.Println(session, err)
-		return nil, err
+		session, err = komp.Call("mixt/R/getEnrichmentScores",
+			`{"tissue": `+"\""+tissue+"\""+`,
+						"module":`+"\""+module+"\""+`}`)
+		if err != nil {
+			fmt.Println("Call failed a second time :( ")
+			return nil, err
+		}
 	}
 
 	resp, err := session.GetResult(komp, "json")

@@ -106,7 +106,7 @@ type Module struct {
 	Name             string
 	HeatmapUrl       string
 	Genes            []Gene
-	EnrichmentScores []EnrichmentScore
+	EnrichmentScores EnrichmentScores
 	Url              string
 }
 
@@ -153,7 +153,7 @@ func GetModules(tissue string) ([]Module, error) {
 					return
 				}
 			*/
-			m := Module{moduleNames[i], "", nil, nil, ""}
+			m := Module{moduleNames[i], "", nil, EnrichmentScores{}, ""}
 			resChan <- m
 		}(i)
 	}
@@ -177,7 +177,6 @@ func GetModule(name string, tissue string) (Module, error) {
 		fmt.Println("heatmap")
 		return Module{}, err
 	}
-
 
 	genes, url, err := GetGeneList(name, tissue)
 	if err != nil {
@@ -203,7 +202,7 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 	if err != nil {
 		fmt.Println("Call failed one time, trying again. ")
 		fmt.Println(session, err)
-		
+
 		session, err = komp.Call("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
 					"module":`+"\""+module+"\""+`}`)
 		if err != nil {
@@ -262,7 +261,7 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 	return genes, url, nil
 }
 
-type EnrichmentScore struct {
+type Score struct {
 	Set          string  `json:"set"`
 	Name         string  `json:"_row"`
 	Size         int     `json:"sig.size"`
@@ -274,7 +273,23 @@ type EnrichmentScore struct {
 	DownPvalue   float64 `json:"dn.p"`
 }
 
-func GetEnrichmentScores(module, tissue string) (scores []EnrichmentScore,
+type EnrichmentScores struct {
+	Sets map[string][]Set
+}
+
+type Set struct {
+	SetName       string
+	SignatureName string
+	Size          int
+	UpDownCommon  int
+	UpDownPvalue  float64
+	UpCommon      int
+	UpPvalue      float64
+	DownCommon    int
+	DownPvalue    float64
+}
+
+func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores,
 	err error) {
 
 	session, err := komp.Call("mixt/R/getEnrichmentScores",
@@ -282,31 +297,43 @@ func GetEnrichmentScores(module, tissue string) (scores []EnrichmentScore,
 					"module":`+"\""+module+"\""+`}`)
 
 	if err != nil {
-		fmt.Println("Call failed, trying again.") 
+		fmt.Println("Call failed, trying again.")
 		fmt.Println(session, err)
 		session, err = komp.Call("mixt/R/getEnrichmentScores",
 			`{"tissue": `+"\""+tissue+"\""+`,
 						"module":`+"\""+module+"\""+`}`)
 		if err != nil {
 			fmt.Println("Call failed a second time :( ")
-			return nil, err
+			return EnrichmentScores{}, err
 		}
 	}
 
 	resp, err := session.GetResult(komp, "json")
 	if err != nil {
 		fmt.Println(resp, err)
-		return nil, err
+		return EnrichmentScores{}, err
 	}
 
 	res := []byte(resp)
 
+	var scores []Score
 	err = json.Unmarshal(res, &scores)
 	if err != nil {
 		fmt.Println(err)
-		return nil, err
+		return EnrichmentScores{}, err
 	}
 
-	return scores, nil
+	sets := make(map[string][]Set)
+
+	for _, s := range scores {
+		name := s.Set
+		name = strings.Replace(name, ".", "", -1)
+		sets[name] = append(sets[name], Set{name, s.Name, s.Size, s.UpDownCommon, s.UpDownPvalue,
+			s.UpCommon, s.UpPvalue, s.DownCommon, s.DownPvalue})
+
+	}
+
+	enrichment = EnrichmentScores{sets}
+	return enrichment, nil
 
 }

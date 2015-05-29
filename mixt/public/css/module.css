@@ -15,3 +15,15 @@
 img#module-heatmap {
     width: 100%;
 }
+
+td.score-name { 
+    width:100px;
+    word-wrap:break-word;
+     overflow: hidden; 
+} 
+
+th.score-name-header { 
+    width: 100px;
+    word-wrap:break-word;
+    overflow: hidden; 
+} 

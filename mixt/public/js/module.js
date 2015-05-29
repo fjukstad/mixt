@@ -22,6 +22,7 @@ $(function(){
         }); 
 
 
- new Tablesort(document.getElementById('score-table'));
  new Tablesort(document.getElementById('gene-table'));
+
+ $('#settab a:first').tab('show')
 });

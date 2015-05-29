@@ -2,7 +2,7 @@
     <div class="container-fluid">
         {{ range .Modules }} 
             <div class="row" id="module"> 
-                <div class="col-sm-4 col-md-4 col-lg-4">
+                <div class="col-sm-6 col-md-6 col-lg-6">
                     <!-- <h2> {{.Name}} </h2> -->
                     <a href="{{.HeatmapUrl}}/pdf">
                         <img src={{.HeatmapUrl}}/png id="module-heatmap"></img>
@@ -12,7 +12,7 @@
                     </span> 
                     </hr>
                 </div>
-                <div class="col-sm-4 col-md-4 col-lg-4" id="module-table">
+                <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
                     <div class="table-responsive" id="genes">
                     <table class="table table-hover" id="gene-table">
                         <thead> 
@@ -42,12 +42,28 @@
                     </table>
                 </div>
                 </div>
-                <div class="col-sm-4 col-md-4 col-lg-4" id="set-table">
+            </div>
+            <div class="row" id="module">             
+                <div class="col-sm-12 col-md-12 col-lg-12" id="set-table"
+                    role="tabpanel">
+
+
+                    <ul class="nav nav-tabs" role="tablist" id="settab">
+                        {{  range $name, $set := .EnrichmentScores.Sets }} 
+                        <li role="presentation"><a href="#{{$name}}" 
+                            aria-controls="{{$name}}"
+                            role="tab" data-toggle="tab">
+                            {{$name}} </a> 
+                        </li>
+                        {{ end }} 
+                    </ul> 
+                <div class="tab-content"> 
+                    {{  range $name, $sets := .EnrichmentScores.Sets }} 
+                    <div role="tabpanel" class="tab-pane"  id="{{$name}}">
                     <div class="table-responsive" id="scores">
-                    <table class="table table-hover" id="score-table">
+                        <table class="table table-hover" id="score-table{{$name}}">
                         <thead> 
-                            <th> Signature ({{len .EnrichmentScores}}) </th>
-                            <th> Set </th> 
+                            <th class="score-name-header"> Signature </th>
                             <th> Size </th>
                             
                             <th> Common </th>
@@ -60,10 +76,9 @@
                             <th> p-value (down) </th>
                         </thead>
                         <tbody class="list">
-                             {{ range .EnrichmentScores }} 
+                             {{ range $sets }} 
                                  <tr> 
-                                     <td class="score-name"> {{.Name}}  </td> 
-                                     <td class="set"> {{.Set}} </td> 
+                                     <td class="set"> {{.SignatureName}} </td> 
                                      <td class="size" data-sort-method='numeric'> {{.Size}} </td> 
                                      <td class="common" data-sort-method='numeric'> {{.UpDownCommon}} </td> 
                                      <td class="p-value" data-sort-method='numeric'> {{.UpDownPvalue}} </td> 
@@ -76,14 +91,25 @@
                         </tbody> 
                     </table>
                 </div>
+            </div> 
+                {{ end }} 
+                </div> 
                 </div>
 
             </div>
+           <script> 
+                $(function(){
+                {{ range $name, $sets := .EnrichmentScores.Sets }} 
+                new Tablesort(document.getElementById('score-table{{$name}}'));
+                {{ end }} 
+                });
+           </script> 
         {{ end }} 
+
     </div>
    <script src="/public/js/list.js" type="text/javascript" charset="utf-8"></script>
-   <script src="/public/js/tablesort.js" type="text/javascript" charset="utf-8"></script>
    <script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
    <script src="/public/js/module.js" type="text/javascript" charset="utf-8"></script>
    <link rel="stylesheet" type="text/css" href="/public/css/module.css"> 
+
 {{ end }} 

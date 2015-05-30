@@ -34,13 +34,15 @@ func GeneHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("GENEHANDLER WHAT ARE YOU DOING?")
 	vars := mux.Vars(r)
 	term := vars["genes"]
 	genes := strings.Split(term, " ")
+
+	fmt.Println("GENES", genes)
 	var result []Gene
 	for _, gene := range genes {
 		hits, _ := SearchForGene(gene)
+		fmt.Println(hits)
 		for _, h := range hits {
 
 			modules, err := mixt.GetAllModuleNames(h)

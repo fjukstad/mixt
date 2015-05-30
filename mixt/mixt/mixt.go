@@ -22,6 +22,7 @@ func Heatmap(tissue, module string) (string, error) {
 					"module":`+"\""+module+"\""+`}`)
 
 	if err != nil {
+		fmt.Println("Heatmapper")
 		fmt.Println(session, err)
 		return "", err
 	}
@@ -43,7 +44,6 @@ func GetGenes() ([]string, error) {
 
 	body := strings.NewReader(resp)
 	reader := csv.NewReader(body)
-
 	var genes []string
 	line := 0
 	for {
@@ -295,26 +295,19 @@ type Set struct {
 func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores,
 	err error) {
 
-	session, err := komp.Call("mixt/R/getEnrichmentScores",
+	resp, err := komp.Rpc("mixt/R/getEnrichmentScores",
 		`{"tissue": `+"\""+tissue+"\""+`,
-					"module":`+"\""+module+"\""+`}`)
+					"module":`+"\""+module+"\""+`}`, "json")
 
 	if err != nil {
-		fmt.Println("Call failed, trying again.")
-		fmt.Println(session, err)
-		session, err = komp.Call("mixt/R/getEnrichmentScores",
+		fmt.Println("Could not get enrich")
+		resp, err = komp.Rpc("mixt/R/getEnrichmentScores",
 			`{"tissue": `+"\""+tissue+"\""+`,
-						"module":`+"\""+module+"\""+`}`)
+						"module":`+"\""+module+"\""+`}`, "json")
 		if err != nil {
-			fmt.Println("Call failed a second time :( ")
+			fmt.Println("Enrichment scores failed 2 times")
 			return EnrichmentScores{}, err
 		}
-	}
-
-	resp, err := session.GetResult(komp, "json")
-	if err != nil {
-		fmt.Println(resp, err)
-		return EnrichmentScores{}, err
 	}
 
 	res := []byte(resp)

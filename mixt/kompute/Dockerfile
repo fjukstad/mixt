@@ -73,6 +73,7 @@ ADD opencpu.conf /etc/apache2/sites-available/opencpu.conf
 
 # install path for r packages 
 ADD rsession.conf /etc/rstudio/rsession.conf
+ADD server.conf /etc/opencpu/server.conf
 
 # add empty apache html page
 ADD index.html /var/www/html/index.html
@@ -104,5 +105,6 @@ RUN chmod 755 /bin/git-raw
 # VOLUME /usr/local/lib/R/site-library    # r pkg install location
 
 # Define default command.
-CMD service opencpu restart && rstudio-server restart && \
+CMD service opencpu restart &&  \ 
+    rstudio-server restart && \
     tail -F /var/log/opencpu/apache_access.log

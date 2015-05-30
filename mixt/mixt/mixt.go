@@ -138,6 +138,9 @@ func GetModules(tissue string) ([]Module, error) {
 
 	}
 
+	// removing the grey module
+	moduleNames = moduleNames[1:len(moduleNames)]
+
 	var modules []Module
 
 	resChan := make(chan Module)

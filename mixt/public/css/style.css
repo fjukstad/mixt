@@ -49,7 +49,7 @@ td#comp{
  cursor: pointer; cursor: hand;
 }
 
-select#module-select {
+select.tissue {
     height: 50%;
 }
 

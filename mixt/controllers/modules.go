@@ -20,7 +20,7 @@ var modulesTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/modules.html", "views/footer.html"))
 
 type ModulesOverview struct {
-	Modules []mixt.Module
+	Modules map[string][]mixt.Module
 	Tissues []string
 }
 
@@ -62,21 +62,26 @@ func ModulesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vars := mux.Vars(r)
-	tissue := vars["tissue"]
+	//vars := mux.Vars(r)
+	//tissue := vars["tissue"]
 
-	modules, err := mixt.GetModules(tissue)
-	if err != nil {
-		fmt.Println("Could not get modules")
-		http.Error(w, err.Error(), 503)
-		return
-	}
-	fmt.Println("tissues")
 	tissues, err := mixt.GetTissues()
 	if err != nil {
 		fmt.Println("Could not get tissues")
 		http.Error(w, err.Error(), 500)
 		return
+	}
+
+	modules := make(map[string][]mixt.Module)
+
+	for _, tissue := range tissues {
+		m, err := mixt.GetModules(tissue)
+		if err != nil {
+			fmt.Println("Could not get modules")
+			http.Error(w, err.Error(), 503)
+			return
+		}
+		modules[tissue] = m
 	}
 
 	m := ModulesOverview{modules, tissues}

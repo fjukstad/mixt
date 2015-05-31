@@ -9,28 +9,32 @@
         </div> 
         <div class="row">
             <div class="col-sm-6 col-md-6 col-lg-6">
-                <select multiple class="form-control" id="module-select">
-                    {{range .Modules}}
-                        <option>{{ .Name }} </option>
+            <ul class="nav nav-tabs" role="tablist" id="tissue-tab">
+                {{ range .Tissues }} 
+                <li role="presentation" tissue="{{.}}"><a href="#{{.}}" 
+                            aria-controls="{{.}}"
+                            role="tab" data-toggle="tab">
+                            {{.}} </a> 
+                        </li>
+                {{ end }}
+            </ul>
+                <div class="tab-content"> 
+                    {{  range $tissue, $modules := .Modules }} 
+                    <div role="tabpanel" class="tab-pane"
+                        id="{{$tissue}}">
+                        <select multiple class="form-control tissue" id="{{$tissue}}-module-select">
+                            {{range $modules}}
+                                <option>{{ .Name }} </option>
+                            {{ end }} 
+                        </select> 
+                    </div> 
                     {{ end }} 
-                </select> 
                 </br> 
                 <button type="submit" class="btn btn-default"
                     id="module-select-btn">Select</button>
+                </div> 
             </div> 
         </div> 
-    </div> 
-    <div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-1 col-md-1 col-lg-1 img-rounded">
-            <div id="settings-icon"> 
-              <span class="glyphicon glyphicon glyphicon-cog" aria-hidden="true"></span>
-          </div> 
-        </div>
-        <div class="col-sm-11 col-md-11 col-lg-11">
-            <div class="module"> 
-            </div>
-        </div>
     </div> 
    <script src="/public/js/modules.js" type="text/javascript" charset="utf-8"></script>
 {{ end }}

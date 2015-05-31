@@ -99,7 +99,7 @@ func main() {
 
 	r.HandleFunc("/login", LoginHandler)
 
-	r.HandleFunc("/modules/{tissue}", controllers.ModulesHandler)
+	r.HandleFunc("/modules/", controllers.ModulesHandler)
 	r.HandleFunc("/modules/{tissue}/{modules}", controllers.ModuleHandler)
 
 	r.HandleFunc("/public/{folder}/{file}", PublicHandler)

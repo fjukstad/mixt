@@ -17,11 +17,11 @@ import (
 )
 
 var outsideTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/outside-navbar.html", "views/panels.html",
+	"views/header.html", "views/outside-navbar.html",
 	"views/outside-index.html", "views/footer.html"))
 
 var indexTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html", "views/panels.html",
+	"views/header.html", "views/navbar.html",
 	"views/index.html", "views/footer.html"))
 
 var s = securecookie.New(

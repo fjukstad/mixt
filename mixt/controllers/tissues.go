@@ -17,11 +17,11 @@ type Tissue struct {
 }
 
 var tissuesTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html", "views/panels.html",
+	"views/header.html", "views/navbar.html",
 	"views/tissues.html", "views/footer.html"))
 
 var tissueComparisonTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html", "views/panels.html",
+	"views/header.html", "views/navbar.html",
 	"views/tissue-comparison.html", "views/footer.html"))
 
 func TissuesHandler(w http.ResponseWriter, r *http.Request) {

@@ -16,7 +16,7 @@ var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/module.html", "views/footer.html"))
 
 var modulesTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html", "views/panels.html",
+	"views/header.html", "views/navbar.html",
 	"views/modules.html", "views/footer.html"))
 
 type ModulesOverview struct {

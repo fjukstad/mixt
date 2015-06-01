@@ -1,12 +1,12 @@
-#genes {
+div#genes {
     height: 500px;
 }
 
-#scores {
+div#scores {
     height: 500px;
 }
 
-#module {
+div.module {
     padding-bottom:2em;
     border-bottom: 1px solid #ccc;
     margin-top: 2em;
@@ -27,3 +27,24 @@ th.score-name-header {
     word-wrap:break-word;
     overflow: hidden; 
 } 
+
+.affix {
+  top: 20px;
+  width: 50px;
+}
+.affix-bottom {
+  position: absolute;
+  width: 50px;
+}
+
+section.module {
+    padding-left: 10%;
+} 
+
+ul#nav {
+    padding-top: 5%;
+}
+
+hr.module {
+    margin-left: 10%;
+}

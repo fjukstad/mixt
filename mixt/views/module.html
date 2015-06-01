@@ -1,115 +1,129 @@
 {{ define "content" }}
-    <div class="container-fluid">
-        {{ range .Modules }} 
-            <div class="row" id="module"> 
-                <div class="col-sm-6 col-md-6 col-lg-6">
-                    <!-- <h2> {{.Name}} </h2> -->
-                    <a href="{{.HeatmapUrl}}/pdf">
-                        <img src={{.HeatmapUrl}}/png id="module-heatmap"></img>
-                    </a>
-                    <span id="download-link">
-                        <a href="{{.Url}}">Download gene list</a>
-                    </span> 
-                    </hr>
-                </div>
-                <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
-                    <div class="table-responsive" id="genes">
-                    <table class="table table-hover" id="gene-table">
-                        <thead> 
-                            <th> Gene ({{len .Genes}}) </th>
-                            <th> Correlation </th>
-                            <th> k </th>
-                            <th> kin </th>
-                            <th> Up/Down </th>
-                        </thead>
-                        <tbody class="list">
-                             {{ range .Genes }} 
-                                 <tr> 
-                                     <td class="name" data-toggle="tooltip"
-                                         data-placement="left" id="{{.Name}}">
-                                         <a
-                                             href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">
-                                            {{.Name}}
+<div class="container-fluid">
+  <div class="col-md-1 scrollspy">
+
+    <ul id="nav" class="nav hidden-xs hidden-sm" data-spy="affix">
+      {{ range .Modules }}
+      <li>
+        <a href="#{{.Name}}-module">{{.Name}}</a>
+        <ul class="nav">
+          <li> <a href="#{{.Name}}-enrichment"> Enrichment Scores</a> </li>
+        </ul>
+      </li>
+      {{ end }}
+    </ul>
+
+  </div>
+
+  {{ range $module := .Modules }}
+  <section id="{{$module.Name}}" class="module">
+    <div class="row" id="{{$module.Name}}-module">
+      <div class="col-sm-5 col-md-5 col-lg-5">
+        <!-- <h2> {{.Name}} </h2> -->
+        <a href="{{$module.HeatmapUrl}}/pdf">
+          <img src={{$module.HeatmapUrl}}/png id="module-heatmap"></img>
+        </a>
+        <span id="download-link">
+          <a href="{{$module.Url}}">Download gene list</a>
+        </span>
+        </hr>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
+        <div class="table-responsive" id="genes">
+          <table class="table table-hover" id="gene-table">
+            <thead>
+              <th> Gene ({{len $module.Genes}}) </th>
+              <th> Correlation </th>
+              <th> k </th>
+              <th> kin </th>
+              <th> Up/Down </th>
+            </thead>
+            <tbody class="list">
+              {{ range $gene := $module.Genes }}
+              <tr>
+                <td class="name" data-toggle="tooltip" data-placement="left" id="{{.Name}}">
+                  <a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">
+                                            {{$gene.Name}}
                                          </a>
-                                     </td>
-                                     <td class="correlation"> {{.Correlation}} </td> 
-                                     <td class="k"> {{.K}} </td> 
-                                     <td class="kin"> {{.Kin}} </td> 
-                                     <td class="updown"> {{.Updown}} </td> 
-                                 </tr>
-                            {{ end }} 
-                        </tbody> 
-                    </table>
-                </div>
-                </div>
-            </div>
-            <div class="row" id="module">             
-                <div class="col-sm-12 col-md-12 col-lg-12" id="set-table"
-                    role="tabpanel">
-
-
-                    <ul class="nav nav-tabs" role="tablist" id="settab">
-                        {{  range $name, $set := .EnrichmentScores.Sets }} 
-                        <li role="presentation"><a href="#{{$name}}" 
-                            aria-controls="{{$name}}"
-                            role="tab" data-toggle="tab">
-                            {{$name}} </a> 
-                        </li>
-                        {{ end }} 
-                    </ul> 
-                <div class="tab-content"> 
-                    {{  range $name, $sets := .EnrichmentScores.Sets }} 
-                    <div role="tabpanel" class="tab-pane"  id="{{$name}}">
-                    <div class="table-responsive" id="scores">
-                        <table class="table table-hover" id="score-table{{$name}}">
-                        <thead> 
-                            <th class="score-name-header"> Signature </th>
-                            <th> Size </th>
-                            
-                            <th> Common </th>
-                            <th> p-value </th>
-                            
-                            <th> Common (up) </th>
-                            <th> p-value (up)</th>
-
-                            <th> Common (down) </th>
-                            <th> p-value (down) </th>
-                        </thead>
-                        <tbody class="list">
-                             {{ range $sets }} 
-                                 <tr> 
-                                     <td class="set"> {{.SignatureName}} </td> 
-                                     <td class="size" data-sort-method='numeric'> {{.Size}} </td> 
-                                     <td class="common" data-sort-method='numeric'> {{.UpDownCommon}} </td> 
-                                     <td class="p-value" data-sort-method='numeric'> {{.UpDownPvalue}} </td> 
-                                     <td class="common" data-sort-method='numeric'> {{.UpCommon}} </td> 
-                                     <td class="p-value" data-sort-method='numeric'> {{.UpPvalue}} </td> 
-                                     <td class="common" data-sort-method='numeric'> {{.DownCommon}} </td> 
-                                     <td class="p-value" data-sort-method='numeric'> {{.DownPvalue}} </td> 
-                                 </tr>
-                            {{ end }} 
-                        </tbody> 
-                    </table>
-                </div>
-            </div> 
-                {{ end }} 
-                </div> 
-                </div>
-
-            </div>
-           <script> 
-                $(function(){
-                {{ range $name, $sets := .EnrichmentScores.Sets }} 
-                new Tablesort(document.getElementById('score-table{{$name}}'));
-                {{ end }} 
-                });
-           </script> 
-        {{ end }} 
-
+                </td>
+                <td class="correlation"> {{$gene.Correlation}} </td>
+                <td class="k"> {{$gene.K}} </td>
+                <td class="kin"> {{$gene.Kin}} </td>
+                <td class="updown"> {{$gene.Updown}} </td>
+              </tr>
+              {{ end }}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-   <script src="/public/js/list.js" type="text/javascript" charset="utf-8"></script>
-   <script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
-   <script src="/public/js/module.js" type="text/javascript" charset="utf-8"></script>
-   <link rel="stylesheet" type="text/css" href="/public/css/module.css"> 
+    <section id="{{$module.Name}}-enrichment">
+      <div class="row" id="{{$module.Name}}-enrichment">
+        <div class="col-sm-11 col-md-11 col-lg-11" id="set-table" role="tabpanel">
+            <ul class="nav nav-tabs" role="tablist" id="settab-{{$module.Name}}">
+            {{ range $name, $set := .EnrichmentScores.Sets }}
+            <li role="presentation"><a href="#{{$module.Name}}-{{$name}}" aria-controls="{{$module.Name}}-{{$name}}" role="tab" data-toggle="tab">
+                            {{$name}} </a>
+            </li>
+            {{ end }}
+          </ul>
+          <div class="tab-content">
+            {{ range $name, $sets := .EnrichmentScores.Sets }}
+            <div role="tabpanel" class="tab-pane" id="{{$module.Name}}-{{$name}}">
+              <div class="table-responsive" id="scores">
+                  <table class="table table-hover" id="score-table-{{$module.Name}}-{{$name}}">
+                  <thead>
+                    <th class="score-name-header"> Signature </th>
+                    <th> Size </th>
 
-{{ end }} 
+                    <th> Common </th>
+                    <th> p-value </th>
+
+                    <th> Common (up) </th>
+                    <th> p-value (up)</th>
+
+                    <th> Common (down) </th>
+                    <th> p-value (down) </th>
+                  </thead>
+                  <tbody class="list">
+                    {{ range $set := $sets }}
+                    <tr>
+                      <td class="set"> {{$set.SignatureName}} </td>
+                      <td class="size" data-sort-method='numeric'> {{$set.Size}} </td>
+                      <td class="common" data-sort-method='numeric'> {{$set.UpDownCommon}} </td>
+                      <td class="p-value" data-sort-method='numeric'> {{$set.UpDownPvalue}} </td>
+                      <td class="common" data-sort-method='numeric'> {{$set.UpCommon}} </td>
+                      <td class="p-value" data-sort-method='numeric'> {{$set.UpPvalue}} </td>
+                      <td class="common" data-sort-method='numeric'> {{$set.DownCommon}} </td>
+                      <td class="p-value" data-sort-method='numeric'> {{$set.DownPvalue}} </td>
+                    </tr>
+                    {{ end }}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </section> 
+
+    <script>
+      $(function() {
+        {{range $name, $sets := .EnrichmentScores.Sets}}
+        new Tablesort(document.getElementById('score-table-{{$module.Name}}-{{$name}}'));
+        $('#settab-{{$module.Name}} a:first').tab('show')
+        {{end}}
+      });
+    </script>
+  </section>
+  <hr class="module">
+  {{ end }}
+
+  <script src="/public/js/list.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/public/js/module.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" type="text/css" href="/public/css/module.css">
+
+{{ end }}
+

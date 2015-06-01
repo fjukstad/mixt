@@ -1,14 +1,15 @@
 {{ define "content" }}
 <div class="container-fluid">
-  <div class="col-md-1 scrollspy">
-
-    <ul id="nav" class="nav hidden-xs hidden-sm" data-spy="affix">
+  <div class="col-md-1 scrollnav" id="scrollnav" >
+    <ul class="nav navigator nav-stacked affix-top" data-spy="affix">
       {{ range .Modules }}
       <li>
         <a href="#{{.Name}}-module">{{.Name}}</a>
-        <ul class="nav">
+        <!--
+        <ul class="nav navigator">
           <li> <a href="#{{.Name}}-enrichment"> Enrichment Scores</a> </li>
         </ul>
+        -->
       </li>
       {{ end }}
     </ul>

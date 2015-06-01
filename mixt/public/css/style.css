@@ -57,3 +57,7 @@ span#download-link {
     float: right;
     margin-right: 30%;
 }
+
+body { 
+    height: 100%;
+}

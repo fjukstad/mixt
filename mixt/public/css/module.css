@@ -30,7 +30,6 @@ th.score-name-header {
 
 .affix {
   top: 20px;
-  width: 50px;
 }
 .affix-bottom {
   position: absolute;
@@ -41,10 +40,14 @@ section.module {
     padding-left: 10%;
 } 
 
-ul#nav {
+ul.navigator {
     padding-top: 5%;
 }
 
 hr.module {
     margin-left: 10%;
+}
+
+.nav .nav a {
+    font-size: .8em;
 }

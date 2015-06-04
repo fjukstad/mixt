@@ -91,7 +91,9 @@
                   <tbody class="list">
                     {{ range $set := $sets }}
                     <tr>
-                      <td class="set"> {{$set.SignatureName}} </td>
+                      <td class="set"> <a class="signature"
+                              href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName={{$set.SignatureName}}"
+                              target="blank">{{$set.SignatureName}}</a> </td>
                       <td class="size" data-sort-method='numeric'> {{$set.Size}} </td>
                       <td class="common" data-sort-method='numeric'> {{$set.UpDownCommon}} </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.UpDownPvalue}} </td>

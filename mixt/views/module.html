@@ -33,6 +33,7 @@
         <div class="table-responsive" id="genes">
           <table class="table table-hover" id="gene-table">
             <thead>
+              <th> Rank </th> 
               <th> Gene ({{len $module.Genes}}) </th>
               <th> Correlation </th>
               <th> k </th>
@@ -40,8 +41,9 @@
               <th> Up/Down </th>
             </thead>
             <tbody class="list">
-              {{ range $gene := $module.Genes }}
+              {{ range $rank, $gene := $module.Genes }}
               <tr>
+                <td class="rank"> {{$rank}} </td> 
                 <td class="name" data-toggle="tooltip" data-placement="left" id="{{.Name}}">
                   <a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">
                                             {{$gene.Name}}

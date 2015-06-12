@@ -28,6 +28,15 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Search went bad:", err)
 		http.Error(w, err.Error(), 500)
 	}
+
+	setres, err := SearchForGeneSet(term)
+	if err != nil {
+		fmt.Println("Searching for gene sets bad", err)
+		http.Error(w, err.Error(), 500)
+	}
+
+	result = append(result, setres...)
+
 	res := SearchResponse{result}
 	b, _ := json.Marshal(res)
 	w.Write(b)
@@ -44,14 +53,36 @@ func SearchForGene(searchTerm string) ([]string, error) {
 		}
 	}
 
-	var result []string
-	for _, gene := range genes {
-		a := strings.ToLower(gene)
-		b := strings.ToLower(searchTerm)
-		if strings.Contains(a, b) {
-			geneFmt := strings.Trim(gene, "\"")
-			result = append(result, geneFmt)
+	result := inSlice(searchTerm, genes)
+
+	return result, nil
+}
+
+var geneSetNames []string
+
+func SearchForGeneSet(searchTerm string) ([]string, error) {
+	var err error
+	if len(geneSetNames) < 1 {
+		geneSetNames, err = mixt.GetGeneSetNames()
+		if err != nil {
+			return []string{}, err
 		}
 	}
+
+	result := inSlice(searchTerm, geneSetNames)
+
 	return result, nil
+}
+
+func inSlice(s string, words []string) []string {
+	var result []string
+	for _, word := range words {
+		a := strings.ToLower(word)
+		b := strings.ToLower(s)
+		if strings.Contains(a, b) {
+			wordFmt := strings.Trim(word, "\"")
+			result = append(result, wordFmt)
+		}
+	}
+	return result
 }

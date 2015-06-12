@@ -349,3 +349,19 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores,
 	return enrichment, nil
 
 }
+
+func GetGeneSetNames() ([]string, error) {
+
+	resp, err := komp.Rpc("mixt/R/getGeneSetNames", "", "json")
+	if err != nil {
+		fmt.Println("Could not get gene set names :(", err)
+		return []string{}, err
+	}
+
+	res := []byte(resp)
+
+	var names []string
+	err = json.Unmarshal(res, &names)
+	return names, err
+
+}

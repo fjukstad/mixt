@@ -105,8 +105,8 @@ func main() {
 	r.HandleFunc("/public/{folder}/{file}", PublicHandler)
 
 	r.HandleFunc("/search/{term}", controllers.SearchHandler)
+	r.HandleFunc("/search/results/{terms}", controllers.SearchResultHandler)
 
-	r.HandleFunc("/gene/{genes}", controllers.GeneHandler)
 	r.HandleFunc("/gene/summary/{gene}", controllers.GeneSummaryHandler)
 
 	r.HandleFunc("/tissues", controllers.TissuesHandler)

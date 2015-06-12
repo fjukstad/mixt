@@ -4,17 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"text/template"
 
 	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 
 	"github.com/fjukstad/kvik/genecards"
 	"github.com/gorilla/mux"
 )
-
-var geneTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
-	"views/gene.html", "views/footer.html"))
 
 type Genes struct {
 	Genes   []Gene
@@ -27,18 +22,7 @@ type Gene struct {
 	Summary string
 }
 
-func GeneHandler(w http.ResponseWriter, r *http.Request) {
-
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
-	vars := mux.Vars(r)
-	term := vars["genes"]
-	genes := strings.Split(term, " ")
-
-	fmt.Println("GENES", genes)
+func GeneResults(genes []string) ([]Gene, []string, error) {
 	var result []Gene
 	for _, gene := range genes {
 		hits, _ := SearchForGene(gene)
@@ -48,11 +32,8 @@ func GeneHandler(w http.ResponseWriter, r *http.Request) {
 			modules, err := mixt.GetAllModuleNames(h)
 			if err != nil {
 				fmt.Println("Could not get modules for ", h)
-				http.Error(w, err.Error(), 503)
-				return
+				return []Gene{}, []string{}, err
 			}
-
-			fmt.Println(h, modules)
 
 			summary := genecards.Summary(h)
 
@@ -68,12 +49,11 @@ func GeneHandler(w http.ResponseWriter, r *http.Request) {
 	tissues, err := mixt.GetTissues()
 	if err != nil {
 		fmt.Println("Could not get tissues")
-		http.Error(w, err.Error(), 503)
-		return
+		//http.Error(w, err.Error(), 503)
+		return []Gene{}, []string{}, err
 	}
 
-	res := Genes{result, tissues}
-	geneTemplate.Execute(w, res)
+	return result, tissues, nil
 }
 
 func GeneSummaryHandler(w http.ResponseWriter, r *http.Request) {

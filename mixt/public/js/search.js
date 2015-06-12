@@ -28,7 +28,7 @@ $(function() {
 
     $('input#search').bind("enterKey", function(e){
         searchterm = $('input#search').val()
-        window.location = window.location.origin+"/gene/"+searchterm
+        window.location = window.location.origin+"/search/results/"+searchterm
     });
 
     $('input#search').keyup(function(e){

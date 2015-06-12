@@ -7,9 +7,14 @@ import (
 	"strings"
 
 	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
+	"text/template"
 
 	"github.com/gorilla/mux"
 )
+
+var searchResultTemplate = template.Must(template.ParseFiles("views/base.html",
+	"views/header.html", "views/navbar.html",
+	"views/search-result.html", "views/footer.html"))
 
 type SearchResponse struct {
 	Terms []string
@@ -85,4 +90,32 @@ func inSlice(s string, words []string) []string {
 		}
 	}
 	return result
+}
+
+type SearchResults struct {
+	Genes    []Gene
+	Tissues  []string
+	GeneSets []mixt.GeneSet
+}
+
+func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
+	if !LoggedIn(r) {
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
+	vars := mux.Vars(r)
+	term := vars["terms"]
+	searchTerms := strings.Split(term, " ")
+
+	genes, tissues, err := GeneResults(searchTerms)
+	if err != nil {
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	geneSets := mixt.SetResults(searchTerms)
+
+	res := SearchResults{genes, tissues, geneSets}
+	searchResultTemplate.Execute(w, res)
 }

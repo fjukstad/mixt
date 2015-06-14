@@ -14,7 +14,7 @@ var s = securecookie.New(
 func LoggedIn(r *http.Request) bool {
 	username := GetUsername(r)
 	if username == "" {
-		//return false
+		//	return false
 	}
 	fmt.Println("User is logged in as", username)
 	return true

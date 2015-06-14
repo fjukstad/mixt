@@ -74,9 +74,9 @@ func SearchForGeneSet(searchTerm string) ([]string, error) {
 		}
 	}
 
-	result := inSlice(searchTerm, geneSetNames)
+	results := inSlice(searchTerm, geneSetNames)
 
-	return result, nil
+	return results, nil
 }
 
 func inSlice(s string, words []string) []string {
@@ -95,7 +95,7 @@ func inSlice(s string, words []string) []string {
 type SearchResults struct {
 	Genes    []Gene
 	Tissues  []string
-	GeneSets []mixt.GeneSet
+	GeneSets []GeneSet
 }
 
 func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +114,13 @@ func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	geneSets := mixt.SetResults(searchTerms)
+	geneSets, err := SetResults(searchTerms)
+
+	if err != nil {
+		fmt.Println("ERROR", err)
+		http.Error(w, err.Error(), 500)
+		return
+	}
 
 	res := SearchResults{genes, tissues, geneSets}
 	searchResultTemplate.Execute(w, res)

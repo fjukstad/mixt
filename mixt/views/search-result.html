@@ -1,7 +1,7 @@
 {{ define "content" }}
     <div class="container">
         <div class="row">
-            <h2> The search returned {{len .Genes}} results</h2>
+            <h2> The search returned {{len .Genes}} genes </h2>
         </div>
         <div class="row">
             <table class="table table-hover">
@@ -33,5 +33,40 @@
                 {{end}}
             </table>
         </div> 
+
+
+        <div class="row">
+            <h2> The search returned {{len .GeneSets}} gene sets </h2>
+        </div>
+
+        <div> 
+            {{ range $index, $geneset := .GeneSets }} 
+            <div class="row"> 
+                <h3> <a
+                    href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName="{{$geneset.Name }}>
+                    {{$geneset.Name}}</a> 
+                </h3> 
+                {{ range $tissue, $modules := $geneset.TissueSets }} 
+                      <div class="col-md-4">
+                          <h4> {{ $tissue }} </h4> 
+                    <table class="table table-hover"> 
+                        <thead> 
+                            <th> Module </th> 
+                            <th> p-value </th> 
+                        </thead> 
+                        {{ range $index, $module := $modules }}
+                        <tr> 
+                            <td> <a
+                                    href="/modules/{{$tissue}}/{{$module.Name}}">{{$module.Name}}</a></td>
+                            <td> {{$module.Pvalue}} </td> 
+                        </tr> 
+                        {{ end }}
+                    </table> 
+                    </div> 
+                {{ end }} 
+            </div> 
+            {{ end }} 
+        </div> 
+
     </div>
 {{ end }} 

@@ -311,15 +311,14 @@ type Set struct {
 func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores,
 	err error) {
 
-	resp, err := komp.Rpc("mixt/R/getEnrichmentScores",
-		`{"tissue": `+"\""+tissue+"\""+`,
-					"module":`+"\""+module+"\""+`}`, "json")
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
+					"module":` + "\"" + module + "\"" + `}`
+
+	resp, err := komp.Rpc("mixt/R/getEnrichmentScores", args, "json")
 
 	if err != nil {
 		fmt.Println("Could not get enrich")
-		resp, err = komp.Rpc("mixt/R/getEnrichmentScores",
-			`{"tissue": `+"\""+tissue+"\""+`,
-						"module":`+"\""+module+"\""+`}`, "json")
+		resp, err = komp.Rpc("mixt/R/getEnrichmentScores", args, "json")
 		if err != nil {
 			fmt.Println("Enrichment scores failed 2 times")
 			return EnrichmentScores{}, err
@@ -347,6 +346,30 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores,
 
 	enrichment = EnrichmentScores{sets}
 	return enrichment, nil
+
+}
+
+func GetEnrichmentScore(module, tissue, geneset string) (Score, error) {
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
+	"module":` + "\"" + module + "\"" + `, 
+	"geneset":` + "\"" + geneset + "\"" + `}`
+
+	resp, err := komp.Rpc("mixt/R/getEnrichmentScores", args, "json")
+
+	if err != nil {
+		return Score{}, err
+	}
+
+	res := []byte(resp)
+
+	var score []Score
+	err = json.Unmarshal(res, &score)
+	if err != nil {
+		fmt.Println(err)
+		return Score{}, err
+	}
+	return score[0], nil
 
 }
 

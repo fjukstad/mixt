@@ -18,8 +18,6 @@ type ModuleEnrichment struct {
 }
 
 func SetResults(searchTerms []string) ([]GeneSet, error) {
-	fmt.Println(searchTerms)
-
 	// get all tissues
 	tissues, err := mixt.GetTissues()
 	if err != nil {
@@ -52,9 +50,7 @@ func SetResults(searchTerms []string) ([]GeneSet, error) {
 
 			for _, s := range sc {
 				mes = append(mes, ModuleEnrichment{s.Name, s.UpDownPvalue})
-				fmt.Println(s.Name, s.UpDownPvalue)
 			}
-			fmt.Println(tissue)
 			ts[tissue] = mes
 		}
 		gs = append(gs, GeneSet{geneSetName, ts})

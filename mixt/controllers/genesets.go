@@ -27,17 +27,6 @@ func SetResults(searchTerms []string) ([]GeneSet, error) {
 		return []GeneSet{}, err
 	}
 
-	// get all modules
-	modules := make(map[string][]mixt.Module)
-	for _, tissue := range tissues {
-		m, err := mixt.GetModules(tissue)
-		if err != nil {
-			fmt.Println("Could not get modules")
-			return []GeneSet{}, err
-		}
-		modules[tissue] = m
-	}
-
 	// fetch all gene sets that matched the search
 	var geneSetNames []string
 	for _, term := range searchTerms {
@@ -48,23 +37,24 @@ func SetResults(searchTerms []string) ([]GeneSet, error) {
 		geneSetNames = append(geneSetNames, hits...)
 	}
 
-	ts := make(map[string][]ModuleEnrichment)
 	var gs []GeneSet
 
 	// fetch enrichment scores for the genesets in the
 	for _, geneSetName := range geneSetNames {
-		for tissue, ms := range modules {
+		ts := make(map[string][]ModuleEnrichment)
+		for _, tissue := range tissues {
 			var mes []ModuleEnrichment
-			for _, module := range ms {
-				sc, err := mixt.GetEnrichmentScore(module.Name, tissue, geneSetName)
-				if err != nil {
-					fmt.Println("Could not get ER score")
-					return []GeneSet{}, err
-				}
-
-				mes = append(mes, ModuleEnrichment{module.Name, sc.UpDownPvalue})
-
+			sc, err := mixt.GetEnrichmentForTissue(tissue, geneSetName)
+			if err != nil {
+				fmt.Println("Could not get enrichment for tissue", err)
+				return []GeneSet{}, err
 			}
+
+			for _, s := range sc {
+				mes = append(mes, ModuleEnrichment{s.Name, s.UpDownPvalue})
+				fmt.Println(s.Name, s.UpDownPvalue)
+			}
+			fmt.Println(tissue)
 			ts[tissue] = mes
 		}
 		gs = append(gs, GeneSet{geneSetName, ts})

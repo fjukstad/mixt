@@ -43,7 +43,7 @@
             {{ range $index, $geneset := .GeneSets }} 
             <div class="row"> 
                 <h3> <a
-                    href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName="{{$geneset.Name }}>
+                    href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName={{$geneset.Name}}">
                     {{$geneset.Name}}</a> 
                 </h3> 
                 {{ range $tissue, $modules := $geneset.TissueSets }} 

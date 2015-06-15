@@ -290,6 +290,7 @@ type Score struct {
 	UpPvalue     float64 `json:"up.p"`
 	DownCommon   int     `json:"dn.common"`
 	DownPvalue   float64 `json:"dn.p"`
+	Tissue       string  `json:"tissue,omitempty"`
 }
 
 type EnrichmentScores struct {
@@ -308,8 +309,7 @@ type Set struct {
 	DownPvalue    float64
 }
 
-func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores,
-	err error) {
+func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, err error) {
 
 	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
 					"module":` + "\"" + module + "\"" + `}`
@@ -386,5 +386,28 @@ func GetGeneSetNames() ([]string, error) {
 	var names []string
 	err = json.Unmarshal(res, &names)
 	return names, err
+
+}
+
+type ModuleScores struct {
+	_ []map[string]Score
+}
+
+func GetEnrichmentForTissue(tissue, geneset string) ([]Score, error) {
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
+	"geneset":` + "\"" + geneset + "\"" + `}`
+
+	resp, err := komp.Rpc("mixt/R/getEnrichmentForTissue", args, "json")
+
+	if err != nil {
+		return []Score{}, err
+	}
+
+	res := []byte(resp)
+
+	var modulescores []Score
+	err = json.Unmarshal(res, &modulescores)
+	return modulescores, err
 
 }

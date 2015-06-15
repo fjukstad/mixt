@@ -49,7 +49,8 @@
                 {{ range $tissue, $modules := $geneset.TissueSets }} 
                       <div class="col-md-4">
                           <h4> {{ $tissue }} </h4> 
-                    <table class="table table-hover"> 
+                          <table class="table table-hover"
+                              id="er-{{$geneset.Name}}-{{$tissue}}"> 
                         <thead> 
                             <th> Module </th> 
                             <th> p-value </th> 
@@ -58,15 +59,25 @@
                         <tr> 
                             <td> <a
                                     href="/modules/{{$tissue}}/{{$module.Name}}">{{$module.Name}}</a></td>
-                            <td> {{$module.Pvalue}} </td> 
+                            <td data-sort-method='numeric'> {{$module.Pvalue}} </td> 
                         </tr> 
                         {{ end }}
                     </table> 
                     </div> 
+
+                    <script> 
+                        $(function(){
+                            new Tablesort(document.getElementById('er-{{$geneset.Name}}-{{$tissue}}')); 
+                        });
+                    </script> 
                 {{ end }} 
             </div> 
             {{ end }} 
         </div> 
 
     </div>
+
+<script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
+
+
 {{ end }} 

@@ -109,6 +109,8 @@ func main() {
 
 	r.HandleFunc("/gene/summary/{gene}", controllers.GeneSummaryHandler)
 
+	r.HandleFunc("/geneset/abstract/{geneset}", controllers.GeneSetAbstractHandler)
+
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissue1}/{tissue2}", controllers.TissueComparisonHandler)
 

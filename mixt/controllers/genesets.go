@@ -2,6 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/fjukstad/kvik/gsea"
+	"github.com/gorilla/mux"
 
 	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 )
@@ -13,8 +17,9 @@ type GeneSet struct {
 }
 
 type ModuleEnrichment struct {
-	Name   string
-	Pvalue float64
+	Name     string
+	Pvalue   float64
+	Abstract string
 }
 
 func SetResults(searchTerms []string) ([]GeneSet, error) {
@@ -49,7 +54,8 @@ func SetResults(searchTerms []string) ([]GeneSet, error) {
 			}
 
 			for _, s := range sc {
-				mes = append(mes, ModuleEnrichment{s.Name, s.UpDownPvalue})
+				abstract, _ := gsea.Abstract(s.Name)
+				mes = append(mes, ModuleEnrichment{s.Name, s.UpDownPvalue, abstract})
 			}
 			ts[tissue] = mes
 		}
@@ -57,4 +63,16 @@ func SetResults(searchTerms []string) ([]GeneSet, error) {
 	}
 
 	return gs, nil
+}
+
+func GeneSetAbstractHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	geneset := vars["geneset"]
+	abstract, _ := gsea.Abstract(geneset)
+	if len(abstract) <= 2 {
+		briefDescription, _ := gsea.BriefDescription(geneset)
+		w.Write([]byte(briefDescription))
+		return
+	}
+	w.Write([]byte(abstract))
 }

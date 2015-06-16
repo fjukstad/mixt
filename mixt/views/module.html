@@ -36,8 +36,6 @@
               <th> Rank </th> 
               <th> Gene ({{len $module.Genes}}) </th>
               <th> Correlation </th>
-              <th> k </th>
-              <th> kin </th>
               <th> Up/Down </th>
             </thead>
             <tbody class="list">
@@ -50,8 +48,6 @@
                                          </a>
                 </td>
                 <td class="correlation"> {{$gene.Correlation}} </td>
-                <td class="k"> {{$gene.K}} </td>
-                <td class="kin"> {{$gene.Kin}} </td>
                 <td class="updown"> {{$gene.Updown}} </td>
               </tr>
               {{ end }}
@@ -91,7 +87,8 @@
                   <tbody class="list">
                     {{ range $set := $sets }}
                     <tr>
-                      <td class="set"> <a class="signature"
+                      <td class="set" data-toggle="tooltip" data-placement="left">
+                          <a class="signature"
                               href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName={{$set.SignatureName}}"
                               target="blank">{{$set.SignatureName}}</a> </td>
                       <td class="size" data-sort-method='numeric'> {{$set.Size}} </td>

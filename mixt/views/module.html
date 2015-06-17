@@ -106,9 +106,25 @@
                     {{ range $set := $sets }}
                     <tr>
                       <td class="set" data-toggle="tooltip" data-placement="left">
-                          <a class="signature"
-                              href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName={{$set.SignatureName}}"
-                              target="blank">{{$set.SignatureName}}</a> </td>
+                    {{if eq $set.SignatureName "Dumeaux_50" "Dumeaux_345" }}
+                        <a class="signature"
+                          href="http://onlinelibrary.wiley.com/doi/10.1002/ijc.29030/abstract"
+                          target="blank">{{$set.SignatureName}}</a>
+                    {{else if eq $set.SignatureName "LaBreche_114" }} 
+                        <a class="signature"
+                          href="http://www.biomedcentral.com/1755-8794/4/61"
+                          target="blank">{{$set.SignatureName}}</a>
+                    {{else if eq $name "i" }}
+                        <a class="signature"
+                          href="http://www.sciencedirect.com/science/article/pii/S1074761308002835"
+                          target="blank">{{$set.SignatureName}}</a>
+                    {{ else }} 
+                        <a class="signature"
+                          href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName={{$set.SignatureName}}"
+                          target="blank">{{$set.SignatureName}}</a> 
+                    {{ end }} 
+                          
+                          </td>
                       <td class="size" data-sort-method='numeric'> {{$set.Size}} </td>
                       <td class="common" data-sort-method='numeric'> {{$set.UpDownCommon}} </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.UpDownPvalue}} </td>

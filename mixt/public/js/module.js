@@ -25,7 +25,8 @@ $(function(){
         })
 
 
- new Tablesort(document.getElementById('gene-table'));
+    $('#gene-table').tablesorter(); 
+
 
  $('#settab a:first').tab('show')
 });

@@ -1,4 +1,5 @@
 {{ define "content" }}
+<script src="/public/js/jquery.tablesorter.js" type="text/javascript" charset="utf-8"></script>
     <div class="container">
         <div class="row">
             <h2> The search returned {{len .Genes}} genes </h2>
@@ -49,25 +50,26 @@
                 {{ range $tissue, $modules := $geneset.TissueSets }} 
                       <div class="col-md-4">
                           <h4> {{ $tissue }} </h4> 
-                          <table class="table table-hover"
-                              id="er-{{$geneset.Name}}-{{$tissue}}"> 
-                        <thead> 
-                            <th> Module </th> 
-                            <th> p-value </th> 
-                        </thead> 
-                        {{ range $index, $module := $modules }}
-                        <tr> 
-                            <td> <a
-                                    href="/modules/{{$tissue}}/{{$module.Name}}">{{$module.Name}}</a></td>
-                            <td data-sort-method='numeric'> {{$module.Pvalue}} </td> 
-                        </tr> 
-                        {{ end }}
-                    </table> 
+                          <table class="table table-hover" id="er-{{$geneset.Name}}-{{$tissue}}"> 
+                            <thead> 
+                                <th> Module </th> 
+                                <th> p-value </th> 
+                            </thead> 
+                            <tbody>
+                            {{ range $index, $module := $modules }}
+                            <tr> 
+                                <td> <a
+                                        href="/modules/{{$tissue}}/{{$module.Name}}">{{$module.Name}}</a></td>
+                                <td> {{$module.Pvalue}} </td> 
+                            </tr> 
+                            {{ end }}
+                            </tbody> 
+                        </table> 
                     </div> 
 
                     <script> 
                         $(function(){
-                            new Tablesort(document.getElementById('er-{{$geneset.Name}}-{{$tissue}}')); 
+                            $(document.getElementById('er-{{$geneset.Name}}-{{$tissue}}')).tablesorter();
                         });
                     </script> 
                 {{ end }} 
@@ -76,8 +78,4 @@
         </div> 
 
     </div>
-
-<script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
-
-
 {{ end }} 

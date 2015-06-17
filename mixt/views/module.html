@@ -1,9 +1,23 @@
 {{ define "content" }}
   
-  <script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
   <script src="/public/js/module.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/public/js/jquery.tablesorter.js" type="text/javascript" charset="utf-8"></script>
   <link rel="stylesheet" type="text/css" href="/public/css/module.css">
 
+  <!-- For scientific notation http://stackoverflow.com/a/5540774/1385324 -->
+  <script> 
+    $.tablesorter.addParser({ 
+    // set a unique id
+    id: 'scinot', 
+    is: function(s) { 
+        return /[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?/.test(s); 
+    }, 
+    format: function(s) { 
+        return $.tablesorter.formatFloat(s);
+    }, 
+    type: 'numeric' 
+    });
+  </script> 
 
 <div class="container-fluid">
   <div class="col-md-1 scrollnav" id="scrollnav" >
@@ -44,14 +58,12 @@
               <th> Correlation </th>
               <th> Up/Down </th>
             </thead>
-            <tbody class="list">
+            <tbody>
               {{ range $rank, $gene := $module.Genes }}
               <tr>
                 <td class="rank"> {{$rank}} </td> 
                 <td class="name" data-toggle="tooltip" data-placement="left" id="{{.Name}}">
-                  <a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">
-                                            {{$gene.Name}}
-                                         </a>
+                  <a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">{{$gene.Name}}</a>
                 </td>
                 <td class="correlation"> {{$gene.Correlation}} </td>
                 <td class="updown"> {{$gene.Updown}} </td>
@@ -118,7 +130,7 @@
     <script>
       $(function() {
         {{range $name, $sets := .EnrichmentScores.Sets}}
-        new Tablesort(document.getElementById('score-table-{{$module.Name}}-{{$name}}'));
+        $('#score-table-{{$module.Name}}-{{$name}}').tablesorter(); 
         $('#settab-{{$module.Name}} a:first').tab('show')
         {{end}}
       });

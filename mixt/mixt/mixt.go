@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/fjukstad/kvik/kompute"
@@ -113,7 +114,7 @@ type Module struct {
 
 type Gene struct {
 	Name        string
-	Correlation float64
+	Correlation string
 	K           float64
 	Kin         float64
 	Updown      string
@@ -265,14 +266,24 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 			updown = "up"
 		}
 
+		cor, err := strconv.ParseFloat(record[2], 64)
+		if err != nil {
+			fmt.Println("Could not parse float :( ", err)
+			return []Gene{}, "", err
+		}
+
+		c := fmt.Sprintf("%.4g", cor)
+
 		g := Gene{Name: name,
-			Correlation: 0,
+			Correlation: c,
 			K:           0,
 			Kin:         0,
 			Updown:      updown}
 
 		genes = append(genes, g)
 	}
+
+	fmt.Println("WE GOT", len(genes), "genes")
 
 	url = session.GetUrl("csv")
 	url = strings.Replace(url, "opencpu", "docker0.bci.mcgill.ca", -1)

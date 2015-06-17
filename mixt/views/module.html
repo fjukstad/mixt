@@ -1,4 +1,10 @@
 {{ define "content" }}
+  
+  <script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/public/js/module.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" type="text/css" href="/public/css/module.css">
+
+
 <div class="container-fluid">
   <div class="col-md-1 scrollnav" id="scrollnav" >
     <ul class="nav navigator nav-stacked affix-top" data-spy="affix">
@@ -109,7 +115,6 @@
         </div>
       </div>
     </section> 
-
     <script>
       $(function() {
         {{range $name, $sets := .EnrichmentScores.Sets}}
@@ -121,11 +126,6 @@
   </section>
   <hr class="module">
   {{ end }}
-
-  <script src="/public/js/list.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/public/js/tablesort.numeric.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/public/js/module.js" type="text/javascript" charset="utf-8"></script>
-  <link rel="stylesheet" type="text/css" href="/public/css/module.css">
-
+  </div> 
 {{ end }}
 

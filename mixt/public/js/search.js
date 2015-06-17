@@ -36,4 +36,27 @@ $(function() {
             $(this).trigger("enterKey");
         }
     }) 
+
+    $('input#search').on('focus', function(){
+        $(this).animate({
+            width: '100%'
+            }, 400, function(){
+            }); 
+        $(".ui-widget").animate({
+            width: '70%'
+        }, 400, function(){
+        }); 
+    })
+
+
+    $('input#search').on('blur', function(){
+        $(this).animate({
+            width: '100%'
+            }, 400, function(){
+            }); 
+        $(".ui-widget").animate({
+            width: '10%'
+        }, 400, function(){
+        }); 
+    })
 });

@@ -43,7 +43,7 @@ $(function() {
             }, 400, function(){
             }); 
         $(".ui-widget").animate({
-            width: '70%'
+            width: '500px'
         }, 400, function(){
         }); 
     })

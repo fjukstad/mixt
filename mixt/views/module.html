@@ -92,10 +92,10 @@
                       <thead>
                           <th> GO.ID </th>
                           <th> Term </th> 
-                          <th> Annotated </th> 
-                          <th> Significant </th> 
+                          <th> Size </th> 
+                          <th> Common </th> 
                           <th> Expected </th> 
-                          <th> Classic Fisher </th> 
+                          <th> Raw p-value <small>(not adjusted for multiple testing)</small> </th> 
                       </thead>
                       <tbody>
                         {{ range $index, $term := $module.GOTerms }}

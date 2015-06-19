@@ -78,14 +78,40 @@
       <div class="row" id="{{$module.Name}}-enrichment">
         <div class="col-sm-11 col-md-11 col-lg-11" id="set-table" role="tabpanel">
             <ul class="nav nav-tabs" role="tablist" id="settab-{{$module.Name}}">
+            <li role="presentation"><a href="#gotab" aria-controls="goterms" role="tab" data-toggle="tab">GO terms</a></li>
             {{ range $name, $set := .EnrichmentScores.Sets }}
             <li role="presentation"><a href="#{{$module.Name}}-{{$name}}" aria-controls="{{$module.Name}}-{{$name}}" role="tab" data-toggle="tab">
                             {{$name}} </a>
             </li>
             {{ end }}
-            <li role="presentation"><a href="#gotab" aria-controls="goterms" role="tab" data-toggle="tab">GO terms</a></li>
           </ul>
           <div class="tab-content">
+            <div role="tabpanel" class="tab-pane" id="gotab">
+              <div class="table-responsive" id="scores">
+                  <table class="table table-hover" id="goterms">
+                      <thead>
+                          <th> GO.ID </th>
+                          <th> Term </th> 
+                          <th> Annotated </th> 
+                          <th> Significant </th> 
+                          <th> Expected </th> 
+                          <th> Classic Fisher </th> 
+                      </thead>
+                      <tbody>
+                        {{ range $index, $term := $module.GOTerms }}
+                            <tr> 
+                                <td> {{$term.GOId }} </td> 
+                                <td><a href="http://amigo.geneontology.org/amigo/term/{{$term.GOId}}">{{$term.Term }}</a></td> 
+                                <td> {{$term.Annotated }} </td> 
+                                <td> {{$term.Significant }} </td> 
+                                <td> {{$term.Expected }} </td> 
+                                <td> {{$term.ClassicFisher }} </td> 
+                            </tr> 
+                        {{end}}
+                      </tbody> 
+                  </table>
+                </div>
+            </div> 
             {{ range $name, $sets := .EnrichmentScores.Sets }}
             <div role="tabpanel" class="tab-pane" id="{{$module.Name}}-{{$name}}">
               <div class="table-responsive" id="scores">
@@ -140,35 +166,6 @@
               </div>
             </div>
             {{ end }}
-            
-            <div role="tabpanel" class="tab-pane" id="gotab">
-              <div class="table-responsive" id="scores">
-                  <table class="table table-hover" id="goterms">
-                      <thead>
-                          <th> GO.ID </th>
-                          <th> Term </th> 
-                          <th> Annotated </th> 
-                          <th> Significant </th> 
-                          <th> Expected </th> 
-                          <th> Classic Fisher </th> 
-                      </thead>
-                      <tbody>
-                        {{ range $index, $term := $module.GOTerms }}
-                            <tr> 
-                                <td> {{$term.GOId }} </td> 
-                                <td><a href="http://amigo.geneontology.org/amigo/term/{{$term.GOId}}">{{$term.Term }}</a></td> 
-                                <td> {{$term.Annotated }} </td> 
-                                <td> {{$term.Significant }} </td> 
-                                <td> {{$term.Expected }} </td> 
-                                <td> {{$term.ClassicFisher }} </td> 
-                            </tr> 
-                        {{end}}
-                      </tbody> 
-                  </table>
-                </div>
-            </div> 
-
-
           </div>
         </div>
       </div>

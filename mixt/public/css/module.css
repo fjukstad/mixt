@@ -51,3 +51,16 @@ hr.module {
 .nav .nav a {
     font-size: .8em;
 }
+
+th.headerSortUp { 
+    background-image: url(/public/img/small_asc.gif); 
+} 
+
+th.headerSortDown { 
+    background-image: url(/public/img/small_desc.gif); 
+} 
+th.header { 
+    background-image: url(/public/img/bg.gif); 
+    background-repeat: no-repeat; 
+    background-position: right;
+}

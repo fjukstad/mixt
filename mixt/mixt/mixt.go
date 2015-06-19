@@ -109,6 +109,7 @@ type Module struct {
 	HeatmapUrl       string
 	Genes            []Gene
 	EnrichmentScores EnrichmentScores
+	GOTerms          []GOTerm
 	Url              string
 }
 
@@ -158,7 +159,7 @@ func GetModules(tissue string) ([]Module, error) {
 					return
 				}
 			*/
-			m := Module{moduleNames[i], "", nil, EnrichmentScores{}, ""}
+			m := Module{moduleNames[i], "", nil, EnrichmentScores{}, []GOTerm{}, ""}
 			resChan <- m
 		}(i)
 	}
@@ -210,21 +211,29 @@ func GetModule(name string, tissue string) (Module, error) {
 		return Module{}, err
 	}
 
-	module := Module{name, heatmapUrl, genes, scores, url}
+	goterms, err := GetGOTerms(name, tissue, "")
+	if err != nil {
+		fmt.Println("Could not get goterms", err)
+		return Module{}, err
+	}
+
+	module := Module{name, heatmapUrl, genes, scores, goterms, url}
 	return module, nil
 }
 
 func GetGeneList(module, tissue string) (genes []Gene, url string,
 	err error) {
-	session, err := komp.Call("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
-					"module":`+"\""+module+"\""+`}`)
+	var args string
+	args = `{"tissue": ` + "\"" + tissue + "\"" + `,
+					"module":` + "\"" + module + "\"" + `}`
+
+	session, err := komp.Call("mixt/R/getGeneList", args)
 
 	if err != nil {
 		fmt.Println("Call failed one time, trying again. ")
 		fmt.Println(session, err)
 
-		session, err = komp.Call("mixt/R/getGeneList", `{"tissue": `+"\""+tissue+"\""+`,
-					"module":`+"\""+module+"\""+`}`)
+		session, err = komp.Call("mixt/R/getGeneList", args)
 		if err != nil {
 			fmt.Println("Call failed for the second time :( ")
 			return nil, "", err
@@ -292,15 +301,15 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 }
 
 type Score struct {
-	Set          string  `json:"set"`
+	Set          string  `json:"sig.set"`
 	Name         string  `json:"_row"`
-	Size         int     `json:"sig.size"`
-	UpDownCommon int     `json:"updn.common"`
-	UpDownPvalue float64 `json:"updn.p"`
-	UpCommon     int     `json:"up.common"`
-	UpPvalue     float64 `json:"up.p"`
-	DownCommon   int     `json:"dn.common"`
-	DownPvalue   float64 `json:"dn.p"`
+	Size         int     `json:"sig.size,string"`
+	UpDownCommon int     `json:"updn.common,string"`
+	UpDownPvalue float64 `json:"updn.p,string"`
+	UpCommon     int     `json:"up.common,string"`
+	UpPvalue     float64 `json:"up.p,string"`
+	DownCommon   int     `json:"dn.common,string"`
+	DownPvalue   float64 `json:"dn.p,string"`
 	Tissue       string  `json:"tissue,omitempty"`
 }
 
@@ -341,7 +350,8 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, er
 	var scores []Score
 	err = json.Unmarshal(res, &scores)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Unm", err)
+		fmt.Println(res)
 		return EnrichmentScores{}, err
 	}
 
@@ -420,5 +430,41 @@ func GetEnrichmentForTissue(tissue, geneset string) ([]Score, error) {
 	var modulescores []Score
 	err = json.Unmarshal(res, &modulescores)
 	return modulescores, err
+
+}
+
+type GOTerm struct {
+	GOId          string `json:"GO.ID"`
+	Term          string
+	Annotated     int
+	Significant   int
+	Expected      float64
+	ClassicFisher string `json:"classicFisher"`
+}
+
+func GetGOTerms(module, tissue, terms string) ([]GOTerm, error) {
+
+	var args string
+	if len(terms) < 1 {
+		args = `{"tissue": ` + "\"" + tissue + "\"" + `,
+		"module":` + "\"" + module + "\"" + `}`
+	} else {
+
+		args = `{"tissue": ` + "\"" + tissue + "\"" + `,
+		"module":` + "\"" + module + "\"" + `, 
+		"terms":` + "\"" + terms + "\"" + `}`
+	}
+
+	resp, err := komp.Rpc("mixt/R/getGOTerms", args, "json")
+
+	if err != nil {
+		return []GOTerm{}, err
+	}
+
+	res := []byte(resp)
+
+	var goterms []GOTerm
+	err = json.Unmarshal(res, &goterms)
+	return goterms, err
 
 }

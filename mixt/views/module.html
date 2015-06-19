@@ -83,6 +83,7 @@
                             {{$name}} </a>
             </li>
             {{ end }}
+            <li role="presentation"><a href="#gotab" aria-controls="goterms" role="tab" data-toggle="tab">GO terms</a></li>
           </ul>
           <div class="tab-content">
             {{ range $name, $sets := .EnrichmentScores.Sets }}
@@ -139,6 +140,35 @@
               </div>
             </div>
             {{ end }}
+            
+            <div role="tabpanel" class="tab-pane" id="gotab">
+              <div class="table-responsive" id="scores">
+                  <table class="table table-hover" id="goterms">
+                      <thead>
+                          <th> GO.ID </th>
+                          <th> Term </th> 
+                          <th> Annotated </th> 
+                          <th> Significant </th> 
+                          <th> Expected </th> 
+                          <th> Classic Fisher </th> 
+                      </thead>
+                      <tbody>
+                        {{ range $index, $term := $module.GOTerms }}
+                            <tr> 
+                                <td> {{$term.GOId }} </td> 
+                                <td><a href="http://amigo.geneontology.org/amigo/term/{{$term.GOId}}">{{$term.Term }}</a></td> 
+                                <td> {{$term.Annotated }} </td> 
+                                <td> {{$term.Significant }} </td> 
+                                <td> {{$term.Expected }} </td> 
+                                <td> {{$term.ClassicFisher }} </td> 
+                            </tr> 
+                        {{end}}
+                      </tbody> 
+                  </table>
+                </div>
+            </div> 
+
+
           </div>
         </div>
       </div>
@@ -149,6 +179,8 @@
         $('#score-table-{{$module.Name}}-{{$name}}').tablesorter(); 
         $('#settab-{{$module.Name}} a:first').tab('show')
         {{end}}
+
+        $("#goterms").tablesorter(); 
       });
     </script>
   </section>

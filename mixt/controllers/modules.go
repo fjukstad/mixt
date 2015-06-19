@@ -50,11 +50,6 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		modules = append(modules, m)
-		goterms, err := mixt.GetGOTerms(module, tissue, "")
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(goterms)
 	}
 
 	moduleTemplate.Execute(w, Modules{modules})

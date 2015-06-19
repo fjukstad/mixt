@@ -305,11 +305,11 @@ type Score struct {
 	Name         string  `json:"_row"`
 	Size         int     `json:"sig.size,string"`
 	UpDownCommon int     `json:"updn.common,string"`
-	UpDownPvalue float64 `json:"updn.p,string"`
+	UpDownPvalue float64 `json:"updn.pval,string"`
 	UpCommon     int     `json:"up.common,string"`
-	UpPvalue     float64 `json:"up.p,string"`
+	UpPvalue     float64 `json:"up.pval,string"`
 	DownCommon   int     `json:"dn.common,string"`
-	DownPvalue   float64 `json:"dn.p,string"`
+	DownPvalue   float64 `json:"dn.pval,string"`
 	Tissue       string  `json:"tissue,omitempty"`
 }
 
@@ -338,11 +338,7 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, er
 
 	if err != nil {
 		fmt.Println("Could not get enrich")
-		resp, err = komp.Rpc("mixt/R/getEnrichmentScores", args, "json")
-		if err != nil {
-			fmt.Println("Enrichment scores failed 2 times")
-			return EnrichmentScores{}, err
-		}
+		return EnrichmentScores{}, err
 	}
 
 	res := []byte(resp)

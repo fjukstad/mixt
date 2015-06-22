@@ -29,10 +29,7 @@ func Heatmap(tissue, module string) (string, error) {
 		return "", err
 	}
 
-	plotUrl := session.Graphics
-
-	// Since we don't have a dns thing for opencpu
-	plotUrl = strings.Replace(plotUrl, "opencpu", "docker0.bci.mcgill.ca", -1)
+	plotUrl := session.Key
 
 	return plotUrl, nil
 }
@@ -106,6 +103,7 @@ func GetTissues() ([]string, error) {
 
 type Module struct {
 	Name             string
+	Tissue           string
 	HeatmapUrl       string
 	Genes            []Gene
 	EnrichmentScores EnrichmentScores
@@ -159,13 +157,14 @@ func GetModules(tissue string) ([]Module, error) {
 					return
 				}
 			*/
-			m := Module{moduleNames[i], "", nil, EnrichmentScores{}, []GOTerm{}, ""}
+			m := Module{moduleNames[i], tissue, "", nil, EnrichmentScores{}, []GOTerm{}, ""}
 			resChan <- m
 		}(i)
 	}
 
 	for range moduleNames {
 		m := <-resChan
+		m.Tissue = tissue
 		modules = append(modules, m)
 	}
 
@@ -217,7 +216,7 @@ func GetModule(name string, tissue string) (Module, error) {
 		return Module{}, err
 	}
 
-	module := Module{name, heatmapUrl, genes, scores, goterms, url}
+	module := Module{name, tissue, heatmapUrl, genes, scores, goterms, url}
 	return module, nil
 }
 
@@ -294,10 +293,7 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 
 	fmt.Println("WE GOT", len(genes), "genes")
 
-	url = session.GetUrl("csv")
-	url = strings.Replace(url, "opencpu", "docker0.bci.mcgill.ca", -1)
-
-	return genes, url, nil
+	return genes, session.Key, nil
 }
 
 type Score struct {
@@ -463,4 +459,8 @@ func GetGOTerms(module, tissue, terms string) ([]GOTerm, error) {
 	err = json.Unmarshal(res, &goterms)
 	return goterms, err
 
+}
+
+func Get(key, filetype string) ([]byte, error) {
+	return komp.Get(key, filetype)
 }

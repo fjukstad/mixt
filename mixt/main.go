@@ -114,6 +114,8 @@ func main() {
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissue1}/{tissue2}", controllers.TissueComparisonHandler)
 
+	r.HandleFunc("/resources/{key}/{filetype}/{name}", controllers.FileHandler)
+
 	addr := "opencpu:80"
 	username := "biopsy@mcgill"
 	password := "van-mi-ka-al"

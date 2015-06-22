@@ -41,11 +41,15 @@
     <div class="row" id="{{$module.Name}}-module">
       <div class="col-sm-5 col-md-5 col-lg-5">
         <!-- <h2> {{.Name}} </h2> -->
-        <a href="{{$module.HeatmapUrl}}/pdf">
-          <img src={{$module.HeatmapUrl}}/png id="module-heatmap"></img>
+        <a href="/resources/{{$module.HeatmapUrl}}/pdf/heatmap.pdf"
+            download="{{$module.Name}}-{{$module.Tissue}}-heatmap.pdf"
+            target="_blank">
+          <img src="/resources/{{$module.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
         </a>
         <span id="download-link">
-          <a href="{{$module.Url}}">Download gene list</a>
+          <a href="/resources/{{$module.Url}}/csv/genelist.csv" 
+              download="{{$module.Name}}-{{$module.Tissue}}-genelist.csv"
+              target="_blank">Download gene list</a>
         </span>
         </hr>
       </div>

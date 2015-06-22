@@ -8,7 +8,6 @@ $(function(){
             $.get(url, function(d){
                 n.attr("title", d) 
                 n.tooltip('show') 
-                console.log(d)
             }); 
         }); 
 
@@ -20,7 +19,6 @@ $(function(){
             $.get(url, function(d){
                 n.attr("title", d) 
                 n.tooltip('show') 
-                console.log(d)
             }); 
         })
 

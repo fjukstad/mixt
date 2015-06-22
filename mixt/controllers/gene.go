@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -73,4 +74,33 @@ func GeneSummaryHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte(summary))
 
+}
+
+type Common struct {
+	Genes []string
+}
+
+func CommonGenesHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	module := vars["module"]
+	tissue := vars["tissue"]
+	geneset := vars["geneset"]
+	status := vars["status"]
+
+	commonGenes, err := mixt.GetCommonGenes(tissue, module, geneset, status)
+	if err != nil {
+		fmt.Println("Could not get common genes", err)
+		return
+	}
+
+	common := Common{commonGenes}
+
+	b, err := json.Marshal(common)
+	if err != nil {
+		fmt.Println("Could not marshal common genes", err)
+		return
+	}
+
+	w.Write(b)
 }

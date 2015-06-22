@@ -67,6 +67,32 @@ func GetGenes() ([]string, error) {
 	return genes, nil
 }
 
+func GetCommonGenes(tissue, module, geneset, status string) ([]string, error) {
+	if status == "" {
+		status = "updn.common"
+	}
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
+					"module":` + "\"" + module + "\"" + `,
+					"geneset":` + "\"" + geneset + "\"" + `,
+					"status": ` + "\"" + status + "\"" + `}`
+
+	resp, err := komp.Rpc("mixt/R/getCommonGenes", args, "json")
+	if err != nil {
+		fmt.Println("Could not get common genes", err)
+		return []string{}, err
+	}
+
+	geneNames := make([]string, 0)
+	err = json.Unmarshal([]byte(resp), &geneNames)
+	if err != nil {
+		fmt.Println("Could not unmarshal gene names", err)
+		return []string{}, err
+	}
+	return geneNames, nil
+
+}
+
 func GetAllModuleNames(gene string) ([]string, error) {
 	resp, err := komp.Rpc("mixt/R/getAllModules", `{"gene": `+"\""+gene+"\""+`}`, "json")
 	if err != nil {

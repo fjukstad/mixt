@@ -157,12 +157,24 @@
                           
                           </td>
                       <td class="size" data-sort-method='numeric'> {{$set.Size}} </td>
-                      <td class="common" data-sort-method='numeric'> {{$set.UpDownCommon}} </td>
+                      <td class="common" data-sort-method='numeric'>
+                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/updn.common" target="_blank">
+                              {{$set.UpDownCommon}}
+                           </a>
+                       </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.UpDownPvalue}} </td>
-                      <td class="common" data-sort-method='numeric'> {{$set.UpCommon}} </td>
+                      <td class="common-up" data-sort-method='numeric'> 
+                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/up.common" target="_blank">                          
+                          {{$set.UpCommon}}
+                            </a>
+                        </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.UpPvalue}} </td>
-                      <td class="common" data-sort-method='numeric'> {{$set.DownCommon}} </td>
+                      <td class="common-down" data-sort-method='numeric'>
+                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/dn.common" target="_blank">                          
+                              {{$set.DownCommon}}</a> </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.DownPvalue}} </td>
+
+
                     </tr>
                     {{ end }}
                   </tbody>
@@ -170,6 +182,43 @@
               </div>
             </div>
             {{ end }}
+                    <script> 
+                        var baseUrl = "http://"+ location.hostname + ":" + location.port
+
+                        $("td.common").mouseover(
+                            function (d){
+                                    set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
+                                    n = $(this) 
+                                    url = baseUrl + "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/updn.common"
+                                    $.get(url, function(d) {
+                                        d = JSON.parse(d) 
+                                        n.attr("title", d.Genes)
+                                    })
+                            }
+                        ); 
+                        $("td.common-up").mouseover(
+                        function (d){
+                                    set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
+                                    n = $(this) 
+                                    url = baseUrl + "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/up.common"
+                                    $.get(url, function(d) {
+                                        d = JSON.parse(d) 
+                                        n.attr("title", d.Genes)
+                                    })
+                            }); 
+        
+                        $("td.common-down").mouseover(
+                                 
+                        function (d){
+                                    set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
+                                    n = $(this) 
+                                    url = baseUrl + "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/dn.common"
+                                    $.get(url, function(d) {
+                                        d = JSON.parse(d) 
+                                        n.attr("title", d.Genes)
+                                    })
+                            }); 
+                    </script>
           </div>
         </div>
       </div>

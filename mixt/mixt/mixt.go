@@ -452,12 +452,14 @@ func GetEnrichmentForTissue(tissue, geneset string) ([]Score, error) {
 }
 
 type GOTerm struct {
-	GOId          string `json:"GO.ID"`
-	Term          string
-	Annotated     int
-	Significant   int
-	Expected      float64
-	ClassicFisher string `json:"classicFisher"`
+	GOId           string `json:"GO.ID"`
+	Term           string
+	Annotated      int
+	Significant    int
+	Expected       float64
+	ClassicFisher  string `json:"classicFisher"`
+	Weight01Fisher string `json:"weight01Fisher"`
+	Rank           int    `json:"Rank in weight01Fisher"`
 }
 
 func GetGOTerms(module, tissue, terms string) ([]GOTerm, error) {

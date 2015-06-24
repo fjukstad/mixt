@@ -14,7 +14,7 @@ var s = securecookie.New(
 func LoggedIn(r *http.Request) bool {
 	username := GetUsername(r)
 	if username == "" {
-		//	return false
+		return false
 	}
 	fmt.Println("User is logged in as", username)
 	return true
@@ -24,7 +24,7 @@ func GetUsername(r *http.Request) string {
 	cookie, err := r.Cookie("session")
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("could not get cookie", err)
 		return ""
 	}
 
@@ -32,7 +32,7 @@ func GetUsername(r *http.Request) string {
 
 	err = s.Decode("session", cookie.Value, &val)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("session decode error:", err, cookie.Value)
 		return ""
 	}
 

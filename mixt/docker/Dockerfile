@@ -16,13 +16,15 @@ RUN apt-get update && apt-get install -y \
     automake \
     sshfs \ 
     nfs-common \
-    vim
+    vim \ 
+    python3
 
 RUN go get github.com/PuerkitoBio/goquery && \
     go get github.com/fjukstad/gocache && \
     go get github.com/gorilla/mux && \
     go get github.com/gorilla/securecookie && \
-    go get code.google.com/p/gcfg
+    go get code.google.com/p/gcfg && \
+    go get github.com/codegangsta/negroni
 
 RUN mkdir -p /go/src/github.com/fjukstad
 RUN mkdir -p /go/src/bitbucket.org/vdumeaux/mixt
@@ -37,5 +39,4 @@ VOLUME /go/src/bitbucket.org/vdumeaux/mixt
 EXPOSE 8080
 
 WORKDIR /go/src/bitbucket.org/vdumeaux/mixt/mixt/
-
-ENTRYPOINT go run main.go
+#ENTRYPOINT go run main.go

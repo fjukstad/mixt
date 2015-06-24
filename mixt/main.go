@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"text/template"
 
 	"code.google.com/p/gcfg"
@@ -14,6 +15,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
+
+	"github.com/codegangsta/negroni"
 )
 
 var outsideTemplate = template.Must(template.ParseFiles("views/base.html",
@@ -85,6 +88,29 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	outsideTemplate.Execute(w, e)
 }
 
+func AuthMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	// any request to /public is open to anyone
+	if strings.HasPrefix(r.URL.Path, "/public") {
+		next(w, r)
+		return
+	}
+
+	// don't have to be logged in to log in...
+	if strings.HasPrefix(r.URL.Path, "/login") {
+		next(w, r)
+		return
+	}
+
+	// auth user
+	if controllers.LoggedIn(r) {
+		next(w, r)
+		return
+	} else {
+		e := Error{"Please log in."}
+		outsideTemplate.Execute(w, e)
+	}
+}
+
 func main() {
 
 	err := gcfg.ReadFileInto(&cfg, "config.gcfg")
@@ -125,8 +151,10 @@ func main() {
 
 	http.Handle("/", r)
 
-	fmt.Println("Starting mixt app on port 8004")
+	n := negroni.New(negroni.HandlerFunc(AuthMiddleware))
+	n.UseHandler(r)
 
-	log.Fatal(http.ListenAndServe(":8004", nil))
+	fmt.Println("Starting mixt app on port 8004")
+	log.Fatal(http.ListenAndServe(":8004", n))
 
 }

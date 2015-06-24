@@ -29,11 +29,6 @@ type Modules struct {
 }
 
 func ModuleHandler(w http.ResponseWriter, r *http.Request) {
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	vars := mux.Vars(r)
 	mods := vars["modules"]
 	tissue := vars["tissue"]
@@ -56,11 +51,6 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ModulesHandler(w http.ResponseWriter, r *http.Request) {
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	//vars := mux.Vars(r)
 	//tissue := vars["tissue"]
 

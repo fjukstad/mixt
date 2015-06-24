@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 	"text/template"
+
+	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 
 	"github.com/gorilla/mux"
 )
@@ -21,11 +22,6 @@ type SearchResponse struct {
 }
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	vars := mux.Vars(r)
 	term := vars["term"]
 	result, err := SearchForGene(term)
@@ -99,11 +95,6 @@ type SearchResults struct {
 }
 
 func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	vars := mux.Vars(r)
 	term := vars["terms"]
 	searchTerms := strings.Split(term, " ")

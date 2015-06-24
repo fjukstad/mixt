@@ -25,11 +25,6 @@ var tissueComparisonTemplate = template.Must(template.ParseFiles("views/base.htm
 	"views/tissue-comparison.html", "views/footer.html"))
 
 func TissuesHandler(w http.ResponseWriter, r *http.Request) {
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	tissues, err := mixt.GetTissues()
 	if err != nil {
 		fmt.Println("getting tissues went bad:", err)
@@ -52,10 +47,5 @@ func TissuesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func TissueComparisonHandler(w http.ResponseWriter, r *http.Request) {
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	tissueComparisonTemplate.Execute(w, nil)
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -87,6 +88,7 @@ func CommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 	tissue := vars["tissue"]
 	geneset := vars["geneset"]
 	status := vars["status"]
+	output := vars["output"]
 
 	commonGenes, err := mixt.GetCommonGenes(tissue, module, geneset, status)
 	if err != nil {
@@ -96,11 +98,30 @@ func CommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 
 	common := Common{commonGenes}
 
-	b, err := json.Marshal(common)
-	if err != nil {
-		fmt.Println("Could not marshal common genes", err)
+	if output == "json" {
+		b, err := json.Marshal(common)
+		if err != nil {
+			fmt.Println("Could not marshal common genes", err)
+			return
+		}
+
+		w.Write(b)
 		return
 	}
 
-	w.Write(b)
+	h := w.Header()
+	filename := tissue + "-" + module + "-" + geneset + "-" + status + ".csv"
+	h.Add("Content-Disposition", "attachment;filename="+filename)
+
+	header := []string{"Gene"}
+	var records [][]string
+	records = append(records, header)
+	for _, gene := range commonGenes {
+		entry := []string{gene}
+		records = append(records, entry)
+	}
+
+	writer := csv.NewWriter(w)
+	writer.WriteAll(records)
+
 }

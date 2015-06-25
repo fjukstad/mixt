@@ -134,7 +134,7 @@ func main() {
 	r.HandleFunc("/search/results/{terms}", controllers.SearchResultHandler)
 
 	r.HandleFunc("/gene/summary/{gene}", controllers.GeneSummaryHandler)
-	r.HandleFunc("/common/{tissue}/{module}/{geneset}/{status}", controllers.CommonGenesHandler)
+	r.HandleFunc("/common/{tissue}/{module}/{geneset}/{status}/{output}", controllers.CommonGenesHandler)
 
 	r.HandleFunc("/geneset/abstract/{geneset}", controllers.GeneSetAbstractHandler)
 

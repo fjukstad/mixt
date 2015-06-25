@@ -190,7 +190,8 @@
                             function (d){
                                     set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
                                     n = $(this) 
-                                    url = baseUrl + "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/updn.common"
+                                    url = baseUrl +
+                            "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/updn.common/json"
                                     $.get(url, function(d) {
                                         d = JSON.parse(d) 
                                         n.attr("title", d.Genes)
@@ -201,7 +202,8 @@
                         function (d){
                                     set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
                                     n = $(this) 
-                                    url = baseUrl + "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/up.common"
+                                    url = baseUrl +
+                            "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/up.common/json"
                                     $.get(url, function(d) {
                                         d = JSON.parse(d) 
                                         n.attr("title", d.Genes)
@@ -213,7 +215,8 @@
                         function (d){
                                     set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
                                     n = $(this) 
-                                    url = baseUrl + "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/dn.common"
+                                    url = baseUrl +
+                            "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/dn.common/json"
                                     $.get(url, function(d) {
                                         d = JSON.parse(d) 
                                         n.attr("title", d.Genes)

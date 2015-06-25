@@ -1,0 +1,38 @@
+{{ define "navbar" }} 
+<div class="navbar yamm" id="topnav">
+    <a class="navbar-brand" href="/">MIxT</a>
+    <ul class="nav navbar-nav">
+        <li class="dropdown"><a data-toggle="dropdown" href="/modules">Modules</a>
+            <ul class="dropdown-menu">
+                <li> 
+                <div class="yamm-content">
+                    <div class="row">
+                        <ul class="col-sm-6 col-sm-offset-3"> 
+                        <p>
+                            <h4><a href="/modules">Select multiple</a></h4> 
+                        </p> 
+                        </ul> 
+                    </div>
+                        <div class="row">
+                        {{ range $tissue, $modules := .Overview.Modules }}                 
+                        <ul class="col-sm-4 list-unstyled">
+                        <li><p><strong>{{$tissue}}</strong></p></li>
+                        {{ range $modules }} 
+                        <li><a href="/modules/{{ $tissue }}/{{ .Name }}"> {{ .Name }} </a></li>
+                        {{end }} 
+                        </ul> 
+                       {{ end }} 
+                   </div>
+               </div>
+            </ul>
+        </li>
+        <li><a href="/tissues">Compare Tissues</a></li>
+    </ul>
+
+    <div class="ui-widget">
+          <label for="search"></label>
+          <input id="search"></input> 
+          <i class="glyphicon glyphicon-search form-control-feedback"></i>
+    </div>
+</div> 
+{{ end }} 

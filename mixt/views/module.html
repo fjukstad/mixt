@@ -161,19 +161,21 @@
                           </td>
                       <td class="size" data-sort-method='numeric'> {{$set.Size}} </td>
                       <td class="common" data-sort-method='numeric'>
-                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/updn.common/csv" target="_blank" download>
+                          <a
+                              href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/updn.common/csv"
+                              target="_blank">
                               {{$set.UpDownCommon}}
                            </a>
                        </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.UpDownPvalue}} </td>
                       <td class="common-up" data-sort-method='numeric'> 
-                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/up.common/csv" target="_blank" download>                          
+                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/up.common/csv" target="_blank">                          
                           {{$set.UpCommon}}
                             </a>
                         </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.UpPvalue}} </td>
                       <td class="common-down" data-sort-method='numeric'>
-                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/dn.common/csv" target="_blank" download>                          
+                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/dn.common/csv" target="_blank">                          
                               {{$set.DownCommon}}</a> </td>
                       <td class="p-value" data-sort-method='numeric'> {{$set.DownPvalue}} </td>
                     </tr>

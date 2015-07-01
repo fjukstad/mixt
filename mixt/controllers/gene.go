@@ -109,10 +109,6 @@ func CommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h := w.Header()
-	filename := tissue + "-" + module + "-" + geneset + "-" + status + ".csv"
-	h.Add("Content-Disposition", "attachment;filename="+filename)
-
 	header := []string{"Gene"}
 	var records [][]string
 	records = append(records, header)

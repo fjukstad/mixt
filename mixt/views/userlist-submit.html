@@ -1,0 +1,26 @@
+{{ define "content"}} 
+<script src="/public/js/dropzone.js" type="text/javascript" charset="utf-8"></script>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <small> Work in progess! </small>
+            <div class="container" id="genedrop">
+                <div class="dz-message">
+                    <h4> Drop a gene list here to start the analysis </h4> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(function(){
+        var drop = new Dropzone("div#genedrop", {url:"/userlist/submit"});
+        drop.on("success", function(a,url){
+            window.location.replace(url) 
+            });
+    });
+</script>
+{{ end }} 

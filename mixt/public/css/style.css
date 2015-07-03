@@ -61,3 +61,23 @@ span#download-link {
 body { 
     height: 100%;
 }
+
+a.userlist { 
+    color: rgba(255, 97, 0, 0.61);
+}
+#genedrop {
+    height: 100%;
+    width: 100%;
+
+    background-color: #f1f1f1;
+}
+
+div.dz-drag-hover {
+    background-color: rgba(255, 97, 0, 0.61) !important;
+}
+
+div.dz-message { 
+    left:30%;
+    top:50%;
+    position:absolute;    
+}

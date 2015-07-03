@@ -143,6 +143,10 @@ func main() {
 
 	r.HandleFunc("/resources/{key}/{filetype}/{name}", controllers.FileHandler)
 
+	r.HandleFunc("/userlist", controllers.UserListHandler)
+	r.HandleFunc("/userlist/submit", controllers.UserListSubmitHandler)
+	r.HandleFunc("/userlist/result/{listname}/{genes}", controllers.UserListResultHandler)
+
 	addr := "opencpu:80"
 	username := "biopsy@mcgill"
 	password := "van-mi-ka-al"

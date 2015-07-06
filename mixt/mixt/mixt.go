@@ -492,3 +492,37 @@ func GetGOTerms(module, tissue, terms string) ([]GOTerm, error) {
 func Get(key, filetype string) ([]byte, error) {
 	return komp.Get(key, filetype)
 }
+
+type UserScore struct {
+	PValue float64 `json:"p-value"`
+	Module string  `json:"module"`
+}
+
+func UserEnrichmentScores(tissue string, genelist []string) ([]UserScore, error) {
+
+	var fmtgenelist []string
+	for i, _ := range genelist {
+		fmtgenelist = append(fmtgenelist, "\""+genelist[i]+"\"")
+	}
+
+	genes := "["
+	genes += strings.Join(fmtgenelist, ", ")
+	genes += "]"
+
+	fmt.Println(tissue)
+	fmt.Println(genes)
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"genelist":` + genes + `}`
+
+	resp, err := komp.Rpc("mixt/R/userEnrichmentScores", args, "json")
+	if err != nil {
+		fmt.Println("Could not calculate er scores for user list")
+		return []UserScore{}, err
+	}
+
+	res := []byte(resp)
+
+	var scores []UserScore
+	err = json.Unmarshal(res, &scores)
+	return scores, err
+}

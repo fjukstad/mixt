@@ -5,10 +5,10 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <small> Work in progess! </small>
             <div class="container" id="genedrop">
                 <div class="dz-message">
                     <h4> Drop a gene list here to start the analysis </h4> 
+                    <small class="fileselect"> You can also click to select a file </small>
                 </div>
             </div>
         </div>
@@ -17,7 +17,13 @@
 </div>
 <script>
     $(function(){
-        var drop = new Dropzone("div#genedrop", {url:"/userlist/submit"});
+        var drop = new Dropzone("div#genedrop", {
+                                url:"/userlist/submit",
+                                });
+        drop.on("drop", function(file){
+            $(".dz-message").html("<h4>Analyzing...</h4>") 
+            })
+
         drop.on("success", function(a,url){
             window.location.replace(url) 
             });

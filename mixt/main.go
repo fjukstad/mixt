@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -118,6 +119,8 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	port := flag.String("port", ":8004", "port to start the app on")
+	flag.Parse()
 
 	r := mux.NewRouter()
 
@@ -158,7 +161,7 @@ func main() {
 	n := negroni.New(negroni.HandlerFunc(AuthMiddleware))
 	n.UseHandler(r)
 
-	fmt.Println("Starting mixt app on port 8004")
-	log.Fatal(http.ListenAndServe(":8004", n))
+	fmt.Println("Starting mixt app on", *port)
+	log.Fatal(http.ListenAndServe(*port, n))
 
 }

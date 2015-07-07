@@ -236,7 +236,7 @@ func GetModule(name string, tissue string) (Module, error) {
 		return Module{}, err
 	}
 
-	goterms, err := GetGOTerms(name, tissue, "")
+	goterms, err := GetGOTerms(name, tissue, []string{})
 	if err != nil {
 		fmt.Println("Could not get goterms", err)
 		return Module{}, err
@@ -468,9 +468,10 @@ type GOTerm struct {
 	ClassicFisher  string `json:"classicFisher"`
 	Weight01Fisher string `json:"weight01Fisher"`
 	Rank           int    `json:"Rank in weight01Fisher"`
+	Module         string `json:"module"`
 }
 
-func GetGOTerms(module, tissue, terms string) ([]GOTerm, error) {
+func GetGOTerms(module, tissue string, terms []string) ([]GOTerm, error) {
 
 	var args string
 	if len(terms) < 1 {
@@ -478,9 +479,18 @@ func GetGOTerms(module, tissue, terms string) ([]GOTerm, error) {
 		"module":` + "\"" + module + "\"" + `}`
 	} else {
 
+		var fmtterms []string
+		for i, _ := range terms {
+			fmtterms = append(fmtterms, "\""+terms[i]+"\"")
+		}
+
+		goTermNames := "["
+		goTermNames += strings.Join(fmtterms, ", ")
+		goTermNames += "]"
+
 		args = `{"tissue": ` + "\"" + tissue + "\"" + `,
 		"module":` + "\"" + module + "\"" + `, 
-		"terms":` + "\"" + terms + "\"" + `}`
+		"terms":` + "\"" + goTermNames + "\"" + `}`
 	}
 
 	resp, err := komp.Rpc("mixt/R/getGOTerms", args, "json")
@@ -494,6 +504,25 @@ func GetGOTerms(module, tissue, terms string) ([]GOTerm, error) {
 	var goterms []GOTerm
 	err = json.Unmarshal(res, &goterms)
 	return goterms, err
+
+}
+
+func GetGOScoresForTissue(tissue, goterm string) ([]GOTerm, error) {
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"term":` + "\"" + goterm + "\"" + `}`
+
+	resp, err := komp.Rpc("mixt/R/getGOScoresForTissue", args, "json")
+
+	if err != nil {
+		return []GOTerm{}, err
+	}
+
+	res := []byte(resp)
+
+	var scores []GOTerm
+	err = json.Unmarshal(res, &scores)
+	fmt.Println(scores, err)
+	return scores, err
 
 }
 

@@ -115,6 +115,7 @@ type SearchResults struct {
 	Genes    []Gene
 	Tissues  []string
 	GeneSets []GeneSet
+	GOTerms  []GOTerm
 }
 
 func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
@@ -136,6 +137,13 @@ func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := SearchResults{genes, tissues, geneSets}
+	goterms, err := GOTermResults(searchTerms)
+	if err != nil {
+		fmt.Println("ERROR", err)
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	res := SearchResults{genes, tissues, geneSets, goterms}
 	searchResultTemplate.Execute(w, res)
 }

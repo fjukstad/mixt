@@ -413,8 +413,16 @@ func GetEnrichmentScore(module, tissue, geneset string) (Score, error) {
 }
 
 func GetGeneSetNames() ([]string, error) {
+	return GetSlice("mixt/R/getGeneSetNames", "")
+}
 
-	resp, err := komp.Rpc("mixt/R/getGeneSetNames", "", "json")
+func GetGOTermNames() ([]string, error) {
+	return GetSlice("mixt/R/getGOTermNames", "")
+}
+
+func GetSlice(fun, args string) ([]string, error) {
+
+	resp, err := komp.Rpc(fun, args, "json")
 	if err != nil {
 		fmt.Println("Could not get gene set names :(", err)
 		return []string{}, err

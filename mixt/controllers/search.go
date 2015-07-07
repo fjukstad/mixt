@@ -38,6 +38,14 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	result = append(result, setres...)
 
+	GOTermNames, err := SearchForGOTerms(term)
+	if err != nil {
+		fmt.Println("Searching for go terms went bad", err)
+		http.Error(w, err.Error(), 500)
+	}
+
+	result = append(result, GOTermNames...)
+
 	res := SearchResponse{result}
 	b, _ := json.Marshal(res)
 	w.Write(b)
@@ -73,6 +81,21 @@ func SearchForGeneSet(searchTerm string) ([]string, error) {
 	results := inSlice(searchTerm, geneSetNames)
 
 	return results, nil
+}
+
+var GOTermNames []string
+
+func SearchForGOTerms(searchTerm string) ([]string, error) {
+	var err error
+	if len(GOTermNames) < 1 {
+		GOTermNames, err = mixt.GetGOTermNames()
+		if err != nil {
+			return []string{}, err
+		}
+	}
+	results := inSlice(searchTerm, GOTermNames)
+	return results, nil
+
 }
 
 func inSlice(s string, words []string) []string {

@@ -150,6 +150,8 @@ func main() {
 	r.HandleFunc("/userlist/submit", controllers.UserListSubmitHandler)
 	r.HandleFunc("/userlist/result/{listname}/{genes}", controllers.UserListResultHandler)
 
+	r.HandleFunc("/common-go/{tissue}/{module}/{id}/{format}", controllers.CommonGOTermGenesHandler)
+
 	addr := "opencpu:80"
 	username := "biopsy@mcgill"
 	password := "van-mi-ka-al"

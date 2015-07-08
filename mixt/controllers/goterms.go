@@ -1,7 +1,12 @@
 package controllers
 
 import (
+	"encoding/csv"
+	"encoding/json"
 	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 )
@@ -50,4 +55,44 @@ func GOTermResults(searchTerms []string) ([]GOTerm, error) {
 	}
 
 	return goterms, nil
+}
+
+func CommonGOTermGenesHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	module := vars["module"]
+	tissue := vars["tissue"]
+	id := vars["id"]
+	format := vars["format"]
+
+	genes, err := mixt.GetCommonGOTermGenes(module, tissue, id)
+	if err != nil {
+		fmt.Println("Could not common go term genes")
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	if format == "json" {
+		common := Common{genes}
+		b, err := json.Marshal(common)
+		if err != nil {
+			fmt.Println("Could not marshal common go term genes")
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		w.Write(b)
+		return
+	}
+
+	header := []string{"Gene"}
+	var records [][]string
+	records = append(records, header)
+	for _, gene := range genes {
+		entry := []string{gene}
+		records = append(records, entry)
+	}
+
+	writer := csv.NewWriter(w)
+	writer.WriteAll(records)
+
 }

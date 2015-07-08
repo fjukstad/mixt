@@ -559,3 +559,14 @@ func UserEnrichmentScores(tissue string, genelist []string) ([]UserScore, error)
 	err = json.Unmarshal(res, &scores)
 	return scores, err
 }
+
+func GetCommonGOTermGenes(module, tissue, id string) ([]string, error) {
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `, "module":` + "\"" + module + "\"" + `, 
+	"gotermID":` + "\"" + id + "\"" + `}`
+
+	fun := "mixt/R/getCommonGOTermGenes"
+
+	return GetSlice(fun, args)
+
+}

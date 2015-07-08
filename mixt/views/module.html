@@ -95,7 +95,7 @@
               <div class="table-responsive" id="scores">
                   <table class="table table-hover" id="goterms">
                       <thead>
-                          <th> GO.ID </th>
+                          <th>  GO.ID </th>
                           <th> Term </th> 
                           <th> Size </th> 
                           <th> Common </th> 
@@ -106,10 +106,11 @@
                       <tbody>
                         {{ range $index, $term := $module.GOTerms }}
                             <tr> 
-                                <td> {{$term.GOId }} </td> 
-                                <td><a href="http://amigo.geneontology.org/amigo/term/{{$term.GOId}}">{{$term.Term }}</a></td> 
+                                <td class="goid"> {{$term.GOId }} </td> 
+                                <td><a href="http://amigo.geneontology.org/amigo/term/{{$term.GOId}}">{{$term.Term}}</a></td> 
                                 <td> {{$term.Annotated }} </td> 
-                                <td> {{$term.Significant }} </td> 
+                                <td class="go-common"> <a
+                                        href="/common-go/{{$module.Tissue}}/{{$module.Name}}/{{$term.GOId}}/csv">{{$term.Significant}}</a> </td> 
                                 <td> {{$term.Expected }} </td> 
                                 <td> {{$term.ClassicFisher }} </td> 
                                 <td> {{$term.Weight01Fisher }} </td> 
@@ -224,6 +225,19 @@
                                         n.attr("title", d.Genes)
                                     })
                             }); 
+
+                        $("td.go-common").mouseover(
+                            function(d){
+                                id = $(this).closest('tr').children('td.goid').text().replace(/\s/g, "")
+                                console.log(id) 
+                                n = $(this) 
+                                url = baseUrl + "/common-go/{{$module.Tissue}}/{{$module.Name}}/"+id+"/json"
+                                $.get(url, function(d){
+                                    d = JSON.parse(d)
+                                    n.attr("title", d.Genes)
+                                })
+                            }
+                        );
                     </script>
           </div>
         </div>

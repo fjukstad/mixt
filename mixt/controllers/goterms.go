@@ -8,12 +8,8 @@ import (
 
 type GOTerm struct {
 	Name      string
-	TissueSet map[string][]GOTermScore
-}
-
-type GOTermScore struct {
-	Name   string
-	PValue float64
+	Id        string
+	TissueSet map[string][]mixt.GOTerm
 }
 
 func GOTermResults(searchTerms []string) ([]GOTerm, error) {
@@ -32,18 +28,26 @@ func GOTermResults(searchTerms []string) ([]GOTerm, error) {
 		GOTermNames = append(GOTermNames, hits...)
 	}
 
-	fmt.Println("GO terms", GOTermNames)
-	//var goterms []GOTerm
+	var goterms []GOTerm
 
 	for _, GOTermName := range GOTermNames {
-		fmt.Println(GOTermName)
+		set := make(map[string][]mixt.GOTerm)
+		var id string
 		for _, tissue := range tissues {
 			if tissue == "nblood" {
 				continue
 			}
-			mixt.GetGOScoresForTissue(tissue, GOTermName)
+			score, err := mixt.GetGOScoresForTissue(tissue, GOTermName)
+			if err != nil {
+				return []GOTerm{}, err
+			}
+			set[tissue] = score
+			//GOTermScore{score.Module, score.ClassicFisher,
+			//	score.Weight01Fisher}
+			id = score[0].GOId
 		}
+		goterms = append(goterms, GOTerm{GOTermName, id, set})
 	}
 
-	return []GOTerm{}, nil
+	return goterms, nil
 }

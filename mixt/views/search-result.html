@@ -77,5 +77,48 @@
             {{ end }} 
         </div> 
 
+        <div class="row">
+            <h2> The search returned {{len .GOTerms}} GO Terms </h2>
+        </div>
+
+
+        <div> 
+            {{ range $index, $goterm := .GOTerms }} 
+            <div class="row"> 
+                <h3> <a
+                    href="http://amigo.geneontology.org/amigo/term/{{$goterm.Id}}">
+                    {{$goterm.Name}}</a> 
+                </h3> 
+                {{ range $tissue, $scores := $goterm.TissueSet }} 
+                      <div class="col-md-4">
+                          <h4> {{ $tissue }} </h4> 
+                          <table class="table table-hover"
+                              id="goterm-{{$goterm.Id}}-{{$tissue}}"> 
+                            <thead> 
+                                <th> Module </th> 
+                                <th> Classic Fisher </th>
+                                <th> Weight Fisher </th> 
+                            </thead> 
+                            <tbody>
+                            {{ range $index, $score := $scores }}
+                            <tr> 
+                                <td> <a
+                                        href="/modules/{{$tissue}}/{{$score.Module}}">{{$score.Module}}</a></td>
+                                <td> {{$score.ClassicFisher}} </td> 
+                                <td> {{$score.Weight01Fisher}} </td> 
+                            </tr> 
+                            {{ end }}
+                            </tbody> 
+                        </table> 
+                      </div> 
+                    <script> 
+                        $(function(){
+                            $(document.getElementById('goterm-{{$goterm.Id}}-{{$tissue}}')).tablesorter();
+                        });
+                    </script> 
+                      {{ end }} 
+                     </div>
+                     {{ end }} 
+
     </div>
 {{ end }} 

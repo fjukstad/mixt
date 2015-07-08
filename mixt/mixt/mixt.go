@@ -521,7 +521,6 @@ func GetGOScoresForTissue(tissue, goterm string) ([]GOTerm, error) {
 
 	var scores []GOTerm
 	err = json.Unmarshal(res, &scores)
-	fmt.Println(scores, err)
 	return scores, err
 
 }
@@ -545,9 +544,6 @@ func UserEnrichmentScores(tissue string, genelist []string) ([]UserScore, error)
 	genes := "["
 	genes += strings.Join(fmtgenelist, ", ")
 	genes += "]"
-
-	fmt.Println(tissue)
-	fmt.Println(genes)
 
 	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"genelist":` + genes + `}`
 

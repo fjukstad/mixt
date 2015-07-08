@@ -67,7 +67,7 @@ a.userlist {
 }
 #genedrop {
     height: 80%;
-    width: 60%;
+    width: 100%;
     margin-top:1em;
 
     background-color: #86AED0;
@@ -78,7 +78,7 @@ div.dz-drag-hover {
 }
 
 div.dz-message { 
-    left:35%;
+    left:20%;
     top:50%;
     position:absolute;    
 }
@@ -95,4 +95,23 @@ div.dz-preview{
 
 div.dz-file-preview {
     display:none !important;
+}
+
+#geneinput {
+    height:100%;
+    margin-top:1em;
+}
+
+#gene-input-box {
+    height:80%;
+}
+
+#gene-text {
+    height: 70%;
+    white-space: pre;
+}
+
+#start-btn {
+    margin-top:1em;
+    width: 100%;
 }

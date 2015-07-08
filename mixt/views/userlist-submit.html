@@ -4,12 +4,23 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-sm-12">
-            <div class="container" id="genedrop">
+        <div class="col-sm-6">
+            <div id="genedrop">
                 <div class="dz-message">
                     <h4> Drop a gene list here to start the analysis </h4> 
                     <small class="fileselect"> You can also click to select a file </small>
                 </div>
+            </div>
+        </div>
+        <div class="col-md-6" id="gene-input-box">
+            <div id="geneinput">
+                <span id="gene-enter-help" class="help-block">
+                    Or type in the genes you're interested in. One gene per
+                    line.
+                </span>
+                <textarea class="form-control" rows="10"
+                    describedby="gene-enter-help" id="gene-text"></textarea>
+                <button type="button" class="btn btn-success" id="start-btn">Start analysis</button>
             </div>
         </div>
     </div>
@@ -27,6 +38,14 @@
         drop.on("success", function(a,url){
             window.location.replace(url) 
             });
+
+        $("#start-btn").click(function(){
+            var genetext = $("#gene-text").val();
+            console.log(genetext)
+            genetext = genetext.replace(/\n/g, "+")
+            window.location.href = "/userlist/result/userlist/"+genetext
+
+        })
     });
 </script>
 {{ end }} 

@@ -30,7 +30,7 @@
                     <tr>
                     <td class="module"> <a
                             href="/modules/{{$tissue}}/{{$score.Module}}">{{$score.Module}}</a></td>
-                    <td> {{$score.PValue}} </td> 
+                    <td class="pval"> {{$score.PValue}} </td> 
                     <td class="common">
                         <a href="#" data-toggle="tooltip" title = "{{print $score.Common}}">
                             {{len $score.Common}}</a></td>
@@ -45,6 +45,20 @@
             $(function(){
                 $(document.getElementById('{{$tissue}}-score')).tablesorter();
             });
+
+            $('#{{$tissue}}-score tr').each(function(){
+                $(this).find('td').each(function(){
+                    //do your stuff, you can use $(this) to get current cell
+                    if(this.className == "pval"){
+                        var p = parseFloat(this.innerText)
+                        if(p <= 0.05){
+                            console.log(this.parentNode) 
+                            this.parentNode.bgColor = "#b2ffb2" 
+                        }
+                    }
+                })
+            })
+
         </script> 
         {{ end }} 
     </div>
@@ -60,6 +74,8 @@ $(function(){
         url = "/userlist/common/"+tissue+"/"+module+"/"+genes+"/csv"
         window.location.href=url
         });
+
+
 });
 
 

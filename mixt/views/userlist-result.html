@@ -3,10 +3,11 @@
 <div class="container">
     <div class="row">
         <h3> Geneset <i>{{ .Name }}</i> </h3>
-        <small>  
+        <small class="genetext">  
         {{ range $index, $gene := .Genes }}
             {{ $gene }} 
         {{ end }} 
+        ({{ len .Genes }} genes)
         </small>
     </div>
     
@@ -17,20 +18,24 @@
     <div class="row">
         {{ range $tissue, $scores := .Scores }}
         <div class="col-md-4">
-            <h4> {{ $tissue }} </h4> 
-            
+            <h4 class="tissue"> {{ $tissue }} </h4> 
               <table class="table table-hover" id="{{$tissue}}-score"> 
                 <thead> 
                     <th> Module </th> 
                     <th> p-value </th> 
+                    <th> Common genes </th>
                 </thead> 
                 <tbody>
                     {{ range $index, $score := $scores }} 
                     <tr>
-                    <td> <a
+                    <td class="module"> <a
                             href="/modules/{{$tissue}}/{{$score.Module}}">{{$score.Module}}</a></td>
                     <td> {{$score.PValue}} </td> 
+                    <td class="common">
+                        <a href="#" data-toggle="tooltip" title = "{{print $score.Common}}">
+                            {{len $score.Common}}</a></td>
                     </tr>
+
                         
                     {{ end }}
                 </tbody>
@@ -43,9 +48,21 @@
         </script> 
         {{ end }} 
     </div>
-        
-
 </div>
 
+<script>
+$(function(){
+    $("td.common").click(function(d){
+        module = $(this).closest('tr').children('td.module').text().replace(/\s/g, "")
+        tissue = $(this).closest('div').children('h4.tissue').text().replace(/\s/g, "")
+        url = window.location.pathname;
+        url = url.replace("/userlist/result/userlist/", "/userlist/common/"+tissue+"/"+module+"/")
+        url = url +  "/csv"
+        window.location.href=url
+        });
+});
+
+
+</script> 
 {{ end }} 
 

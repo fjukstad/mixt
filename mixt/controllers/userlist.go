@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -84,4 +86,49 @@ func UserListResultHandler(w http.ResponseWriter, r *http.Request) {
 	us := UserScore{listname, tissues, genelist, scores}
 
 	listResultTemplate.Execute(w, us)
+}
+
+func UserListCommonGenesHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	genes := vars["genes"]
+	module := vars["module"]
+	tissue := vars["tissue"]
+	format := vars["format"]
+
+	genelist := strings.Split(genes, "+")
+
+	commonGenes, err := mixt.GetCommonUserERGenes(module, tissue, genelist)
+	if err != nil {
+		fmt.Println("Could get common user enrichment genes")
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	fmt.Println("COMMON", commonGenes)
+
+	if format == "json" {
+		common := Common{commonGenes}
+		b, err := json.Marshal(common)
+		if err != nil {
+			fmt.Println("Could not marshal common go term genes")
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		w.Write(b)
+		return
+	}
+
+	header := []string{"Gene"}
+	var records [][]string
+	records = append(records, header)
+	for _, gene := range commonGenes {
+		entry := []string{gene}
+		records = append(records, entry)
+	}
+
+	writer := csv.NewWriter(w)
+	writer.WriteAll(records)
+
 }

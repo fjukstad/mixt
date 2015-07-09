@@ -530,20 +530,14 @@ func Get(key, filetype string) ([]byte, error) {
 }
 
 type UserScore struct {
-	PValue float64 `json:"p-value"`
-	Module string  `json:"module"`
+	PValue float64  `json:"p-value"`
+	Module string   `json:"module"`
+	Common []string `json:"common"`
 }
 
 func UserEnrichmentScores(tissue string, genelist []string) ([]UserScore, error) {
 
-	var fmtgenelist []string
-	for i, _ := range genelist {
-		fmtgenelist = append(fmtgenelist, "\""+genelist[i]+"\"")
-	}
-
-	genes := "["
-	genes += strings.Join(fmtgenelist, ", ")
-	genes += "]"
+	genes := parseGeneList(genelist)
 
 	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"genelist":` + genes + `}`
 
@@ -560,12 +554,39 @@ func UserEnrichmentScores(tissue string, genelist []string) ([]UserScore, error)
 	return scores, err
 }
 
+func parseGeneList(genelist []string) string {
+
+	var fmtgenelist []string
+	for i, _ := range genelist {
+		fmtgenelist = append(fmtgenelist, "\""+genelist[i]+"\"")
+	}
+
+	genes := "["
+	genes += strings.Join(fmtgenelist, ", ")
+	genes += "]"
+
+	return genes
+}
+
 func GetCommonGOTermGenes(module, tissue, id string) ([]string, error) {
 
 	args := `{"tissue": ` + "\"" + tissue + "\"" + `, "module":` + "\"" + module + "\"" + `, 
 	"gotermID":` + "\"" + id + "\"" + `}`
 
 	fun := "mixt/R/getCommonGOTermGenes"
+
+	return GetSlice(fun, args)
+
+}
+
+func GetCommonUserERGenes(module, tissue string, genelist []string) ([]string, error) {
+
+	genes := parseGeneList(genelist)
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `, "module":` + "\"" + module + "\"" + `, 
+	"genelist":` + genes + `}`
+
+	fun := "mixt/R/commonEnrichmentScoreGenes"
 
 	return GetSlice(fun, args)
 

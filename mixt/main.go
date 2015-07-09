@@ -149,6 +149,7 @@ func main() {
 	r.HandleFunc("/userlist", controllers.UserListHandler)
 	r.HandleFunc("/userlist/submit", controllers.UserListSubmitHandler)
 	r.HandleFunc("/userlist/result/{listname}/{genes}", controllers.UserListResultHandler)
+	r.HandleFunc("/userlist/common/{tissue}/{module}/{genes}/{format}", controllers.UserListCommonGenesHandler)
 
 	r.HandleFunc("/common-go/{tissue}/{module}/{id}/{format}", controllers.CommonGOTermGenesHandler)
 

@@ -56,8 +56,8 @@ $(function(){
         module = $(this).closest('tr').children('td.module').text().replace(/\s/g, "")
         tissue = $(this).closest('div').children('h4.tissue').text().replace(/\s/g, "")
         url = window.location.pathname;
-        url = url.replace("/userlist/result/userlist/", "/userlist/common/"+tissue+"/"+module+"/")
-        url = url +  "/csv"
+        genes = url.split("/")[4];
+        url = "/userlist/common/"+tissue+"/"+module+"/"+genes+"/csv"
         window.location.href=url
         });
 });

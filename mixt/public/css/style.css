@@ -115,3 +115,17 @@ div.dz-file-preview {
     margin-top:1em;
     width: 100%;
 }
+
+th.headerSortUp { 
+    background-image: url(/public/img/small_asc.gif); 
+} 
+
+th.headerSortDown { 
+    background-image: url(/public/img/small_desc.gif); 
+} 
+th.header { 
+    background-image: url(/public/img/bg.gif); 
+    background-repeat: no-repeat; 
+    background-position: right;
+}
+

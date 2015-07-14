@@ -1,5 +1,243 @@
 {{ define "content" }} 
+
+<script src="/public/js/colorbrewer.js" charset="utf-8"></script>
+<script src="/public/js/d3.min.js" charset="utf-8"></script>
+<script src="/public/js/compare-tissues.js" charset="utf-8"></script> 
+<style> 
+.axis path,
+.axis line {
+    fill: none;
+    shape-rendering: crispEdges;
+}
+</style>
+
+
 <div class="container">
-    <h2> Comparing tissues </h2> 
+    <h2> Comparing tissues {{.TissueA}}  - {{.TissueB}}</h2> 
+
+<div class="heatmap">
+</div>
+
+
+
+<script>
+    function strip(str, substring){
+        for(var i = 0; i < str.length; i++){
+            str[i] = str[i].replace("ME", "") 
+        }
+        return str
+    }
+
+    function replicate(what, howmany){
+        return Array(howmany + 1).join(1).split('').map(function(){return what;})
+    }
+
+    log = d3.scale.log() 
+
+    var modules; 
+
+    var ymodules = []
+
+    var max,
+        min;
+
+    d3.csv("/tissues/{{.TissueA}}/{{.TissueB}}/eigengene", function(d){
+            
+            ymodules.push(d.module)
+            delete d.module
+
+            modules = Object.keys(d)
+            var correlation = Object.keys(d).map(function (key) {return d[key]});
+            max = d3.max(correlation) 
+            min = d3.min(correlation)
+
+            return {
+                modules: modules,
+                correlation: correlation
+            };
+        }, 
+
+    function(error,rows){
+
+        modules = strip(modules, "ME")
+        ymodules = strip(ymodules, "ME")
+
+        var cellHeight = 15,
+            cellWidth = cellHeight;
+
+        var cellMargin = cellHeight + 2
+        var width = cellMargin * modules.length,
+            height = cellMargin * rows.length; 
+            
+        var margin = 120; 
+
+        var xScale = d3.scale.ordinal()
+                    .domain(modules)
+                    .rangePoints([0, width - cellWidth]);
+
+        var yScale = d3.scale.ordinal()
+                     .domain(ymodules)
+                     .rangePoints([0, height - cellHeight]);
+
+        var xAxis = d3.svg.axis().scale(xScale)
+                    .orient("bottom")
+                    .ticks(modules.length)
+                    .innerTickSize(2)
+                    .outerTickSize(0)
+
+
+        var yAxis = d3.svg.axis().scale(yScale)
+                        .orient("left")
+                        .ticks(rows.length); 
+
+        var color = d3.scale.log()
+                        //.range(colorbrewer.RdPu[3])
+                        .range(["#fde0dd", "#c51b8a"])
+                        
+        var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", width + margin * 2 )
+                        .attr("height", height + margin)
+
+        var rows = svg.selectAll("g")
+            .data(rows)
+            .enter()
+            .append("g")
+            .attr("transform", function(d,i){
+                    return "translate(" + margin +  "," + i*cellMargin + ")"
+                    })
+            .attr("class", "row") 
+        
+        var row = rows.selectAll("svg")
+            .data(function(d,i){
+                    res = []
+                    for(j in d.correlation){
+                        a = {correlation: d.correlation[j], 
+                                index: i }
+                        res.push(a) 
+                    }
+                    return res;
+                    })
+            .enter()
+            .append("g")
+            .append("a")
+            .attr("xlink:href", "#")
+            .append("rect")
+            .attr("transform", function(d,i){
+                    return "translate("+i*cellMargin+",0)"
+                    })
+            .attr("height", cellHeight)
+            .attr("width", cellWidth)
+            .style("fill", function(d){
+                    var val = -log(d.correlation)
+                    if(isNaN(val)){
+                        val = 10
+                        }
+                  return color(val)
+                  }) 
+            .on("mouseover", function(d,i){
+                    d3.select(this)
+                        .style("stroke", "black")
+                        .style("stroke-width", 1)
+
+                        xname = modules[i];
+                        yname = ymodules[d.index]; 
+
+                    
+                    xg.selectAll(".tick")
+                        .each(function(d,i){
+                            if(d == xname){
+                                d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                            } 
+                        })
+                    yg.selectAll(".tick")
+                        .each(function(d,i){
+                            if(d == yname){
+                                d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "bold")
+                            } 
+                        })
+
+
+            })
+            .on("mouseout", function(d,i){
+                    d3.select(this).style("stroke-width",0)
+
+                    xg.selectAll(".tick")
+                        .each(function(d,i){
+                            if(d == xname){
+                                d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "")
+                            } 
+                        })
+
+                    yg.selectAll(".tick")
+                        .each(function(d,i){
+                            if(d == yname){
+                                d3.select(this)
+                                    .selectAll('text')
+                                    .style("font-weight", "")
+                            } 
+                        })
+
+
+            })
+
+            .append("svg:title")
+            .text(function(d,i) { 
+                    var val = -log(d.correlation)
+                    if(isNaN(val)){
+                        val = 10
+                    }
+
+                    return val; 
+            })
+
+            var xg = svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(" + (margin + cellWidth/2) +"," + height + ")")
+                .call(xAxis)
+
+                xg.selectAll("text")	
+                    .style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", ".15em")
+                    .attr("transform", function(d) {
+                        return "rotate(-65)" 
+                        });
+            
+            var yg = svg.append("g")
+                .attr("class", "y axis")
+                .attr("transform","translate("+margin+","+cellHeight/2+")")
+                .call(yAxis);
+
+            
+            var legend = d3.select("body")
+                            .append("svg")
+                            .attr("width", 5*cellWidth)
+                            .attr("height", cellHeight); 
+
+            legend.selectAll("g")
+                            .data([0,1,2,4,6,8,10])
+                            .enter()
+                            .append("g") 
+                            .append("rect")
+                            .attr("transform", function(d,i){
+                                    return "translate("+ i*cellWidth + ",0)"
+                                    })
+                            .attr("width", cellWidth)
+                            .attr("height", cellHeight)
+                            .style("fill", function(d){
+                                    return color(d)
+                                    })
+            })
+</script> 
+</div> 
+
+
 </div> 
 {{ end }} 

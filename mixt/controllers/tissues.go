@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"text/template"
 
+	"github.com/gorilla/mux"
+
 	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 )
 
@@ -46,6 +48,31 @@ func TissuesHandler(w http.ResponseWriter, r *http.Request) {
 	tissuesTemplate.Execute(w, res)
 }
 
+type TissueComparison struct {
+	TissueA string
+	TissueB string
+}
+
 func TissueComparisonHandler(w http.ResponseWriter, r *http.Request) {
-	tissueComparisonTemplate.Execute(w, nil)
+
+	vars := mux.Vars(r)
+	tissueA := vars["tissueA"]
+	tissueB := vars["tissueB"]
+
+	tissueComparisonTemplate.Execute(w, TissueComparison{tissueA, tissueB})
+}
+
+func EigengeneHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	tissueA := vars["tissueA"]
+	tissueB := vars["tissueB"]
+
+	result, err := mixt.EigengeneCorrelation(tissueA, tissueB)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+	}
+
+	w.Write(result)
+
 }

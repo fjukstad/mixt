@@ -591,3 +591,17 @@ func GetCommonUserERGenes(module, tissue string, genelist []string) ([]string, e
 	return GetSlice(fun, args)
 
 }
+
+func EigengeneCorrelation(tissueA, tissueB string) ([]byte, error) {
+
+	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	fun := "mixt/R/eigengeneCorrelation"
+
+	session, err := komp.Call(fun, args)
+	if err != nil {
+		return nil, err
+	}
+
+	return Get(session.Key, "csv")
+
+}

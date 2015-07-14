@@ -142,7 +142,8 @@ func main() {
 	r.HandleFunc("/geneset/abstract/{geneset}", controllers.GeneSetAbstractHandler)
 
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
-	r.HandleFunc("/tissues/{tissue1}/{tissue2}", controllers.TissueComparisonHandler)
+	r.HandleFunc("/tissues/{tissueA}/{tissueB}", controllers.TissueComparisonHandler)
+	r.HandleFunc("/tissues/{tissueA}/{tissueB}/eigengene", controllers.EigengeneHandler)
 
 	r.HandleFunc("/resources/{key}/{filetype}/{name}", controllers.FileHandler)
 

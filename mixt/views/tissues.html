@@ -4,7 +4,7 @@
             <h2> Available Tissues  </h2> 
         </div>
         <div class="row">
-            <table class="table table-hover">
+            <table class="table table-hover table-bordered">
                 <thead>
                     <th>
                     </th>
@@ -14,16 +14,16 @@
                     </th> 
                     {{end}}
                 </thead>
-                {{range .T}}
+                {{range $index, $tissue := .T}}
                 <tr>
                     <th>
-                        {{.Name}}
+                        {{$tissue.Name}}
                     </th>
-                    {{range .Comparisons}}
-                        {{ if . }}
-                        <td class="success" id="comp" comp={{.}}></td>
+                    {{range $indexB, $tissueB := $tissue.Comparisons}}
+                        {{ if ne $index $indexB }}
+                        <td class="success" id="comp" comp={{$tissueB}}></td>
                         {{else}}
-                            <td class="active" id="no-comp" ></td>
+                            <td class="info" id="comp" comp={{$tissueB}} ></td>
                         {{end}}
                     {{end}}
                 </tr> 

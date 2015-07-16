@@ -525,8 +525,21 @@ func GetGOScoresForTissue(tissue, goterm string) ([]GOTerm, error) {
 
 }
 
-func Get(key, filetype string) ([]byte, error) {
-	return komp.Get(key, filetype)
+func Get(key, filetype string) (res []byte, err error) {
+	res, err = komp.Get(key, filetype)
+	if err != nil {
+		fmt.Println("Could not get result", err)
+		return nil, err
+	}
+
+	if strings.Contains(string(res), "Terminating process") {
+		res, err = komp.Get(key, filetype)
+		if err != nil {
+			fmt.Println("Get failed for the second time")
+			return nil, err
+		}
+	}
+	return res, err
 }
 
 type UserScore struct {
@@ -593,15 +606,23 @@ func GetCommonUserERGenes(module, tissue string, genelist []string) ([]string, e
 }
 
 func EigengeneCorrelation(tissueA, tissueB string) ([]byte, error) {
+	return analysis("eigengeneCorrelation", tissueA, tissueB)
+}
+
+func ModuleHypergeometricTest(tissueA, tissueB string) ([]byte, error) {
+	return analysis("moduleHypergeometricTest", tissueA, tissueB)
+}
+
+func analysis(analysis, tissueA, tissueB string) ([]byte, error) {
 
 	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
-	fun := "mixt/R/eigengeneCorrelation"
+	fun := "mixt/R/" + analysis
 
 	session, err := komp.Call(fun, args)
 	if err != nil {
+		fmt.Println("Could not run analysis:", err)
 		return nil, err
 	}
 
 	return Get(session.Key, "csv")
-
 }

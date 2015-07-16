@@ -34,12 +34,12 @@ func TissuesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var result []Tissue
-	for i, t := range tissues {
+	for _, t := range tissues {
 		comp := make([]string, len(tissues))
 		for j, u := range tissues {
-			if i != j {
-				comp[j] = t + "/" + u
-			}
+			//if i != j {
+			comp[j] = t + "/" + u
+			//}
 		}
 		tissue := Tissue{t, comp}
 		result = append(result, tissue)
@@ -68,9 +68,26 @@ func EigengeneHandler(w http.ResponseWriter, r *http.Request) {
 	tissueA := vars["tissueA"]
 	tissueB := vars["tissueB"]
 
-	result, err := mixt.EigengeneCorrelation(tissueA, tissueB)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
+	analysis := vars["analysis"]
+
+	var result []byte
+	var err error
+
+	if analysis == "eigengene" {
+		result, err = mixt.EigengeneCorrelation(tissueA, tissueB)
+		if err != nil {
+			fmt.Println("Could not do eigen gene correlation", err)
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
+
+	if analysis == "overlap" {
+		result, err = mixt.ModuleHypergeometricTest(tissueA, tissueB)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
 	}
 
 	w.Write(result)

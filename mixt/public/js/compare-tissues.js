@@ -49,6 +49,18 @@ function loadGeneOverlapHeatmap(tissueA, tissueB) {
 }
 
 
+function loadROIHeatmap(tissueA, tissueB) {
+    var url = "/tissues/" + tissueA + "/" + tissueB + "/roi"
+    heatmap(url)
+}
+
+
+function loadPatientRankHeatmap(tissueA, tissueB) {
+    var url = "/tissues/" + tissueA + "/" + tissueB + "/patientrank"
+    heatmap(url)
+}
+
+
 function heatmap(url) {
 
 
@@ -66,7 +78,13 @@ function heatmap(url) {
 
             modules = Object.keys(d)
             var data = Object.keys(d).map(function(key) {
-                return -log(parseFloat(d[key]))
+                var num = -log(parseFloat(d[key]))
+                console.log(num) 
+                if(num > 10){
+                    num = 10;
+                }
+
+                return  num
             });
 
             localmax = d3.max(data)
@@ -160,7 +178,7 @@ function heatmap(url) {
                 .style("fill", function(d) {
                     var val = d.data
                     if (isNaN(val)) {
-                        val = 10
+                        return "#d3d3d3"
                     }
                     return color(val)
                 })
@@ -220,7 +238,7 @@ function heatmap(url) {
                 .text(function(d, i) {
                     var val = d.data
                     if (isNaN(val)) {
-                        val = 10
+                        val = "NA"
                     }
 
                     return val;

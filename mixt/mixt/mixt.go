@@ -613,6 +613,14 @@ func ModuleHypergeometricTest(tissueA, tissueB string) ([]byte, error) {
 	return analysis("moduleHypergeometricTest", tissueA, tissueB)
 }
 
+func ROITest(tissueA, tissueB string) ([]byte, error) {
+	return analysis("roiTest", tissueA, tissueB)
+}
+
+func PatientRankCorrelation(tissueA, tissueB string) ([]byte, error) {
+	return analysis("patientRankCorrelation", tissueA, tissueB)
+}
+
 func analysis(analysis, tissueA, tissueB string) ([]byte, error) {
 
 	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`

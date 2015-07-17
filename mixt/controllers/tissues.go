@@ -90,6 +90,22 @@ func EigengeneHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if analysis == "roi" {
+		result, err = mixt.ROITest(tissueA, tissueB)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
+
+	if analysis == "patientrank" {
+		result, err = mixt.PatientRankCorrelation(tissueA, tissueB)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
+
 	w.Write(result)
 
 }

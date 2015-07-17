@@ -32,7 +32,7 @@
                 <tr id="eigengene"><td class="analysis-select"> Eigengene correlation (student-p) </td> </tr>
                 <tr id="overlap"><td class="analysis-select"> Gene overlap (hyper-p) </td> </tr>
                 <tr id="roi"><td class="analysis-select"> ROI association (FET-p) </td> </tr>
-                <tr id="rank"><td class="analysis-select"> Patient rank correlation
+                <tr id="patientrank"><td class="analysis-select"> Patient rank correlation
                         (student-p)</td> </tr>
             </tbody> 
             </table>
@@ -54,14 +54,20 @@
     loadEigengeneHeatmap("{{.TissueA}}", "{{.TissueB}}") 
     
     $("tr#overlap").click(function(){
-            console.log("Loading gene overlap") 
             loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
     })
 
     $("tr#eigengene").click(function(){
-            console.log("Loading eigengene corr ") 
             loadEigengeneHeatmap("{{.TissueA}}","{{.TissueB}}")
     })
 
+
+    $("tr#roi").click(function(){
+            loadROIHeatmap("{{.TissueA}}","{{.TissueB}}")
+    })
+
+    $("tr#patientrank").click(function(){
+            loadPatientRankHeatmap("{{.TissueA}}","{{.TissueB}}")
+    })
 </script> 
 {{ end }} 

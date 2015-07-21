@@ -1,44 +1,22 @@
-FROM rocker/rstudio
+# Use builds from launchpad
+FROM ubuntu:latest
 
 MAINTAINER Bjørn Fjukstad <bjorn@cs.uit.no>
 
-# From the rstudio docker file at 
-# https://registry.hub.docker.com/u/opencpu/rstudio/dockerfile/ 
+# Install.
 RUN \
-  useradd -ms /bin/bash builder && \
   apt-get update && \
   apt-get -y dist-upgrade && \
-  apt-get install -y wget make devscripts apache2-prefork-dev apache2-mpm-prefork libapreq2-dev r-base r-base-dev libapparmor-dev libcurl4-openssl-dev libprotobuf-dev libprotoc-dev xvfb xauth xfonts-base curl libssl-dev pkg-config libxml2-dev libicu-dev
-
-USER builder
-
-RUN \
-  cd ~ && \
-  wget https://github.com/jeffreyhorner/rapache/archive/v1.2.6.tar.gz && \
-  tar xzf v1.2.6.tar.gz && \
-  cd rapache-1.2.6 && \
-  dpkg-buildpackage
-
-RUN \
-  cd ~ && \
-  wget https://github.com/jeroenooms/opencpu-server/archive/v1.5.0.tar.gz && \
-  tar xzf v1.5.0.tar.gz && \
-  cd opencpu-server-1.5.0 && \
-  dpkg-buildpackage
-
-USER root
-
-RUN \
-  cd /home/builder && \
-  dpkg -i libapache2-mod-r-base_*.deb && \
-  dpkg -i opencpu-lib_*.deb && \
-  dpkg -i opencpu-server_*.deb
-
-RUN \
-  apt-get purge -y devscripts apache2-prefork-dev libapreq2-dev \ 
-  libapparmor-dev libprotobuf-dev libprotoc-dev xvfb xauth pkg-config && \
-  apt-get autoremove --purge -y && \
-  deluser builder --remove-home
+  apt-get install -y software-properties-common && \
+  add-apt-repository -y ppa:opencpu/opencpu-1.5 && \
+  apt-get update && \
+  apt-get install -y opencpu \
+        opencpu-cache \ 
+        rstudio-server \
+        apache2-utils \ 
+        python3 \
+        libapache2-mod-proxy-html \
+        libxml2-dev 
 
 # Libraries etc that we depend on 
 ADD deps.r /tmp/deps.r
@@ -47,12 +25,8 @@ RUN R --vanilla < deps.r
 
 # Apache ports (without caching)
 EXPOSE 80
-#EXPOSE 443
-#EXPOSE 8004
 
-# Add r server config file to only accept connections on localhost
-# ADD rserver.conf /etc/rstudio/rserver.conf 
-
+# directories etc. 
 RUN mkdir -p /home/rstudio
 RUN mkdir -p /home/data
 RUN mkdir -p /usr/local/lib/R/site-library 
@@ -81,31 +55,18 @@ ADD index.html /var/www/html/index.html
 # fix group permissions so that the rstudio user is in the Hallett group and can
 # read/write to the data dir
 RUN groupadd -g 1001 Hallett
-RUN usermod -g 1001 rstudio
-
+RUN useradd -g 1001 -u 1000 -p $(openssl passwd -1 rstudio) rstudio
 
 # Git RAW
-RUN apt-get -y install python3
 ADD https://raw.githubusercontent.com/fjukstad/git-raw/master/git-raw /bin/git-raw
 RUN chmod +x /bin/git-raw
 
 ADD git-raw-fix /bin/git-raw-fix
 RUN chmod +x /bin/git-raw-fix
-
 RUN chmod 755 /bin/git-raw 
 
 # Headers for apache config
 RUN a2enmod headers
-
-# Create users that can use rstudio etc
-# RUN useradd -s /bin/bash -d /home/bjorn -u 501 -g 20 bjorn
-# RUN echo 'bjorn:test' | chpasswd
-# RUN addgroup bjorn staff
-# RUN mkdir /home/bjorn && chown bjorn:staff /home/bjorn
-
-# VOLUME /home/rstudio                    # home directory of rstudio user
-# VOLUME /home/data                       # mcgill data dir 
-# VOLUME /usr/local/lib/R/site-library    # r pkg install location
 
 # Define default command.
 CMD service opencpu restart &&  \ 

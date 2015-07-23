@@ -72,19 +72,17 @@ function heatmap(url) {
 
     d3.csv(url, function(d) {
 
-            console.log(d)
             ymodules.push(d.module)
             delete d.module
 
             modules = Object.keys(d)
             var data = Object.keys(d).map(function(key) {
                 var num = -log(parseFloat(d[key]))
-                console.log(num) 
-                if(num > 10){
+                if (num > 10) {
                     num = 10;
                 }
 
-                return  num
+                return num
             });
 
             localmax = d3.max(data)
@@ -107,8 +105,9 @@ function heatmap(url) {
         function(error, csvRows) {
 
             $("#heatmap svg").html("")
+            $("#legend svg").html("")
 
-            console.log(ymodules, modules)
+
 
             modules = strip(modules, "ME")
             ymodules = strip(ymodules, "ME")
@@ -262,12 +261,17 @@ function heatmap(url) {
                 .attr("transform", "translate(" + margin + "," + cellHeight / 2 + ")")
                 .call(yAxis);
 
+            var scale = d3.range(min, max, (max - min) / 10);
 
-            legend.attr("width", 5 * cellWidth)
+            legend.attr("width", function() {
+                    var w = scale.length + 2
+                    w = w * cellWidth
+                    return w
+                })
                 .attr("height", cellHeight);
 
             legendg = legend.selectAll("g")
-                .data(color.ticks())
+                .data(scale)
                 .enter()
                 .append("g")
                 .attr("transform", function(d, i) {
@@ -283,19 +287,29 @@ function heatmap(url) {
 
             legendg.append("text")
                 .attr("transform", function(d, i) {
-                    return "translate(3," + 14 + ")"
+                    if (i == 0) {
+                        return "translate(3," + 13 + ")"
+                    }
+                    if (i == scale.length - 1) {
+                        var l = max.toFixed(1).toString().length
+                        l = -3 * l
+                        return "translate(" + l + "," + 13 + ")"
+                    }
                 })
-                /*
+                .style("fill", function(d, i) {
+                    //if (i == scale.length - 1) {
+                    //    return "white"
+                    //}
+                })
                 .text(function(d, i) {
                     if (i == 0) {
-                        return min
+                        return min.toFixed(0)
                     }
-                    if (i == color.ticks.length) {
-                        return max
+                    if (i == scale.length - 1) {
+                        return max.toFixed(1)
                     }
                     return ""
                 })
-                */
         })
 
 

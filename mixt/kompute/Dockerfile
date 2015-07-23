@@ -68,7 +68,10 @@ RUN chmod 755 /bin/git-raw
 # Headers for apache config
 RUN a2enmod headers
 
+RUN apt-get install -y iptables
+
 # Define default command.
 CMD service opencpu restart &&  \ 
+    service opencpu-cache restart && \
     rstudio-server restart && \
     tail -F /var/log/opencpu/apache_access.log

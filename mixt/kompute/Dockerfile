@@ -16,7 +16,9 @@ RUN \
         apache2-utils \ 
         python3 \
         libapache2-mod-proxy-html \
-        libxml2-dev 
+        libxml2-dev \
+        iptables \ 
+        git 
 
 # Libraries etc that we depend on 
 ADD deps.r /tmp/deps.r
@@ -67,8 +69,6 @@ RUN chmod 755 /bin/git-raw
 
 # Headers for apache config
 RUN a2enmod headers
-
-RUN apt-get install -y iptables
 
 # Define default command.
 CMD service opencpu restart &&  \ 

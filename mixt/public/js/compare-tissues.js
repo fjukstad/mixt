@@ -40,28 +40,28 @@ $(function() {
 
 function loadEigengeneHeatmap(tissueA, tissueB) {
     var url = "/tissues/" + tissueA + "/" + tissueB + "/eigengene"
-    heatmap(url)
+    heatmap(url, tissueA, tissueB)
 }
 
 function loadGeneOverlapHeatmap(tissueA, tissueB) {
     var url = "/tissues/" + tissueA + "/" + tissueB + "/overlap"
-    heatmap(url)
+    heatmap(url, tissueA, tissueB)
 }
 
 
 function loadROIHeatmap(tissueA, tissueB) {
     var url = "/tissues/" + tissueA + "/" + tissueB + "/roi"
-    heatmap(url)
+    heatmap(url, tissueA, tissueB)
 }
 
 
 function loadPatientRankHeatmap(tissueA, tissueB) {
     var url = "/tissues/" + tissueA + "/" + tissueB + "/patientrank"
-    heatmap(url)
+    heatmap(url, tissueA, tissueB)
 }
 
 
-function heatmap(url) {
+function heatmap(url, tissueA, tissueB) {
 
 
     modules = []
@@ -167,7 +167,12 @@ function heatmap(url) {
                 .enter()
                 .append("g")
                 .append("a")
-                .attr("xlink:href", "#")
+                .attr("xlink:href", function(d,i){
+                    
+                    xname = modules[i];
+                    yname = ymodules[d.index];
+                    return "/compare/"+tissueA+"/"+tissueB + "/"+yname+"/"+xname
+                })
                 .append("rect")
                 .attr("transform", function(d, i) {
                     return "translate(" + i * cellMargin + ",0)"
@@ -188,8 +193,7 @@ function heatmap(url) {
 
                     xname = modules[i];
                     yname = ymodules[d.index];
-
-
+    
                     xg.selectAll(".tick")
                         .each(function(d, i) {
                             if (d == xname) {

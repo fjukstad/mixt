@@ -20,11 +20,27 @@ func Init(addr, username, password string) {
 }
 
 func Heatmap(tissue, module string) (string, error) {
-	session, err := komp.Call("mixt/R/heatmap", `{"tissue": `+"\""+tissue+"\""+`,
-					"module":`+"\""+module+"\""+`}`)
+	fun := "mixt/R/heatmap"
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
+					"module":` + "\"" + module + "\"" + `}`
+	return plot(fun, args)
+
+}
+
+func HeatmapReOrder(tissue, module, orderByTissue, orderByModule string) (string, error) {
+
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"module": ` + "\"" + module + "\"" + `,"re.order": ` + "\"TRUE\"" + `, "orderByModule": ` + "\"" + orderByModule + "\"" + `,"orderByTissue":` + "\"" + orderByTissue + "\"" + `}`
+
+	fun := "mixt/R/heatmap"
+	return plot(fun, args)
+}
+
+func plot(fun, args string) (string, error) {
+
+	session, err := komp.Call(fun, args)
 
 	if err != nil {
-		fmt.Println("Heatmapper")
+		fmt.Println("Could not plot :( ")
 		fmt.Println(session, err)
 		return "", err
 	}
@@ -633,4 +649,30 @@ func analysis(analysis, tissueA, tissueB string) ([]byte, error) {
 	}
 
 	return Get(session.Key, "csv")
+}
+
+type Analyses struct {
+	Eigen   []float64 `json:"eigen"`
+	Rank    []float64 `json:"rank"`
+	Overlap []float64 `json:"overlap"`
+	ROI     []float64 `json:"roi"`
+	Common  []string  `json:"common"`
+}
+
+func ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB string) (Analyses, error) {
+
+	args := `{"tissueA": ` + "\"" + tissueA + "\"" +
+		`, "tissueB":` + "\"" + tissueB + "\"" +
+		`, "moduleA": ` + "\"" + moduleA + "\"" +
+		`, "moduleB": ` + "\"" + moduleB + "\"" + `}`
+
+	fun := "mixt/R/comparisonAnalyses"
+
+	resp, err := komp.Rpc(fun, args, "json")
+
+	res := []byte(resp)
+
+	var analyses Analyses
+	err = json.Unmarshal(res, &analyses)
+	return analyses, err
 }

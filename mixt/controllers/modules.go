@@ -19,6 +19,10 @@ var modulesTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/header.html", "views/navbar.html",
 	"views/modules.html", "views/footer.html"))
 
+var compareModulesTemplate = template.Must(template.ParseFiles("views/base.html",
+	"views/header.html", "views/navbar.html",
+	"views/module-comparison.html", "views/footer.html"))
+
 type ModulesOverview struct {
 	Modules map[string][]mixt.Module
 	Tissues []string
@@ -84,4 +88,52 @@ func retrieveModulesOverview() (ModulesOverview, error) {
 
 	m := ModulesOverview{modules, tissues}
 	return m, nil
+}
+
+type ModuleComparison struct {
+	ModuleA  mixt.Module
+	ModuleB  mixt.Module
+	Analyses mixt.Analyses
+}
+
+func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	moduleA := vars["moduleA"]
+	moduleB := vars["moduleB"]
+	tissueA := vars["tissueA"]
+	tissueB := vars["tissueB"]
+
+	analyses, err := mixt.ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB)
+	if err != nil {
+		fmt.Println("Could not get module comparison analyses")
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	ma, err := mixt.GetModule(moduleA, tissueA)
+	if err != nil {
+		fmt.Println("Could not get module", moduleA)
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	mb, err := mixt.GetModule(moduleB, tissueB)
+	if err != nil {
+		fmt.Println("Could not get module", moduleB)
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	reorderHeatmap, err := mixt.HeatmapReOrder(tissueB, moduleB, tissueA, moduleA)
+	if err != nil {
+		fmt.Println("Could not get re order heatmap")
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	mb.HeatmapUrl = reorderHeatmap
+
+	fmt.Println(analyses)
+
+	compareModulesTemplate.Execute(w, ModuleComparison{ma, mb, analyses})
 }

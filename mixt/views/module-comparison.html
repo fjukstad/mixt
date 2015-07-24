@@ -1,0 +1,101 @@
+{{ define "content" }}
+<link rel="stylesheet" type="text/css" href="/public/css/module.css">
+<div class="container-fluid">
+    <div class="row">
+        Eigengene correlation: {{ index .Analyses.Eigen 0 }} Overlap
+        {{ index .Analyses.Overlap 0 }} 
+        Rank {{ index .Analyses.Rank 0 }}
+        ROI {{ index .Analyses.ROI 0 }} 
+        Common genes: {{ .Analyses.Common }}
+    </div>
+    <div class="row">
+        <section id="{{.ModuleA.Name}}" class="module">
+            <div class="row" id="{{.ModuleA.Name}}-module">
+                <div class="col-sm-5 col-md-5 col-lg-5">
+                    <a href="/resources/{{.ModuleA.HeatmapUrl}}/pdf/heatmap.pdf" download="{{.ModuleA.Name}}-{{.ModuleA.Tissue}}-heatmap.pdf"
+                    target="_blank">
+                        <img src="/resources/{{.ModuleA.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
+                    </a>
+                    <span id="download-link">
+
+              <a href="/resources/{{.ModuleA.Url}}/csv/genelist.csv" 
+                  download="{{.ModuleA.Name}}-{{.ModuleA.Tissue}}-genelist.csv"
+                  target="_blank">Download gene list</a>
+            </span>
+                    </hr>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
+                    <div class="table-responsive" id="genes">
+                        <table class="table table-hover" id="gene-table">
+                            <thead>
+                                <th> Rank </th>
+                                <th> Gene ({{len .ModuleA.Genes}}) </th>
+                                <th> Correlation </th>
+                                <th> Up/Down </th>
+                            </thead>
+                            <tbody>
+                                {{ range $rank, $gene := .ModuleA.Genes }}
+                                <tr>
+                                    <td class="rank"> {{$rank}} </td>
+                                    <td class="name" data-toggle="tooltip" data-placement="left" id="{{.Name}}">
+                                        <a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">{{$gene.Name}}</a>
+                                    </td>
+                                    <td class="correlation"> {{$gene.Correlation}} </td>
+                                    <td class="updown"> {{$gene.Updown}} </td>
+                                </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+  <hr class="module">
+    <div class="row">
+        <section id="{{.ModuleB.Name}}" class="module">
+            <div class="row" id="{{.ModuleB.Name}}-module">
+                <div class="col-sm-5 col-md-5 col-lg-5">
+                    <a href="/resources/{{.ModuleB.HeatmapUrl}}/pdf/heatmap.pdf" download="{{.ModuleB.Name}}-{{.ModuleB.Tissue}}-heatmap.pdf"
+                    target="_blank">
+                        <img src="/resources/{{.ModuleB.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
+                    </a>
+                    <span id="download-link">
+
+              <a href="/resources/{{.ModuleB.Url}}/csv/genelist.csv" 
+                  download="{{.ModuleB.Name}}-{{.ModuleB.Tissue}}-genelist.csv"
+                  target="_blank">Download gene list</a>
+            </span>
+                    </hr>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
+                    <div class="table-responsive" id="genes">
+                        <table class="table table-hover" id="gene-table">
+                            <thead>
+                                <th> Rank </th>
+                                <th> Gene ({{len .ModuleB.Genes}}) </th>
+                                <th> Correlation </th>
+                                <th> Up/Down </th>
+                            </thead>
+                            <tbody>
+                                {{ range $rank, $gene := .ModuleB.Genes }}
+                                <tr>
+                                    <td class="rank"> {{$rank}} </td>
+                                    <td class="name" data-toggle="tooltip" data-placement="left" id="{{.Name}}">
+                                        <a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">{{$gene.Name}}</a>
+                                    </td>
+                                    <td class="correlation"> {{$gene.Correlation}} </td>
+                                    <td class="updown"> {{$gene.Updown}} </td>
+                                </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+</div>
+{{ end }}

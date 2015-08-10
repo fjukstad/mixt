@@ -60,7 +60,6 @@ function loadPatientRankHeatmap(tissueA, tissueB) {
     heatmap(url, tissueA, tissueB)
 }
 
-
 function heatmap(url, tissueA, tissueB) {
 
 
@@ -71,16 +70,17 @@ function heatmap(url, tissueA, tissueB) {
     max = 0
 
     d3.csv(url, function(d) {
-
+            
             ymodules.push(d.module)
             delete d.module
 
             modules = Object.keys(d)
             var data = Object.keys(d).map(function(key) {
                 var num = -log(parseFloat(d[key]))
-                if (num > 10) {
+                if (num > 10 || isNaN(num)) {
                     num = 10;
-                }
+               }
+
 
                 return num
             });
@@ -103,11 +103,12 @@ function heatmap(url, tissueA, tissueB) {
         },
 
         function(error, csvRows) {
+            if(csvRows.length < 1){
+                heatmap(url,tissueA,tissueB) 
+            }
 
             $("#heatmap svg").html("")
             $("#legend svg").html("")
-
-
 
             modules = strip(modules, "ME")
             ymodules = strip(ymodules, "ME")

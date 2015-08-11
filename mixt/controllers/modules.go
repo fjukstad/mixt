@@ -91,8 +91,7 @@ func retrieveModulesOverview() (ModulesOverview, error) {
 }
 
 type ModuleComparison struct {
-	ModuleA  mixt.Module
-	ModuleB  mixt.Module
+	Modules  []mixt.Module
 	Analyses mixt.Analyses
 }
 
@@ -133,7 +132,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 
 	mb.HeatmapUrl = reorderHeatmap
 
-	fmt.Println(analyses)
+	modules := []mixt.Module{ma, mb}
 
-	compareModulesTemplate.Execute(w, ModuleComparison{ma, mb, analyses})
+	compareModulesTemplate.Execute(w, ModuleComparison{modules, analyses})
 }

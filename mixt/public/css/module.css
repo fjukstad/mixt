@@ -2,6 +2,10 @@ div#genes {
     height: 500px;
 }
 
+#module-comparison-genes { 
+    height: 20em;
+}    
+
 div#scores {
     height: 500px;
 }
@@ -28,6 +32,11 @@ th.score-name-header {
     overflow: hidden; 
 } 
 
+td.set { 
+    max-width: 20em;
+    overflow: scroll;
+}
+
 .affix {
   top: 20px;
 }
@@ -52,3 +61,7 @@ hr.module {
     font-size: .8em;
 }
 
+#analysis-results { 
+    padding-left: 10%;
+    padding-top: 1%; 
+}

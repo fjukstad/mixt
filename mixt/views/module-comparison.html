@@ -1,40 +1,44 @@
 {{ define "content" }}
 <link rel="stylesheet" type="text/css" href="/public/css/module.css">
 <div class="container-fluid">
-    <div class="row">
-        Eigengene correlation: {{ index .Analyses.Eigen 0 }} Overlap
-        {{ index .Analyses.Overlap 0 }} 
-        Rank {{ index .Analyses.Rank 0 }}
-        ROI {{ index .Analyses.ROI 0 }} 
-        Common genes: {{ .Analyses.Common }}
+    <div class="row" id="analysis-results">
+         <dl class="dl-horizontal"> 
+             <dt> Eigengene correlation: </dt> <dd> {{ index .Analyses.Eigen 0 }} </dd>
+            <dt> Overlap </dt> <dd> {{ index .Analyses.Overlap 0 }} </dd>
+            <dt> Rank  </dt><dd> {{ index .Analyses.Rank 0 }} </dd>
+            <dt> ROI  </dt><dd> {{ index .Analyses.ROI 0 }}  </dd>
+            <dt> Common genes: </dt><dd> {{ .Analyses.Common }} </dd>
+        </dl>
     </div>
+    <hr class="module"></hr> 
+      {{ range $module := .Modules }}    
     <div class="row">
-        <section id="{{.ModuleA.Name}}" class="module">
-            <div class="row" id="{{.ModuleA.Name}}-module">
+        <section id="{{$module.Name}}" class="module">
+            <div class="row" id="{{$module.Name}}-module">
                 <div class="col-sm-5 col-md-5 col-lg-5">
-                    <a href="/resources/{{.ModuleA.HeatmapUrl}}/pdf/heatmap.pdf" download="{{.ModuleA.Name}}-{{.ModuleA.Tissue}}-heatmap.pdf"
+                    <a href="/resources/{{$module.HeatmapUrl}}/pdf/heatmap.pdf" download="{{$module.Name}}-{{$module.Tissue}}-heatmap.pdf"
                     target="_blank">
-                        <img src="/resources/{{.ModuleA.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
+                        <img src="/resources/{{$module.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
                     </a>
                     <span id="download-link">
 
-              <a href="/resources/{{.ModuleA.Url}}/csv/genelist.csv" 
-                  download="{{.ModuleA.Name}}-{{.ModuleA.Tissue}}-genelist.csv"
+              <a href="/resources/{{$module.Url}}/csv/genelist.csv" 
+                  download="{{$module.Name}}-{{$module.Tissue}}-genelist.csv"
                   target="_blank">Download gene list</a>
             </span>
                     </hr>
                 </div>
                 <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
-                    <div class="table-responsive" id="genes">
+                    <div class="table-responsive" id="module-comparison-genes">
                         <table class="table table-hover" id="gene-table">
                             <thead>
                                 <th> Rank </th>
-                                <th> Gene ({{len .ModuleA.Genes}}) </th>
+                                <th> Gene ({{len $module.Genes}}) </th>
                                 <th> Correlation </th>
                                 <th> Up/Down </th>
                             </thead>
                             <tbody>
-                                {{ range $rank, $gene := .ModuleA.Genes }}
+                                {{ range $rank, $gene := $module.Genes }}
                                 <tr>
                                     <td class="rank"> {{$rank}} </td>
                                     <td class="name" data-toggle="tooltip" data-placement="left" id="{{.Name}}">
@@ -47,55 +51,193 @@
                             </tbody>
                         </table>
                     </div>
+                        <a class="btn btn-default btn-lg btn-block" role="button" data-toggle="collapse" href="#{{$module.Name}}-{{$module.Tissue}}-scores"aria-expanded="false" aria-controls="{{$module.Name}}-{{$module.Tissue}}-scores">
+                            Enrichment Scores <small> (click to view) </small>
+                        </a>
                 </div>
             </div>
         </section>
-    </div>
-  <hr class="module">
-    <div class="row">
-        <section id="{{.ModuleB.Name}}" class="module">
-            <div class="row" id="{{.ModuleB.Name}}-module">
-                <div class="col-sm-5 col-md-5 col-lg-5">
-                    <a href="/resources/{{.ModuleB.HeatmapUrl}}/pdf/heatmap.pdf" download="{{.ModuleB.Name}}-{{.ModuleB.Tissue}}-heatmap.pdf"
-                    target="_blank">
-                        <img src="/resources/{{.ModuleB.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
-                    </a>
-                    <span id="download-link">
 
-              <a href="/resources/{{.ModuleB.Url}}/csv/genelist.csv" 
-                  download="{{.ModuleB.Name}}-{{.ModuleB.Tissue}}-genelist.csv"
-                  target="_blank">Download gene list</a>
-            </span>
-                    </hr>
+    <div class="collapse" id="{{$module.Name}}-{{$module.Tissue}}-scores"> 
+    <section class="module" id="{{$module.Name}}-enrichment">
+      <div class="row" id="{{$module.Name}}-enrichment">
+        <div class="col-sm-11 col-md-11 col-lg-11" id="set-table" role="tabpanel">
+            <ul class="nav nav-tabs" role="tablist" id="settab-{{$module.Name}}-{{$module.Tissue}}">
+                <li role="presentation" class="active"><a href="#gotab" aria-controls="goterms-{{$module.Name}}-{{$module.Tissue}}" role="tab" data-toggle="tab">GO terms</a></li>
+            {{ range $name, $set := $module.EnrichmentScores.Sets }}
+            <li role="presentation"><a href="#{{$module.Name}}-{{$name}}" aria-controls="{{$module.Name}}-{{$name}}" role="tab" data-toggle="tab">
+                            {{$name}} </a>
+            </li>
+            {{ end }}
+          </ul>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="gotab">
+              <div class="table-responsive" id="scores">
+                  <table class="table table-hover" id="goterms-{{$module.Name}}-{{$module.Tissue}}">
+                      <thead>
+                          <th>  GO.ID </th>
+                          <th> Term </th> 
+                          <th> Size </th> 
+                          <th> Common </th> 
+                          <th> Expected </th> 
+                          <th> Raw p-value <small>(not adjusted for multiple testing)</small> </th> 
+                          <th> Weight01Fisher </th> 
+                      </thead>
+                      <tbody>
+                        {{ range $index, $term := $module.GOTerms }}
+                            <tr> 
+                                <td class="goid"> {{$term.GOId }} </td> 
+                                <td><a href="http://amigo.geneontology.org/amigo/term/{{$term.GOId}}">{{$term.Term}}</a></td> 
+                                <td> {{$term.Annotated }} </td> 
+                                <td class="go-common"> <a
+                                        href="/common-go/{{$module.Tissue}}/{{$module.Name}}/{{$term.GOId}}/csv">{{$term.Significant}}</a> </td> 
+                                <td> {{$term.Expected }} </td> 
+                                <td> {{$term.ClassicFisher }} </td> 
+                                <td> {{$term.Weight01Fisher }} </td> 
+                            </tr> 
+                        {{end}}
+                      </tbody> 
+                  </table>
                 </div>
-                <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
-                    <div class="table-responsive" id="genes">
-                        <table class="table table-hover" id="gene-table">
-                            <thead>
-                                <th> Rank </th>
-                                <th> Gene ({{len .ModuleB.Genes}}) </th>
-                                <th> Correlation </th>
-                                <th> Up/Down </th>
-                            </thead>
-                            <tbody>
-                                {{ range $rank, $gene := .ModuleB.Genes }}
-                                <tr>
-                                    <td class="rank"> {{$rank}} </td>
-                                    <td class="name" data-toggle="tooltip" data-placement="left" id="{{.Name}}">
-                                        <a href="http://www.genecards.org/cgi-bin/carddisp.pl?gene={{.Name}}">{{$gene.Name}}</a>
-                                    </td>
-                                    <td class="correlation"> {{$gene.Correlation}} </td>
-                                    <td class="updown"> {{$gene.Updown}} </td>
-                                </tr>
-                                {{ end }}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            </div> 
+            {{ range $name, $sets := .EnrichmentScores.Sets }}
+            <div role="tabpanel" class="tab-pane" id="{{$module.Name}}-{{$name}}">
+              <div class="table-responsive" id="scores">
+                  <table class="table table-hover" id="score-table-{{$module.Name}}-{{$module.Tissue}}-{{$name}}">
+                  <thead>
+                    <th class="score-name-header"> Signature </th>
+                    <th> Size </th>
+
+                    <th> Common </th>
+                    <th> p-value </th>
+
+                    <th> Common (up) </th>
+                    <th> p-value (up)</th>
+
+                    <th> Common (down) </th>
+                    <th> p-value (down) </th>
+                  </thead>
+                  <tbody class="list">
+                    {{ range $set := $sets }}
+                    <tr>
+                      <td class="set" data-toggle="tooltip" data-placement="left">
+                    {{if eq $set.SignatureName "Dumeaux_50" "Dumeaux_345" }}
+                        <a class="signature"
+                          href="http://onlinelibrary.wiley.com/doi/10.1002/ijc.29030/abstract"
+                          target="blank">{{$set.SignatureName}}</a>
+                    {{else if eq $set.SignatureName "LaBreche_114" }} 
+                        <a class="signature"
+                          href="http://www.biomedcentral.com/1755-8794/4/61"
+                          target="blank">{{$set.SignatureName}}</a>
+                    {{else if eq $name "i" }}
+                        <a class="signature"
+                          href="http://www.sciencedirect.com/science/article/pii/S1074761308002835"
+                          target="blank">{{$set.SignatureName}}</a>
+                    {{ else }} 
+                        <a class="signature"
+                          href="http://www.broadinstitute.org/gsea/msigdb/geneset_page.jsp?geneSetName={{$set.SignatureName}}"
+                          target="blank">{{$set.SignatureName}}</a> 
+                    {{ end }} 
+                          
+                          </td>
+                      <td class="size" data-sort-method='numeric'> {{$set.Size}} </td>
+                      <td class="common" data-sort-method='numeric'>
+                          <a
+                              href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/updn.common/csv"
+                              target="_blank">
+                              {{$set.UpDownCommon}}
+                           </a>
+                       </td>
+                      <td class="p-value" data-sort-method='numeric'> {{$set.UpDownPvalue}} </td>
+                      <td class="common-up" data-sort-method='numeric'> 
+                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/up.common/csv" target="_blank">                          
+                          {{$set.UpCommon}}
+                            </a>
+                        </td>
+                      <td class="p-value" data-sort-method='numeric'> {{$set.UpPvalue}} </td>
+                      <td class="common-down" data-sort-method='numeric'>
+                          <a href="/common/{{$module.Tissue}}/{{$module.Name}}/{{$set.SignatureName}}/dn.common/csv" target="_blank">                          
+                              {{$set.DownCommon}}</a> </td>
+                      <td class="p-value" data-sort-method='numeric'> {{$set.DownPvalue}} </td>
+                    </tr>
+                    {{ end }}
+                  </tbody>
+                </table>
+              </div>
             </div>
-        </section>
-    </div>
+            {{ end }}
+                    <script> 
+                        var baseUrl = "http://"+ location.hostname + ":" + location.port
 
+                        $("td.common").mouseover(
+                            function (d){
+                                    set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
+                                    n = $(this) 
+                                    url = baseUrl +
+                            "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/updn.common/json"
+                                    $.get(url, function(d) {
+                                        d = JSON.parse(d) 
+                                        n.attr("title", d.Genes)
+                                    })
+                            }
+                        ); 
+                        $("td.common-up").mouseover(
+                        function (d){
+                                    set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
+                                    n = $(this) 
+                                    url = baseUrl +
+                            "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/up.common/json"
+                                    $.get(url, function(d) {
+                                        d = JSON.parse(d) 
+                                        n.attr("title", d.Genes)
+                                    })
+                            }); 
+        
+                        $("td.common-down").mouseover(
+                                 
+                        function (d){
+                                    set = $(this).closest('tr').children('td.set').text().replace(/\s/g, "")
+                                    n = $(this) 
+                                    url = baseUrl +
+                            "/common/{{$module.Tissue}}/{{$module.Name}}/"+set+"/dn.common/json"
+                                    $.get(url, function(d) {
+                                        d = JSON.parse(d) 
+                                        n.attr("title", d.Genes)
+                                    })
+                            }); 
+
+                        $("td.go-common").mouseover(
+                            function(d){
+                                id = $(this).closest('tr').children('td.goid').text().replace(/\s/g, "")
+                                console.log(id) 
+                                n = $(this) 
+                                url = baseUrl + "/common-go/{{$module.Tissue}}/{{$module.Name}}/"+id+"/json"
+                                $.get(url, function(d){
+                                    d = JSON.parse(d)
+                                    n.attr("title", d.Genes)
+                                })
+                            }
+                        );
+                    </script>
+          </div>
+        </div>
+      </div>
+    </section> 
+    <script>
+      $(function() {
+        {{range $name, $sets := $module.EnrichmentScores.Sets}}
+        $('#score-table-{{$module.Name}}-{{$module.Tissue}}-{{$name}}').tablesorter(); 
+        $('#settab-{{$module.Name}}-{{$module.Tissue}} a:first').tab('show')
+        {{end}}
+
+        $("#goterms-{{$module.Name}}-{{$module.Tissue}}").tablesorter(); 
+      });
+    </script>
+
+    </div> 
+    </div>
+    <hr class="module"></hr> 
+    {{ end }} 
 
 </div>
 {{ end }}

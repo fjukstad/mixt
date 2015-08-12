@@ -44,7 +44,8 @@ func GOTermResults(searchTerms []string) ([]GOTerm, error) {
 			}
 			score, err := mixt.GetGOScoresForTissue(tissue, GOTermName)
 			if err != nil {
-				return []GOTerm{}, err
+				//return []GOTerm{}, err
+				continue
 			}
 			set[tissue] = score
 			//GOTermScore{score.Module, score.ClassicFisher,

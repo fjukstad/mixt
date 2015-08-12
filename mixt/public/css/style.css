@@ -118,16 +118,18 @@ div.dz-file-preview {
 }
 
 th.headerSortUp { 
-    background-image: url(/public/img/small_asc.gif); 
+    background-image: url(/public/img/asc.gif) !important; 
 } 
 
 th.headerSortDown { 
-    background-image: url(/public/img/small_desc.gif); 
+    background-image: url(/public/img/desc.gif) !important; 
 } 
 th.header { 
     background-image: url(/public/img/bg.gif); 
     background-repeat: no-repeat; 
     background-position: right;
+    background-position-x: 0%;
+    padding-left: 17px !important;
 }
 
 

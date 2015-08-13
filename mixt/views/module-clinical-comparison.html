@@ -1,0 +1,79 @@
+{{ define "content" }} 
+
+<script src="/public/js/colorbrewer.js" charset="utf-8"></script>
+<script src="/public/js/d3.min.js" charset="utf-8"></script>
+<script src="/public/js/comparison-heatmap.js" charset="utf-8"></script>
+
+<style> 
+.axis path,
+.axis line {
+    fill: none;
+    shape-rendering: crispEdges;
+}
+</style>
+
+<div class="container">
+    <div class="row">
+        <h2>Select tissue</h2> 
+    </div>
+
+    <div class="row">
+      <!-- Nav tabs -->
+      <ul class="nav nav-pills nav-stacked col-md-2" role="tablist">
+          {{ range $tissue := .Tissues }} 
+              <li role="presentation"><a href="#{{$tissue}}" aria-controls="{{$tissue}}"
+              role="tab" data-toggle="tab">{{$tissue}}</a></li>
+          {{ end }} 
+        </ul> 
+
+        <div class="tab-content"> 
+          {{ range $tissue := .Tissues }} 
+            <div role="tabpanel" class="tab-pane" id="{{$tissue}}">
+            
+           <div class="col-md-7">
+               <div id="heatmap-{{$tissue}}">
+                   <svg></svg>
+                </div>
+           </div>
+ 
+            <div class="col-md-2">
+            <table class="table table-hover">
+            <thead>
+                <th> Select analysis </th>
+            </thead>
+            <tbody>
+            <tr id="{{$tissue}}-eigengene"><td class="analysis-select"> Eigengene correlation (cor & anova) </td> </tr>
+                <tr id="{{$tissue}}-roi"><td class="analysis-select"> ROI (fisher & anova) </td> </tr>
+            </tbody> 
+            </table>
+            
+            <h5> Scale (-log10)</h5> 
+            <div id="legend"> 
+                <svg></svg>
+            </div> 
+
+        </div>
+            </div> 
+          {{ end }} 
+        </div> 
+      </div> 
+  </div>
+
+  <script> 
+    {{ range $tissue := .Tissues }} 
+        $("a#{{$tissue}}").click(function(){
+            loadClinicalEigengeneHeatmap("{{$tissue}}") 
+        }); 
+
+        $("tr#{{$tissue}}-eigengene").click(function(){
+            loadClinicalEigengeneHeatmap("{{$tissue}}") 
+        });
+
+        $("tr#{{$tissue}}-roi").click(function(){
+            loadClinicalROIHeatmap("{{$tissue}}") 
+        });
+
+    {{ end }} 
+
+  </script> 
+{{ end }} 

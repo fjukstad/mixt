@@ -1,7 +1,7 @@
 var log = d3.scale.log()
 
-var modules;
-var ymodules = []
+var xnames;
+var ynames = []
 
 var max,
     min;
@@ -30,12 +30,6 @@ margin = 120;
 
 
 $(function() {
-    svg = d3.select("#heatmap")
-        .append("svg")
-
-    legend = d3.select("#legend")
-        .append("svg")
-
 })
 
 function loadEigengeneHeatmap(tissueA, tissueB) {
@@ -60,21 +54,42 @@ function loadPatientRankHeatmap(tissueA, tissueB) {
     heatmap(url, tissueA, tissueB)
 }
 
+function loadClinicalEigengeneHeatmap(tissue){
+    var url = "/clinical-comparison/"+tissue+"/eigengene"
+    heatmap(url, tissue, "") 
+}
+
+function loadClinicalROIHeatmap(tissue){
+    var url = "/clinical-comparison/"+tissue+"/roi"
+    heatmap(url, tissue, "") 
+}
+
+
 function heatmap(url, tissueA, tissueB) {
+    svg = d3.select("#heatmap-"+tissueA+" svg").attr("id",tissueA)
+
+    legend = d3.selectAll("#legend-"+tissueA+" svg").attr("id",tissueA)
 
 
-    modules = []
-    ymodules = []
+
+    xnames = []
+    ynames = []
 
     min = 100
     max = 0
 
     d3.csv(url, function(d) {
-            
-            ymodules.push(d.module)
-            delete d.module
+                
+            if(tissueB == ""){
+                ynames.push(d.Clinical)
+                delete d.Clinical
+            }
+            else { 
+                ynames.push(d.module)
+                delete d.module
+            }
 
-            modules = Object.keys(d)
+            xnames = Object.keys(d)
             var data = Object.keys(d).map(function(key) {
                 var num = -log(parseFloat(d[key]))
                 if (num > 10 || isNaN(num)) {
@@ -97,7 +112,7 @@ function heatmap(url, tissueA, tissueB) {
             }
 
             return {
-                modules: modules,
+                xnames: xnames,
                 data: data
             };
         },
@@ -107,35 +122,34 @@ function heatmap(url, tissueA, tissueB) {
                 heatmap(url,tissueA,tissueB) 
             }
 
-            $("#heatmap svg").html("")
-            $("#legend svg").html("")
+            $("#heatmap-"+tissueA+" svg").html("")
+            $("#legend-"+tissueA+" svg").html("")
 
-            modules = strip(modules, "ME")
-            ymodules = strip(ymodules, "ME")
+            xnames = strip(xnames, "ME")
+            ynames = strip(ynames, "ME")
 
             cellMargin = cellHeight + 2
-            width = cellMargin * modules.length,
-                height = cellMargin * ymodules.length;
+            width = cellMargin * xnames.length,
+                height = cellMargin * ynames.length;
 
 
             xScale = d3.scale.ordinal()
-                .domain(modules)
+                .domain(xnames)
                 .rangePoints([0, width - cellWidth]);
 
             yScale = d3.scale.ordinal()
-                .domain(ymodules)
+                .domain(ynames)
                 .rangePoints([0, height - cellHeight]);
 
             xAxis = d3.svg.axis().scale(xScale)
                 .orient("bottom")
-                .ticks(modules.length)
+                .ticks(xnames.length)
                 .innerTickSize(2)
                 .outerTickSize(0)
 
-
             yAxis = d3.svg.axis().scale(yScale)
                 .orient("left")
-                .ticks(ymodules.length);
+                .ticks(ynames.length);
 
             color = d3.scale.linear()
                 .domain([min, max])
@@ -153,8 +167,9 @@ function heatmap(url, tissueA, tissueB) {
                 })
                 .attr("class", "column")
 
-            row = rows.selectAll("svg")
+            row = rows.selectAll("svg#"+tissueA)
                 .data(function(d, i) {
+                    console.log(d,i) 
                     res = []
                     for (j in d.data) {
                         a = {
@@ -169,10 +184,13 @@ function heatmap(url, tissueA, tissueB) {
                 .append("g")
                 .append("a")
                 .attr("xlink:href", function(d,i){
-                    
-                    xname = modules[i];
-                    yname = ymodules[d.index];
-                    return "/compare/"+tissueA+"/"+tissueB + "/"+yname+"/"+xname
+                    xname = xnames[i];
+                    yname = ynames[d.index];
+                    if(tissueB == "") {
+                        return "/modules/"+tissueA+"/"+xname
+                    } else {
+                        return "/compare/"+tissueA+"/"+tissueB + "/"+yname+"/"+xname
+                    }
                 })
                 .append("rect")
                 .attr("transform", function(d, i) {
@@ -192,8 +210,10 @@ function heatmap(url, tissueA, tissueB) {
                         .style("stroke", "black")
                         .style("stroke-width", 1)
 
-                    xname = modules[i];
-                    yname = ymodules[d.index];
+                    xname = xnames[i];
+                    yname = ynames[d.index];
+
+                    console.log(xname, yname, d, i) 
     
                     xg.selectAll(".tick")
                         .each(function(d, i) {

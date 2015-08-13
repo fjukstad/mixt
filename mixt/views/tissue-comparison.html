@@ -2,7 +2,7 @@
 
 <script src="/public/js/colorbrewer.js" charset="utf-8"></script>
 <script src="/public/js/d3.min.js" charset="utf-8"></script>
-<script src="/public/js/compare-tissues.js" charset="utf-8"></script> 
+<script src="/public/js/comparison-heatmap.js" charset="utf-8"></script> 
 
 <style> 
 .axis path,
@@ -19,7 +19,8 @@
     </div>
     <div class="row">
         <div class="col-md-8">
-            <div id="heatmap">
+            <div id="heatmap-{{.TissueA}}">
+               <svg></svg>
             </div>
         </div>
 

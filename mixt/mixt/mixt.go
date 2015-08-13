@@ -622,24 +622,37 @@ func GetCommonUserERGenes(module, tissue string, genelist []string) ([]string, e
 }
 
 func EigengeneCorrelation(tissueA, tissueB string) ([]byte, error) {
-	return analysis("eigengeneCorrelation", tissueA, tissueB)
+	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	return analysis("eigengeneCorrelation", args)
 }
 
 func ModuleHypergeometricTest(tissueA, tissueB string) ([]byte, error) {
-	return analysis("moduleHypergeometricTest", tissueA, tissueB)
+	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	return analysis("moduleHypergeometricTest", args)
 }
 
 func ROITest(tissueA, tissueB string) ([]byte, error) {
-	return analysis("roiTest", tissueA, tissueB)
+	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	return analysis("roiTest", args)
 }
 
 func PatientRankCorrelation(tissueA, tissueB string) ([]byte, error) {
-	return analysis("patientRankCorrelation", tissueA, tissueB)
+	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	return analysis("patientRankCorrelation", args)
 }
 
-func analysis(analysis, tissueA, tissueB string) ([]byte, error) {
+func ClinicalEigengene(tissue string) ([]byte, error) {
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `}`
+	return analysis("eigengeneClinicalRelation", args)
+}
 
-	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+func ClinicalROI(tissue string) ([]byte, error) {
+	args := `{"tissue": ` + "\"" + tissue + "\"" + `}`
+	return analysis("roiClinicalRelation", args)
+}
+
+func analysis(analysis, args string) ([]byte, error) {
+
 	fun := "mixt/R/" + analysis
 
 	session, err := komp.Call(fun, args)

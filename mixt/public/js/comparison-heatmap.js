@@ -26,7 +26,7 @@ var cellHeight,
 
 cellHeight = 15;
 cellWidth = cellHeight;
-margin = 120;
+margin = 125;
 
 
 function loadEigengeneHeatmap(tissueA, tissueB) {
@@ -65,7 +65,15 @@ function loadClinicalROIHeatmap(tissue) {
 function heatmap(url, tissueA, tissueB) {
     svg = d3.select("#heatmap-" + tissueA + " svg").attr("id", tissueA)
     legend = d3.select("#legend-" + tissueA + " svg").attr("id", tissueA)
-
+    
+    xlabel = tissueA
+    
+    if(tissueB == ""){
+        ylabel = "Clinical" 
+    } else { 
+        ylabel = tissueB
+    }
+    
 
     xnames = []
     ynames = []
@@ -329,7 +337,26 @@ function heatmap(url, tissueA, tissueB) {
                     }
                     return ""
                 })
+                
+                
+                ytrans = (height + margin) / 2.5
+                svg.append("g")
+                    .attr("transform","translate(15,"+ytrans+") rotate(-90)")
+                    .append("text")
+                    .attr("class", "label-heatmap")
+                    .text(ylabel)
+                
+                ytrans = height + margin - 10; 
+                xtrans = (width + margin*1.25) / 2 
+                    
+                svg.append("g")
+                    .attr("transform","translate("+xtrans+","+ytrans+")")
+                    .append("text")
+                    .attr("class", "label-heatmap")
+                    .text(xlabel)
+
         })
+
 
 
 

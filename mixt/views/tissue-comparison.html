@@ -53,22 +53,31 @@
 <script>
 
     loadEigengeneHeatmap("{{.TissueA}}", "{{.TissueB}}") 
+    $("tr#eigengene").addClass("info") 
     
     $("tr#overlap").click(function(){
             loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
+            $(this).addClass("info") 
+            $(this).siblings().removeClass("info") 
     })
 
     $("tr#eigengene").click(function(){
             loadEigengeneHeatmap("{{.TissueA}}","{{.TissueB}}")
+            $(this).addClass("info") 
+            $(this).siblings().removeClass("info") 
     })
 
 
     $("tr#roi").click(function(){
             loadROIHeatmap("{{.TissueA}}","{{.TissueB}}")
+            $(this).addClass("info") 
+            $(this).siblings().removeClass("info") 
     })
 
     $("tr#patientrank").click(function(){
             loadPatientRankHeatmap("{{.TissueA}}","{{.TissueB}}")
+            $(this).addClass("info") 
+            $(this).siblings().removeClass("info") 
     })
 </script> 
 {{ end }} 

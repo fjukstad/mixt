@@ -29,9 +29,6 @@ cellWidth = cellHeight;
 margin = 120;
 
 
-$(function() {
-})
-
 function loadEigengeneHeatmap(tissueA, tissueB) {
     var url = "/tissues/" + tissueA + "/" + tissueB + "/eigengene"
     heatmap(url, tissueA, tissueB)
@@ -54,22 +51,20 @@ function loadPatientRankHeatmap(tissueA, tissueB) {
     heatmap(url, tissueA, tissueB)
 }
 
-function loadClinicalEigengeneHeatmap(tissue){
-    var url = "/clinical-comparison/"+tissue+"/eigengene"
-    heatmap(url, tissue, "") 
+function loadClinicalEigengeneHeatmap(tissue) {
+    var url = "/clinical-comparison/" + tissue + "/eigengene"
+    heatmap(url, tissue, "")
 }
 
-function loadClinicalROIHeatmap(tissue){
-    var url = "/clinical-comparison/"+tissue+"/roi"
-    heatmap(url, tissue, "") 
+function loadClinicalROIHeatmap(tissue) {
+    var url = "/clinical-comparison/" + tissue + "/roi"
+    heatmap(url, tissue, "")
 }
 
 
 function heatmap(url, tissueA, tissueB) {
-    svg = d3.select("#heatmap-"+tissueA+" svg").attr("id",tissueA)
-
-    legend = d3.selectAll("#legend-"+tissueA+" svg").attr("id",tissueA)
-
+    svg = d3.select("#heatmap-" + tissueA + " svg").attr("id", tissueA)
+    legend = d3.select("#legend-" + tissueA + " svg").attr("id", tissueA)
 
 
     xnames = []
@@ -79,12 +74,11 @@ function heatmap(url, tissueA, tissueB) {
     max = 0
 
     d3.csv(url, function(d) {
-                
-            if(tissueB == ""){
+
+            if (tissueB == "") {
                 ynames.push(d.Clinical)
                 delete d.Clinical
-            }
-            else { 
+            } else {
                 ynames.push(d.module)
                 delete d.module
             }
@@ -94,7 +88,7 @@ function heatmap(url, tissueA, tissueB) {
                 var num = -log(parseFloat(d[key]))
                 if (num > 10 || isNaN(num)) {
                     num = 10;
-               }
+                }
 
 
                 return num
@@ -118,12 +112,12 @@ function heatmap(url, tissueA, tissueB) {
         },
 
         function(error, csvRows) {
-            if(csvRows.length < 1){
-                heatmap(url,tissueA,tissueB) 
+            if (csvRows.length < 1) {
+                heatmap(url, tissueA, tissueB)
             }
 
-            $("#heatmap-"+tissueA+" svg").html("")
-            $("#legend-"+tissueA+" svg").html("")
+            $("#heatmap-" + tissueA + " svg").html("")
+            $("#legend-" + tissueA + " svg").html("")
 
             xnames = strip(xnames, "ME")
             ynames = strip(ynames, "ME")
@@ -167,9 +161,9 @@ function heatmap(url, tissueA, tissueB) {
                 })
                 .attr("class", "column")
 
-            row = rows.selectAll("svg#"+tissueA)
+            row = rows.selectAll("svg#" + tissueA)
                 .data(function(d, i) {
-                    console.log(d,i) 
+                    console.log(d, i)
                     res = []
                     for (j in d.data) {
                         a = {
@@ -183,13 +177,13 @@ function heatmap(url, tissueA, tissueB) {
                 .enter()
                 .append("g")
                 .append("a")
-                .attr("xlink:href", function(d,i){
+                .attr("xlink:href", function(d, i) {
                     xname = xnames[i];
                     yname = ynames[d.index];
-                    if(tissueB == "") {
-                        return "/modules/"+tissueA+"/"+xname
+                    if (tissueB == "") {
+                        return "/modules/" + tissueA + "/" + xname
                     } else {
-                        return "/compare/"+tissueA+"/"+tissueB + "/"+yname+"/"+xname
+                        return "/compare/" + tissueA + "/" + tissueB + "/" + yname + "/" + xname
                     }
                 })
                 .append("rect")
@@ -213,8 +207,8 @@ function heatmap(url, tissueA, tissueB) {
                     xname = xnames[i];
                     yname = ynames[d.index];
 
-                    console.log(xname, yname, d, i) 
-    
+                    console.log(xname, yname, d, i)
+
                     xg.selectAll(".tick")
                         .each(function(d, i) {
                             if (d == xname) {

@@ -17,7 +17,7 @@
         <h2>Select tissue</h2> 
     </div>
 
-    <div class="row">
+    <div class="row" id="heatmap-tabs">
       <!-- Nav tabs -->
       <ul class="nav nav-pills nav-stacked col-md-2" role="tablist">
           {{ range $tissue := .Tissues }} 
@@ -61,16 +61,24 @@
 
   <script> 
     {{ range $tissue := .Tissues }} 
-        $("a#{{$tissue}}").click(function(){
-            loadClinicalEigengeneHeatmap("{{$tissue}}") 
+    $('#heatmap-tabs a[href="#{{$tissue}}"]').on("click", function(e){
+              console.log("shit storm", e);
+              loadClinicalEigengeneHeatmap("{{$tissue}}") 
+                $("tr#{{$tissue}}-eigengene").addClass("info") 
+              //$(this).tab('show')
+                
         }); 
 
         $("tr#{{$tissue}}-eigengene").click(function(){
             loadClinicalEigengeneHeatmap("{{$tissue}}") 
+            $(this).addClass("info") 
+            $(this).siblings().removeClass("info") 
         });
 
         $("tr#{{$tissue}}-roi").click(function(){
             loadClinicalROIHeatmap("{{$tissue}}") 
+            $(this).addClass("info") 
+            $(this).siblings().removeClass("info") 
         });
 
     {{ end }} 

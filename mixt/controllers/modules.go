@@ -23,6 +23,10 @@ var compareModulesTemplate = template.Must(template.ParseFiles("views/base.html"
 	"views/header.html", "views/navbar.html",
 	"views/module-comparison.html", "views/footer.html"))
 
+var clinicalComparisonTemplate = template.Must(template.ParseFiles("views/base.html",
+	"views/header.html", "views/navbar.html",
+	"views/module-clinical-comparison.html", "views/footer.html"))
+
 type ModulesOverview struct {
 	Modules map[string][]mixt.Module
 	Tissues []string
@@ -135,4 +139,43 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	modules := []mixt.Module{ma, mb}
 
 	compareModulesTemplate.Execute(w, ModuleComparison{modules, analyses})
+}
+
+type Clinical struct {
+	Tissues []string
+}
+
+func ModuleClinicalHandler(w http.ResponseWriter, r *http.Request) {
+	tissues, err := mixt.GetTissues()
+
+	if err != nil {
+		fmt.Println("Could not get tissues")
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	c := Clinical{tissues}
+	clinicalComparisonTemplate.Execute(w, c)
+}
+
+func ModuleClinicalAnalysisHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	tissue := vars["tissue"]
+	analysis := vars["analysis"]
+
+	var res []byte
+	var err error
+
+	if analysis == "eigengene" {
+		res, err = mixt.ClinicalEigengene(tissue)
+	} else {
+		res, err = mixt.ClinicalROI(tissue)
+	}
+
+	if err != nil {
+		fmt.Println("Could not run analysis", tissue, analysis)
+		http.Error(w, err.Error(), 503)
+	}
+
+	w.Write(res)
 }

@@ -66,12 +66,12 @@ function heatmap(url, tissueA, tissueB) {
     svg = d3.select("#heatmap-" + tissueA + " svg").attr("id", tissueA)
     legend = d3.select("#legend-" + tissueA + " svg").attr("id", tissueA)
     
-    xlabel = tissueA
+    xlabel = tissueB
     
     if(tissueB == ""){
         ylabel = "Clinical" 
     } else { 
-        ylabel = tissueB
+        ylabel = tissueA
     }
     
 
@@ -168,10 +168,12 @@ function heatmap(url, tissueA, tissueB) {
                     return "translate(" + margin + "," + i * cellMargin + ")"
                 })
                 .attr("class", "column")
+                .attr("id", function(d,i){
+                    return ynames[i]
+                });
 
             row = rows.selectAll("svg#" + tissueA)
                 .data(function(d, i) {
-                    console.log(d, i)
                     res = []
                     for (j in d.data) {
                         a = {
@@ -215,7 +217,6 @@ function heatmap(url, tissueA, tissueB) {
                     xname = xnames[i];
                     yname = ynames[d.index];
 
-                    console.log(xname, yname, d, i)
 
                     xg.selectAll(".tick")
                         .each(function(d, i) {
@@ -355,7 +356,89 @@ function heatmap(url, tissueA, tissueB) {
                     .attr("class", "label-heatmap")
                     .text(xlabel)
 
+
+            d3.selectAll("g.y.axis g")  
+                .on("mouseover", function(){
+
+                    d3.select(this).selectAll("text").attr("font-weight", "bold")
+                        
+                    t = d3.transform(d3.select(this).attr("transform")) 
+                    x = t.translate[0] + margin,
+                    y = t.translate[1] - 1;
+
+                    x2 = width + margin - 1
+                    y2 = y 
+
+                    svg.append("line")
+                        .attr("id", "row-select") 
+                        .attr("x1", x)
+                        .attr("y1", y)
+                        .attr("x2", x2)
+                        .attr("y2", y)
+                        .attr("stroke-width", 1) 
+                        .attr("stroke", "black") 
+
+                    svg.append("line")
+                        .attr("id", "row-select") 
+                        .attr("x1", x)
+                        .attr("y1", y + cellHeight - 1)
+                        .attr("x2", x2)
+                        .attr("y2", y + cellHeight - 1 )
+                        .attr("stroke-width", 1) 
+                        .attr("stroke", "black") 
+                })
+                .on("mouseout", function(){
+                    d3.selectAll("line#row-select").remove() 
+                    d3.select(this).selectAll("text").attr("font-weight", "")
+                })
+                
+            d3.selectAll("g.x.axis g")
+                .on("mouseover", function(){
+                    d3.select(this).selectAll("text").attr("font-weight", "bold")
+
+                    t = d3.transform(d3.select(this).attr("transform")) 
+                    x = t.translate[0] + margin - 1,
+                    y = t.translate[1];
+
+                    y2 = height - 1
+                    x2 = x
+
+                    console.log(t,x,y,x2,y2) 
+
+                    svg.append("line")
+                        .attr("id", "column-select") 
+                        .attr("x1", x)
+                        .attr("y1", y)
+                        .attr("x2", x2)
+                        .attr("y2", y2)
+                        .attr("stroke-width", 1) 
+                        .attr("stroke", "black") 
+
+                    x = x + cellWidth
+                    x2 = x
+
+
+                    svg.append("line")
+                        .attr("id", "column-select") 
+                        .attr("x1", x)
+                        .attr("y1", y)
+                        .attr("x2", x2)
+                        .attr("y2", y2)
+                        .attr("stroke-width", 1) 
+                        .attr("stroke", "black") 
+
+
+
+
+                })
+                .on("mouseout", function(){
+                    d3.selectAll("line#column-select").remove() 
+                    d3.select(this).selectAll("text").attr("font-weight", "")
+                }) 
+
         })
+
+
 
 
 

@@ -153,9 +153,11 @@ function heatmap(url, tissueA, tissueB) {
                 .orient("left")
                 .ticks(ynames.length);
 
-            color = d3.scale.linear()
-                .domain([min, max])
-                .range(["#fde0dd", "#c51b8a"])
+            console.log(min,max) 
+
+            color = d3.scale.quantize()
+                .domain([0,  max])
+                .range(["#D4D4D4", "#D4D4D4","#D4D4D4","#D4D4D4", "#D4D4D4","#D4D4D4", "#D0AAB1", "#8E063B"])
 
             svg.attr("width", width + margin * 2)
                 .attr("height", height + margin)

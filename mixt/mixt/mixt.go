@@ -144,13 +144,14 @@ func GetTissues() ([]string, error) {
 }
 
 type Module struct {
-	Name             string
-	Tissue           string
-	HeatmapUrl       string
-	Genes            []Gene
-	EnrichmentScores EnrichmentScores
-	GOTerms          []GOTerm
-	Url              string
+	Name                  string
+	Tissue                string
+	HeatmapUrl            string
+	AlternativeHeatmapUrl string
+	Genes                 []Gene
+	EnrichmentScores      EnrichmentScores
+	GOTerms               []GOTerm
+	Url                   string
 }
 
 type Gene struct {
@@ -199,7 +200,7 @@ func GetModules(tissue string) ([]Module, error) {
 					return
 				}
 			*/
-			m := Module{moduleNames[i], tissue, "", nil, EnrichmentScores{}, []GOTerm{}, ""}
+			m := Module{moduleNames[i], tissue, "", "", nil, EnrichmentScores{}, []GOTerm{}, ""}
 			resChan <- m
 		}(i)
 	}
@@ -258,7 +259,7 @@ func GetModule(name string, tissue string) (Module, error) {
 		return Module{}, err
 	}
 
-	module := Module{name, tissue, heatmapUrl, genes, scores, goterms, url}
+	module := Module{name, tissue, heatmapUrl, "", genes, scores, goterms, url}
 	return module, nil
 }
 

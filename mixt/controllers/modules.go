@@ -136,6 +136,21 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 
 	mb.HeatmapUrl = reorderHeatmap
 
+	ma.AlternativeHeatmapUrl, err = mixt.HeatmapReOrder(tissueA, moduleA, tissueB, moduleB)
+	if err != nil {
+		fmt.Println("Could not get re order heatmap")
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	// Get alternative heatmaps for both modules
+	mb.AlternativeHeatmapUrl, err = mixt.Heatmap(tissueB, moduleB)
+	if err != nil {
+		fmt.Println("Could not get heatmap", tissueB, moduleB)
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
 	modules := []mixt.Module{ma, mb}
 
 	compareModulesTemplate.Execute(w, ModuleComparison{modules, analyses})

@@ -17,15 +17,28 @@
         <section id="{{$module.Name}}" class="module">
             <div class="row" id="{{$module.Name}}-module">
                 <div class="col-sm-5 col-md-5 col-lg-5">
-                    <a href="/resources/{{$module.HeatmapUrl}}/pdf/heatmap.pdf" download="{{$module.Name}}-{{$module.Tissue}}-heatmap.pdf"
-                    target="_blank">
-                        <img src="/resources/{{$module.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
+                    <a href="/resources/{{$module.HeatmapUrl}}/pdf/heatmap.pdf" 
+                       download="{{$module.Name}}-{{$module.Tissue}}-heatmap.pdf"
+                       target="_blank"
+                       id="original">
+                    <img src="/resources/{{$module.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
                     </a>
+
+                    <a href="/resources/{{$module.AlternativeHeatmapUrl}}/pdf/heatmap.pdf" 
+                       download="{{$module.Name}}-{{$module.Tissue}}-heatmap.pdf"
+                       target="_blank"
+                       id="alternative"
+                       style="display:none">
+                    <img src="/resources/{{$module.AlternativeHeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
+                    </a>
+
+
                     <span id="download-link">
 
               <a href="/resources/{{$module.Url}}/csv/genelist.csv" 
                   download="{{$module.Name}}-{{$module.Tissue}}-genelist.csv"
-                  target="_blank">Download gene list</a>
+                  target="_blank">Download gene list</a> | 
+              <a href="#" id="{{$module.Name}}-{{$module.Tissue}}-reorder">Inverse ordering </a> 
             </span>
                     </hr>
                 </div>
@@ -219,6 +232,22 @@
                                 })
                             }
                         );
+
+                        alternative = false; 
+
+                        $("a#{{$module.Name}}-{{$module.Tissue}}-reorder").click(function(d){
+                            console.log("{{$module.AlternativeHeatmapUrl}}")
+                            if(alternative){ 
+                                $("a#alternative").css("display","none");
+                                $("a#original").css("display","");
+                                alternative = false; 
+                            } else { 
+                                $("a#alternative").css("display","");
+                                $("a#original").css("display","none");
+                                alternative = true
+                            }
+                        })
+
                     </script>
           </div>
         </div>

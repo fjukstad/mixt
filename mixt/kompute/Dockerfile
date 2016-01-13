@@ -27,6 +27,7 @@ RUN R --vanilla < deps.r
 
 # Apache ports (without caching)
 EXPOSE 80
+EXPOSE 443 
 
 # directories etc. 
 RUN mkdir -p /home/rstudio

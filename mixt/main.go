@@ -159,6 +159,8 @@ func main() {
 
 	r.HandleFunc("/common-go/{tissue}/{module}/{id}/{format}", controllers.CommonGOTermGenesHandler)
 
+	r.HandleFunc("/suggest-papers/{tissue}/{module}", controllers.PaperSuggestionHandler)
+
 	addr := "opencpu:80"
 	username := "biopsy@mcgill"
 	password := "van-mi-ka-al"

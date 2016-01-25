@@ -9,13 +9,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fjukstad/kvik/kompute"
+	"github.com/fjukstad/kvik/gopencpu"
 )
 
-var komp *kompute.Kompute
+var komp *gopencpu.GoOpenCPU
 
 func Init(addr, username, password string) {
-	komp = kompute.NewKompute(addr, username, password)
+	komp = gopencpu.NewGoOpenCPU(addr, username, password)
 	return
 }
 

@@ -1,0 +1,184 @@
+<html>
+    <head>
+        <!-- OpenCPU client library -->
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="//cdn.opencpu.org/opencpu-0.4.js"></script>
+        <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        
+    </head> 
+
+    <body>
+        <script> 
+    ocpu.seturl("//docker0.bci.mcgill.ca/ocpu/library/mixt/R")
+        
+        var moduleNames = []
+        var nodes = []
+        var edges = [] 
+        var moduleIndex = 0; 
+        var nodeIndex = 0; 
+
+
+        var tissue = "blood" 
+
+        
+        var req = ocpu.rpc("getModules",{
+            tissue:tissue
+        }, function(moduleNames){
+            for(i=0; i< moduleNames.length; i++){
+                ocpu.rpc("getGeneList", {
+                    tissue: tissue,
+                    
+                    module: moduleNames[i]
+                }, function(geneList){
+                    console.log("COLOR", moduleNames[moduleIndex])
+                    for(j=0; j < geneList.length; j++){
+                        if(j > geneList.length/10){
+                            break
+                        }
+                           geneList[j].color = moduleNames[moduleIndex]
+                           nodes.push(geneList[j]); 
+                           //for(k = 0; k < geneList.length; k++){
+                               from = nodeIndex//nodeIndex  
+                               to = nodeIndex +j //from + j
+                               console.log("edge", from, '-', to) 
+                               edges.push({"source": from, "target":to, "value": 2 }) 
+                           //}
+
+                    }
+
+                    if(moduleIndex == moduleNames.length-1){ 
+                        console.log("HERE ARE THE NODES") 
+                        console.log("IN TOTAL", nodes.length, "NODES.",edges.length,"EDGES") 
+                      // var context = canvas.node().getContext("2d");
+                        
+                    force
+                      .nodes(nodes)
+                      .links(edges) 
+                      //.on("tick", tick) 
+                      .start() 
+
+                      /*
+                      function tick() {
+                        context.clearRect(0, 0, width, height);
+
+                        // draw links
+                        context.strokeStyle = "#ccc";
+                        context.beginPath();
+                        edges.forEach(function(d) {
+                          context.moveTo(d.source.x, d.source.y);
+                          context.lineTo(d.target.x, d.target.y);
+                        });
+                        context.stroke();
+
+                        // draw nodes
+                        nodes.forEach(function(d) {
+                        context.beginPath();
+                          context.fillStyle = d.color;
+                          context.moveTo(d.x, d.y);
+                          context.arc(d.x, d.y, 2, 0, 2 * Math.PI);
+                            context.fill();
+                        });
+                      }
+                      */
+                        var link = svg.selectAll(".link")
+                          .data(edges)
+                           .enter().append("line")
+                              .attr("class", "link")
+                              .style("stroke-width", function(d) { 
+                                  return Math.sqrt(d.value);
+
+                                })
+                                .style("stroke", "#ccc");
+
+                      var node = svg.selectAll(".node")
+                          .data(nodes)
+                        .enter().append("circle")
+                          .attr("class", "node")
+                          .attr("r", 2)
+                          .style("fill", function(d) { 
+                              console.log("coloring by", d.color) 
+                              return d.color;
+                          })
+                          .call(force.drag);
+
+                      force.on("tick", function() {
+                      link.attr("x1", function(d) { return d.source.x; })
+                        .attr("y1", function(d) { return d.source.y; })
+                        .attr("x2", function(d) { return d.target.x; })
+                        .attr("y2", function(d) { return d.target.y; });
+                      
+                        node.attr("cx", function(d) { return d.x; })
+                            .attr("cy", function(d) { return d.y; });
+                      });
+
+
+                    } else {
+                        console.log("not this time", moduleIndex)
+                    }
+                    moduleIndex += 1
+                    nodeIndex = nodes.length
+                        
+                });
+            }
+        });
+
+var width = window.innerWidth
+|| document.documentElement.clientWidth
+|| document.body.clientWidth;
+
+var height = window.innerHeight
+|| document.documentElement.clientHeight
+|| document.body.clientHeight; 
+var color = d3.scale.category20();
+
+    var force = d3.layout.force()
+        .charge(-10)
+        .linkDistance(30)
+        .size([width, height]);
+
+/*
+var canvas = d3.select("body").append("canvas")
+    .attr("width", width)
+    .attr("height", height);
+
+    */
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+/*
+  var link = svg.selectAll(".link")
+      .data(edges)
+       .enter().append("line")
+          .attr("class", "link")
+          .style("stroke-width", function(d) { 
+              return Math.sqrt(d.value);
+    });
+
+  var node = svg.selectAll(".node")
+      .data(nodes)
+    .enter().append("circle")
+      .attr("class", "node")
+      .attr("r", 2)
+      .style("fill", function(d) { 
+          console.log("coloring by", d.color) 
+          return d.color;
+      })
+      .call(force.drag);
+
+  force.on("tick", function() {
+  link.attr("x1", function(d) { return d.source.x; })
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
+  
+    node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+  });
+  */
+
+
+        </script> 
+    </body> 
+</html> 

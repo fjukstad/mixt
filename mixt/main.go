@@ -161,6 +161,8 @@ func main() {
 
 	r.HandleFunc("/suggest-papers/{tissue}/{module}", controllers.PaperSuggestionHandler)
 
+	r.HandleFunc("/tomgraph/{tissue}/{what}", controllers.TOMGraphHandler)
+
 	addr := "opencpu:80"
 	username := "biopsy@mcgill"
 	password := "van-mi-ka-al"

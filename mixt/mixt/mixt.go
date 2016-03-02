@@ -1,6 +1,7 @@
 package mixt
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -9,55 +10,59 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fjukstad/kvik/gopencpu"
+	"github.com/fjukstad/kvik/r"
 )
 
-var komp *gopencpu.GoOpenCPU
+var R r.Server
 
 func Init(addr, username, password string) {
-	komp = gopencpu.NewGoOpenCPU(addr, username, password)
+	R = r.Server{addr, username, password}
 	return
 }
 
 func Heatmap(tissue, module string) (string, error) {
-	fun := "mixt/R/heatmap"
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
-					"module":` + "\"" + module + "\"" + `}`
-	return plot(fun, args)
+	pkg := "mixt"
+	fun := "heatmap"
+	args := "tissue='" + tissue + "', module='" + module + "'"
+	return plot(pkg, fun, args)
 
 }
 
 func HeatmapReOrder(tissue, module, orderByTissue, orderByModule string) (string, error) {
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"module": ` + "\"" + module + "\"" + `,"re.order": ` + "\"TRUE\"" + `, "orderByModule": ` + "\"" + orderByModule + "\"" + `,"orderByTissue":` + "\"" + orderByTissue + "\"" + `}`
-
-	fun := "mixt/R/heatmap"
-	return plot(fun, args)
+	args := "tissue='" + tissue + "', module='" + module + "', re.order=TRUE, orderByModule='" + orderByModule + "', orderByTissue='" + orderByTissue + "'"
+	pkg := "mixt"
+	fun := "heatmap"
+	return plot(pkg, fun, args)
 }
 
-func plot(fun, args string) (string, error) {
+func plot(pkg, fun, args string) (string, error) {
 
-	session, err := komp.Call(fun, args)
+	key, err := R.Call(pkg, fun, args)
 
 	if err != nil {
 		fmt.Println("Could not plot :( ")
-		fmt.Println(session, err)
+		fmt.Println(key, err)
 		return "", err
 	}
 
-	plotUrl := session.Key
-
-	return plotUrl, nil
+	return key, nil
 }
 
 func GetGenes() ([]string, error) {
-	resp, err := komp.Rpc("mixt/R/getAllGenes", "", "csv")
+
+	key, err := R.Call("mixt", "getAllGenes", "")
+	if err != nil {
+		return []string{}, err
+	}
+
+	resp, err := R.Get(key, "csv")
 	if err != nil {
 		fmt.Println("error:", err)
 		return []string{""}, err
 	}
 
-	body := strings.NewReader(resp)
+	body := bytes.NewReader(resp)
 	reader := csv.NewReader(body)
 	var genes []string
 	line := 0
@@ -68,7 +73,7 @@ func GetGenes() ([]string, error) {
 			break
 		} else if err != nil {
 			fmt.Println("Error:", err)
-			return []string{}, nil
+			return []string{}, err
 		}
 
 		if line == 0 {
@@ -88,12 +93,16 @@ func GetCommonGenes(tissue, module, geneset, status string) ([]string, error) {
 		status = "updn.common"
 	}
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
-					"module":` + "\"" + module + "\"" + `,
-					"geneset":` + "\"" + geneset + "\"" + `,
-					"status": ` + "\"" + status + "\"" + `}`
+	pkg := "mixt"
+	fun := "getCommonGenes"
+	args := "tissue='" + tissue + "', module='" + module + "', geneset='" + geneset + "', status='" + status + "'"
 
-	resp, err := komp.Rpc("mixt/R/getCommonGenes", args, "json")
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []string{}, err
+	}
+
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		fmt.Println("Could not get common genes", err)
 		return []string{}, err
@@ -110,7 +119,16 @@ func GetCommonGenes(tissue, module, geneset, status string) ([]string, error) {
 }
 
 func GetAllModuleNames(gene string) ([]string, error) {
-	resp, err := komp.Rpc("mixt/R/getAllModules", `{"gene": `+"\""+gene+"\""+`}`, "json")
+	pkg := "mixt"
+	fun := "getAllModules"
+	args := "gene='" + gene + "'"
+
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []string{}, err
+	}
+
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		fmt.Println("error:", err)
 		return []string{""}, err
@@ -127,7 +145,17 @@ func GetAllModuleNames(gene string) ([]string, error) {
 }
 
 func GetTissues() ([]string, error) {
-	resp, err := komp.Rpc("mixt/R/getAllTissues", "", "json")
+
+	pkg := "mixt"
+	fun := "getAllTissues"
+	args := ""
+
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []string{}, err
+	}
+
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		fmt.Println("error:", err)
 		return []string{""}, err
@@ -167,7 +195,17 @@ type Response struct {
 }
 
 func GetModules(tissue string) ([]Module, error) {
-	resp, err := komp.Rpc("mixt/R/getModules", `{"tissue" : `+"\""+tissue+"\""+`}`, "json")
+
+	pkg := "mixt"
+	fun := "getModules"
+	args := "tissue='" + tissue + "'"
+
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		fmt.Println("error:", err)
 		return nil, err
@@ -262,32 +300,21 @@ func GetModule(name string, tissue string) (Module, error) {
 
 func GetGeneList(module, tissue string) (genes []Gene, url string,
 	err error) {
-	var args string
-	args = `{"tissue": ` + "\"" + tissue + "\"" + `,
-					"module":` + "\"" + module + "\"" + `}`
+	pkg := "mixt"
+	fun := "getGeneList"
+	args := "tissue='" + tissue + "', module='" + module + "'"
 
-	session, err := komp.Call("mixt/R/getGeneList", args)
-
+	key, err := R.Call(pkg, fun, args)
 	if err != nil {
-		fmt.Println("Call failed one time, trying again. ")
-		fmt.Println(session, err)
-
-		session, err = komp.Call("mixt/R/getGeneList", args)
-		if err != nil {
-			fmt.Println("Call failed for the second time :( ")
-			return nil, "", err
-		}
-	}
-
-	resp, err := session.GetResult(komp, "csv")
-	if err != nil {
-		fmt.Println("GETRESULT", session.Url, session.Result)
-		fmt.Println(resp, err)
-
 		return nil, "", err
 	}
 
-	body := strings.NewReader(resp)
+	resp, err := R.Get(key, "csv")
+	if err != nil {
+		return nil, "", err
+	}
+
+	body := bytes.NewReader(resp)
 	reader := csv.NewReader(body)
 
 	line := 0
@@ -333,7 +360,8 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 
 	fmt.Println("WE GOT", len(genes), "genes")
 
-	return genes, session.Key, nil
+	return genes, key, nil
+
 }
 
 type Score struct {
@@ -367,11 +395,16 @@ type Set struct {
 
 func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, err error) {
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
-					"module":` + "\"" + module + "\"" + `}`
+	pkg := "mixt"
+	fun := "getEnrichmentScores"
+	args := "tissue='" + tissue + "', module='" + module + "'"
 
-	resp, err := komp.Rpc("mixt/R/getEnrichmentScores", args, "json")
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return EnrichmentScores{}, err
+	}
 
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		fmt.Println("Could not get enrich")
 		return EnrichmentScores{}, err
@@ -404,12 +437,16 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, er
 
 func GetEnrichmentScore(module, tissue, geneset string) (Score, error) {
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
-	"module":` + "\"" + module + "\"" + `, 
-	"geneset":` + "\"" + geneset + "\"" + `}`
+	pkg := "mxit"
+	fun := "getEnrichmentScores"
+	args := "tissue='" + tissue + "', module='" + module + "', geneset='" + geneset + "'"
 
-	resp, err := komp.Rpc("mixt/R/getEnrichmentScores", args, "json")
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return Score{}, err
+	}
 
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		return Score{}, err
 	}
@@ -427,16 +464,20 @@ func GetEnrichmentScore(module, tissue, geneset string) (Score, error) {
 }
 
 func GetGeneSetNames() ([]string, error) {
-	return GetSlice("mixt/R/getGeneSetNames", "")
+	return GetSlice("mixt", "getGeneSetNames", "")
 }
 
 func GetGOTermNames() ([]string, error) {
-	return GetSlice("mixt/R/getGOTermNames", "")
+	return GetSlice("mixt", "getGOTermNames", "")
 }
 
-func GetSlice(fun, args string) ([]string, error) {
+func GetSlice(pkg, fun, args string) ([]string, error) {
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []string{}, err
+	}
 
-	resp, err := komp.Rpc(fun, args, "json")
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		fmt.Println("Could not get gene set names :(", err)
 		return []string{}, err
@@ -456,11 +497,16 @@ type ModuleScores struct {
 
 func GetEnrichmentForTissue(tissue, geneset string) ([]Score, error) {
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,
-	"geneset":` + "\"" + geneset + "\"" + `}`
+	pkg := "mixt"
+	fun := "getEnrichmentForTissue"
+	args := "tissue='" + tissue + "', geneset='" + geneset + "'"
 
-	resp, err := komp.Rpc("mixt/R/getEnrichmentForTissue", args, "json")
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []Score{}, err
+	}
 
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		return []Score{}, err
 	}
@@ -486,12 +532,10 @@ type GOTerm struct {
 }
 
 func GetGOTerms(module, tissue string, terms []string) ([]GOTerm, error) {
-
-	var args string
-	if len(terms) < 1 {
-		args = `{"tissue": ` + "\"" + tissue + "\"" + `,
-		"module":` + "\"" + module + "\"" + `}`
-	} else {
+	pkg := "mixt"
+	fun := "getGOTerms"
+	args := "tissue='" + tissue + "', module='" + module + "'"
+	if len(terms) > 1 {
 
 		var fmtterms []string
 		for i, _ := range terms {
@@ -502,13 +546,15 @@ func GetGOTerms(module, tissue string, terms []string) ([]GOTerm, error) {
 		goTermNames += strings.Join(fmtterms, ", ")
 		goTermNames += "]"
 
-		args = `{"tissue": ` + "\"" + tissue + "\"" + `,
-		"module":` + "\"" + module + "\"" + `, 
-		"terms":` + "\"" + goTermNames + "\"" + `}`
+		args = args + ", terms='" + goTermNames + "'"
 	}
 
-	resp, err := komp.Rpc("mixt/R/getGOTerms", args, "json")
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []GOTerm{}, err
+	}
 
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		return []GOTerm{}, err
 	}
@@ -523,10 +569,16 @@ func GetGOTerms(module, tissue string, terms []string) ([]GOTerm, error) {
 
 func GetGOScoresForTissue(tissue, goterm string) ([]GOTerm, error) {
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"term":` + "\"" + goterm + "\"" + `}`
+	pkg := "mixt"
+	fun := "getGOScoresForTissue"
+	args := "tissue='" + tissue + "', term='" + goterm + "'"
 
-	resp, err := komp.Rpc("mixt/R/getGOScoresForTissue", args, "json")
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []GOTerm{}, err
+	}
 
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		return []GOTerm{}, err
 	}
@@ -539,23 +591,6 @@ func GetGOScoresForTissue(tissue, goterm string) ([]GOTerm, error) {
 
 }
 
-func Get(key, filetype string) (res []byte, err error) {
-	res, err = komp.Get(key, filetype)
-	if err != nil {
-		fmt.Println("Could not get result", err)
-		return nil, err
-	}
-
-	if strings.Contains(string(res), "Terminating process") {
-		res, err = komp.Get(key, filetype)
-		if err != nil {
-			fmt.Println("Get failed for the second time")
-			return nil, err
-		}
-	}
-	return res, err
-}
-
 type UserScore struct {
 	PValue float64  `json:"p-value"`
 	Module string   `json:"module"`
@@ -566,9 +601,16 @@ func UserEnrichmentScores(tissue string, genelist []string) ([]UserScore, error)
 
 	genes := parseGeneList(genelist)
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `,"genelist":` + genes + `}`
+	pkg := "mixt"
+	fun := "userEnrichmentScores"
+	args := "tissue='" + tissue + "', genelist=" + genes
 
-	resp, err := komp.Rpc("mixt/R/userEnrichmentScores", args, "json")
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return []UserScore{}, err
+	}
+
+	resp, err := R.Get(key, "json")
 	if err != nil {
 		fmt.Println("Could not calculate er scores for user list")
 		return []UserScore{}, err
@@ -588,21 +630,19 @@ func parseGeneList(genelist []string) string {
 		fmtgenelist = append(fmtgenelist, "\""+genelist[i]+"\"")
 	}
 
-	genes := "["
+	genes := "c("
 	genes += strings.Join(fmtgenelist, ", ")
-	genes += "]"
+	genes += ")"
 
 	return genes
 }
 
 func GetCommonGOTermGenes(module, tissue, id string) ([]string, error) {
+	pkg := "mixt"
+	fun := "getCommonGOTermGenes"
+	args := "tissue='" + tissue + "', module='" + module + "', gotermID='" + id + "'"
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `, "module":` + "\"" + module + "\"" + `, 
-	"gotermID":` + "\"" + id + "\"" + `}`
-
-	fun := "mixt/R/getCommonGOTermGenes"
-
-	return GetSlice(fun, args)
+	return GetSlice(pkg, fun, args)
 
 }
 
@@ -610,56 +650,52 @@ func GetCommonUserERGenes(module, tissue string, genelist []string) ([]string, e
 
 	genes := parseGeneList(genelist)
 
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `, "module":` + "\"" + module + "\"" + `, 
-	"genelist":` + genes + `}`
+	pkg := "mixt"
+	fun := "commonEnrichmentScoreGenes"
+	args := "tissue='" + tissue + "', module='" + module + "', genelist='" + genes + "'"
 
-	fun := "mixt/R/commonEnrichmentScoreGenes"
-
-	return GetSlice(fun, args)
-
+	return GetSlice(pkg, fun, args)
 }
 
 func EigengeneCorrelation(tissueA, tissueB string) ([]byte, error) {
-	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "'"
 	return analysis("eigengeneCorrelation", args)
 }
 
 func ModuleHypergeometricTest(tissueA, tissueB string) ([]byte, error) {
-	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "'"
 	return analysis("moduleHypergeometricTest", args)
 }
 
 func ROITest(tissueA, tissueB string) ([]byte, error) {
-	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "'"
 	return analysis("roiTest", args)
 }
 
 func PatientRankCorrelation(tissueA, tissueB string) ([]byte, error) {
-	args := `{"tissueA": ` + "\"" + tissueA + "\"" + `, "tissueB":` + "\"" + tissueB + "\"" + `}`
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "'"
 	return analysis("patientRankCorrelation", args)
 }
 
 func ClinicalEigengene(tissue string) ([]byte, error) {
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `}`
+	args := "tissue='" + tissue + "'"
 	return analysis("eigengeneClinicalRelation", args)
 }
 
 func ClinicalROI(tissue string) ([]byte, error) {
-	args := `{"tissue": ` + "\"" + tissue + "\"" + `}`
+	args := "tissue='" + tissue + "'"
 	return analysis("roiClinicalRelation", args)
 }
 
-func analysis(analysis, args string) ([]byte, error) {
-
-	fun := "mixt/R/" + analysis
-
-	session, err := komp.Call(fun, args)
+func analysis(fun, args string) ([]byte, error) {
+	pkg := "mixt"
+	key, err := R.Call(pkg, fun, args)
 	if err != nil {
 		fmt.Println("Could not run analysis:", err)
 		return nil, err
 	}
 
-	return Get(session.Key, "csv")
+	return R.Get(key, "csv")
 }
 
 type Analyses struct {
@@ -672,18 +708,47 @@ type Analyses struct {
 
 func ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB string) (Analyses, error) {
 
-	args := `{"tissueA": ` + "\"" + tissueA + "\"" +
-		`, "tissueB":` + "\"" + tissueB + "\"" +
-		`, "moduleA": ` + "\"" + moduleA + "\"" +
-		`, "moduleB": ` + "\"" + moduleB + "\"" + `}`
+	pkg := "mixt"
+	fun := "comparisonAnalyses"
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "', moduleA='" + moduleA + "', moduleB='" + moduleB + "'"
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return Analyses{}, err
+	}
 
-	fun := "mixt/R/comparisonAnalyses"
-
-	resp, err := komp.Rpc(fun, args, "json")
-
+	resp, err := R.Get(key, "json")
+	if err != nil {
+		return Analyses{}, err
+	}
 	res := []byte(resp)
 
 	var analyses Analyses
 	err = json.Unmarshal(res, &analyses)
 	return analyses, err
+}
+
+func GetTOMGraph(tissue, what string) ([]byte, error) {
+	if what == "nodes" {
+		what = "Nodes"
+	} else {
+		what = "Edges"
+	}
+
+	pkg := "mixt"
+	fun := "getTOMGraph" + what
+	args := "tissue='" + tissue + "'"
+
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		fmt.Println("Could not get TOM graph nodes")
+		return nil, err
+	}
+	fmt.Println("call success:", key)
+
+	return R.Get(key, "json")
+
+}
+
+func Get(key, filetype string) ([]byte, error) {
+	return R.Get(key, filetype)
 }

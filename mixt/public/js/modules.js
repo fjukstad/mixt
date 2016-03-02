@@ -73,6 +73,11 @@ $("ul#tissue-tab li").mouseup(function(){
 function TOMGraph(s, tissue){
     s.graph = s.graph.clear() 
 
+    var h = $("#module-selector").height();
+    var w = $("#module-selector").width();
+ 
+    $("#graph-container").height(h)
+    $("#graph-container").width(w)
    //s.bind("overNode", function(d){
    //    filter.neighborsOf(d.data.node.id).apply();
    //})
@@ -101,7 +106,10 @@ function TOMGraph(s, tissue){
                         edges: edges
                     })
 
-                    s.refresh() 
+                    console.log("refreshing") 
+
+                    s.refresh(); 
+                    console.log("all refreshed") 
 
                 })
         })

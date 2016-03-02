@@ -109,3 +109,18 @@ func EigengeneHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(result)
 
 }
+
+func TOMGraphHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("HANDLING THIS FUCKER")
+
+	vars := mux.Vars(r)
+	tissue := vars["tissue"]
+	what := vars["what"]
+
+	res, err := mixt.GetTOMGraph(tissue, what)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+	}
+	w.Write(res)
+
+}

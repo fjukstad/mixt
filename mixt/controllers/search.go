@@ -105,7 +105,11 @@ func inSlice(s string, words []string) []string {
 		b := strings.ToLower(s)
 		if strings.Contains(a, b) {
 			wordFmt := strings.Trim(word, "\"")
-			result = append(result, wordFmt)
+
+			jresult := strings.Join(result, " ")
+			if !strings.Contains(jresult, wordFmt) {
+				result = append(result, wordFmt)
+			}
 		}
 	}
 	return result

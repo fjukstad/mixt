@@ -75,12 +75,13 @@ func UserListResultHandler(w http.ResponseWriter, r *http.Request) {
 
 	scores := make(map[string][]mixt.UserScore, 0)
 
-	for _, tissue := range tissues {
-		sc, err := mixt.UserEnrichmentScores(tissue, genelist)
-		fmt.Println(sc, err)
-
-		scores[tissue] = sc
-
+	for i, tissue := range tissues {
+		if i < 2 {
+			fmt.Println(tissue, "running analysisis for it")
+			sc, err := mixt.UserEnrichmentScores(tissue, genelist)
+			fmt.Println(sc, err)
+			scores[tissue] = sc
+		}
 	}
 
 	us := UserScore{listname, tissues, genelist, scores}

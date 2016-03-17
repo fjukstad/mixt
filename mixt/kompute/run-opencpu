@@ -1,2 +1,0 @@
-#!/bin/bash
-docker run -privileged -t -p 80:80 -v /home/core/rstudio/:/home/rstudio/ -v /home/core/library/:/usr/local/lib/R/site-library/ -v /home/data/:/home/data/ -v /home/core/mixt/:/home/mixt/ --name opencpu opencpu 

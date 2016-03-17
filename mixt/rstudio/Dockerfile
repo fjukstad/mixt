@@ -5,20 +5,27 @@ MAINTAINER Bjørn Fjukstad <bjorn@cs.uit.no>
 
 # Install.
 RUN \
-  apt-get update && \
+  apt-get upgrade && \
   apt-get -y dist-upgrade && \
-  apt-get install -y software-properties-common && \
-  add-apt-repository -y ppa:opencpu/opencpu-1.5 && \
   apt-get update && \
-  apt-get install -y opencpu \
-        opencpu-cache \ 
-        rstudio-server \
+  apt-get install -y  \ 
+        r-base \ 
+        gdebi-core\
+        apache2 \
         apache2-utils \ 
         python3 \
         libapache2-mod-proxy-html \
+        libapache2-modsecurity \ 
         libxml2-dev \
         iptables \ 
-        git 
+        git \
+        wget 
+
+WORKDIR /tmp
+RUN wget https://download2.rstudio.org/rstudio-server-0.99.892-amd64.deb
+RUN gdebi -n rstudio-server-0.99.892-amd64.deb
+
+RUN a2enmod headers   
 
 # Libraries etc that we depend on 
 ADD deps.r /tmp/deps.r
@@ -45,12 +52,10 @@ RUN htpasswd -b -c /etc/http.passwd biopsy@mcgill van-mi-ka-al
 # different config etc etc
 ADD rstudio.conf /etc/apache2/sites-enabled/rstudio.conf 
 ADD rstudio.conf /etc/apache2/sites-available/rstudio.conf 
-ADD opencpu.conf /etc/apache2/sites-enabled/opencpu.conf 
-ADD opencpu.conf /etc/apache2/sites-available/opencpu.conf 
 
 # install path for r packages 
 ADD rsession.conf /etc/rstudio/rsession.conf
-ADD server.conf /etc/opencpu/server.conf
+ADD rserver.conf /etc/rstudio/rserver.conf
 
 # add empty apache html page
 ADD index.html /var/www/html/index.html
@@ -68,11 +73,10 @@ ADD git-raw-fix /bin/git-raw-fix
 RUN chmod +x /bin/git-raw-fix
 RUN chmod 755 /bin/git-raw 
 
-# Headers for apache config
-RUN a2enmod headers
-
 # Define default command.
-CMD service opencpu restart &&  \ 
-    service opencpu-cache restart && \
-    rstudio-server restart && \
-    tail -F /var/log/opencpu/apache_access.log
+#CMD rstudio-server restart 
+#CMD service apache2 restart && \
+#    /usr/lib/rstudio-server/bin/rserver
+RUN a2enmod headers \  
+    	&& a2enmod proxy \
+	&& a2enmod proxy_http 

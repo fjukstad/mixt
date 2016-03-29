@@ -51,6 +51,7 @@ func TissuesHandler(w http.ResponseWriter, r *http.Request) {
 type TissueComparison struct {
 	TissueA string
 	TissueB string
+	Cohorts []string
 }
 
 func TissueComparisonHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,19 +60,38 @@ func TissueComparisonHandler(w http.ResponseWriter, r *http.Request) {
 	tissueA := vars["tissueA"]
 	tissueB := vars["tissueB"]
 
-	tissueComparisonTemplate.Execute(w, TissueComparison{tissueA, tissueB})
+	cohorts, err := mixt.GetCohorts()
+	if err != nil {
+		fmt.Println("Could not get cohorts")
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	tissueComparisonTemplate.Execute(w, TissueComparison{tissueA, tissueB, cohorts})
 }
 
-func EigengeneHandler(w http.ResponseWriter, r *http.Request) {
+func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	tissueA := vars["tissueA"]
 	tissueB := vars["tissueB"]
 
 	analysis := vars["analysis"]
+	cohort := vars["cohort"]
+
+	fmt.Println("analysis,cohort", analysis, cohort)
 
 	var result []byte
 	var err error
+
+	if analysis == "ranksum" {
+		result, err = mixt.PatientRankSum(tissueA, tissueB, cohort)
+		if err != nil {
+			fmt.Println("Could not get patient rank sum correlation")
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
 
 	if analysis == "eigengene" {
 		result, err = mixt.EigengeneCorrelation(tissueA, tissueB)

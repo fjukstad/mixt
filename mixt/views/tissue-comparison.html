@@ -19,7 +19,7 @@ text.label-heatmap {
 
 <div class="container">
     <div class="row">
-        <h2> Comparing tissues {{.TissueA}}  - {{.TissueB}}</h2> 
+        <h2 id ="comp-header"> Comparing tissues {{.TissueA}}  - {{.TissueB}}</h2> 
     </div>
     <div class="row">
         <div class="col-md-8">
@@ -34,6 +34,7 @@ text.label-heatmap {
                 <th> Select analysis </th>
             </thead>
             <tbody>
+                <tr id="ranksum"><td class="analysis-select">Ranksum</td> </tr>
                 <tr id="eigengene"><td class="analysis-select"> Eigengene correlation (student-p) </td> </tr>
                 <tr id="overlap"><td class="analysis-select"> Gene overlap (hyper-p) </td> </tr>
                 <tr id="roi"><td class="analysis-select"> ROI association (FET-p) </td> </tr>
@@ -44,6 +45,19 @@ text.label-heatmap {
             
             <h5> Scale (-log10)</h5> 
             <div id="legend"> 
+
+
+            <div class="dropdown">
+              <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Select cohort (optional)
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dLabel">
+                  {{ range $cohort := .Cohorts }} 
+                  <input name="cohort" class="cohort-select" type="radio" aria-label="{{$cohort}}" id="{{$cohort}}" value="{{$cohort}}"> {{$cohort}}</input></br>
+                  {{ end }} 
+              </ul>
+            </div>
 
             </div> 
 
@@ -56,9 +70,28 @@ text.label-heatmap {
 
 <script>
 
-    loadEigengeneHeatmap("{{.TissueA}}", "{{.TissueB}}") 
-    $("tr#eigengene").addClass("info") 
+    var cohort = "all" 
+
+    $("#"+cohort).prop("checked", true);
+    $(".cohort-select").click(function(){
+        cohort = $('input[name=cohort]:checked').val();
+        loadRanksumHeatmap("{{.TissueA}}","{{.TissueB}}", cohort);
+
+        $("#comp-header").text("Comparing tissues {{.TissueA}}  - {{.TissueB}} ("+cohort+" cohort)")
+    })
+
+
     
+    loadRanksumHeatmap("{{.TissueA}}", "{{.TissueB}}", cohort) 
+    $("tr#ranksum").addClass("info") 
+    
+    $("tr#ranksum").click(function(){
+            loadRanksumHeatmap("{{.TissueA}}","{{.TissueB}}", cohort)
+            $(this).addClass("info") 
+            $(this).siblings().removeClass("info") 
+    })
+
+
     $("tr#overlap").click(function(){
             loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
             $(this).addClass("info") 

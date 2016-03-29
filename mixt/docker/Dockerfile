@@ -23,7 +23,7 @@ RUN go get github.com/PuerkitoBio/goquery && \
     go get github.com/fjukstad/gocache && \
     go get github.com/gorilla/mux && \
     go get github.com/gorilla/securecookie && \
-    go get code.google.com/p/gcfg && \
+    go get github.com/scalingdata/gcfg && \
     go get github.com/codegangsta/negroni
 
 RUN mkdir -p /go/src/github.com/fjukstad

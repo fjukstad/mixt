@@ -28,6 +28,10 @@ cellHeight = 15;
 cellWidth = cellHeight;
 margin = 125;
 
+function loadRanksumHeatmap(tissueA,tissueB,cohort){
+    var url = "/tissues/" + tissueA + "/" + tissueB + "/ranksum/"+cohort
+    heatmap(url, tissueA, tissueB) 
+}
 
 function loadEigengeneHeatmap(tissueA, tissueB) {
     var url = "/tissues/" + tissueA + "/" + tissueB + "/eigengene"

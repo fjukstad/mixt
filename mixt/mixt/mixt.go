@@ -687,6 +687,11 @@ func ClinicalROI(tissue string) ([]byte, error) {
 	return analysis("roiClinicalRelation", args)
 }
 
+func PatientRankSum(tissueA, tissueB, cohort string) ([]byte, error) {
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "',cohort='" + cohort + "'"
+	return analysis("patientRankSum", args)
+}
+
 func analysis(fun, args string) ([]byte, error) {
 	pkg := "mixt"
 	key, err := R.Call(pkg, fun, args)
@@ -699,6 +704,7 @@ func analysis(fun, args string) ([]byte, error) {
 }
 
 type Analyses struct {
+	RankSum []float64 `json:"ranksum"`
 	Eigen   []float64 `json:"eigen"`
 	Rank    []float64 `json:"rank"`
 	Overlap []float64 `json:"overlap"`
@@ -751,4 +757,29 @@ func GetTOMGraph(tissue, what string) ([]byte, error) {
 
 func Get(key, filetype string) ([]byte, error) {
 	return R.Get(key, filetype)
+}
+
+func GetCohorts() ([]string, error) {
+	pkg := "mixt"
+	fun := "getCohorts"
+	args := ""
+
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		fmt.Println("Could not get cohorts")
+		return []string{}, err
+	}
+
+	resp, err := R.Get(key, "json")
+
+	if err != nil {
+		fmt.Println("Could not get cohorts", err)
+		return []string{}, err
+	}
+
+	cohorts := []string{}
+
+	err = json.Unmarshal(resp, &cohorts)
+	return cohorts, err
+
 }

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	"code.google.com/p/gcfg"
+	"github.com/scalingdata/gcfg"
 
 	"bitbucket.org/vdumeaux/mixt/mixt/controllers"
 	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
@@ -148,7 +148,7 @@ func main() {
 
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissueA}/{tissueB}", controllers.TissueComparisonHandler)
-	r.HandleFunc("/tissues/{tissueA}/{tissueB}/{analysis}", controllers.EigengeneHandler)
+	r.HandleFunc("/tissues/{tissueA}/{tissueB}/{analysis}/{cohort}", controllers.AnalysisHandler)
 
 	r.HandleFunc("/resources/{key}/{filetype}/{name}", controllers.FileHandler)
 

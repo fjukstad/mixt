@@ -369,7 +369,7 @@ type Score struct {
 	Name         string  `json:"_row"`
 	Size         int     `json:"sig.size,string"`
 	UpDownCommon int     `json:"updn.common,string"`
-	UpDownPvalue float64 `json:"updn.pval,string"`
+	UpDownPvalue float64 `json:"updn.pval"`
 	UpCommon     int     `json:"up.common,string"`
 	UpPvalue     float64 `json:"up.pval,string"`
 	DownCommon   int     `json:"dn.common,string"`
@@ -472,6 +472,9 @@ func GetGOTermNames() ([]string, error) {
 }
 
 func GetSlice(pkg, fun, args string) ([]string, error) {
+
+	fmt.Println(pkg, fun, args)
+
 	key, err := R.Call(pkg, fun, args)
 	if err != nil {
 		return []string{}, err
@@ -484,6 +487,8 @@ func GetSlice(pkg, fun, args string) ([]string, error) {
 	}
 
 	res := []byte(resp)
+
+	fmt.Println("Result:", string(res))
 
 	var names []string
 	err = json.Unmarshal(res, &names)

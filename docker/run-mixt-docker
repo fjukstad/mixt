@@ -1,0 +1,2 @@
+#!/bin/bash
+ docker run -v /home/core/kvik:/go/src/github.com/fjukstad/kvik -v /home/core/mixt/:/go/src/bitbucket.org/vdumeaux/mixt/ -p 8004:8004 --name mixt --link=opencpu:opencpu -ti 08bbbc19f177

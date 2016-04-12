@@ -1,6 +1,97 @@
 {{ define "content" }} 
 
+<script src="https://cdn.rawgit.com/imsky/holder/master/holder.js"></script> 
+
     <div class="container">
-        <h1>Welcome</h1> 
+       <div class="row">
+            <h1>Welcome to the MIxT blood-tumor web application</h1> 
+            <p class="lead">
+            The Matched Interaction Across Tissues (MIxT) is a system designed
+            for exploring and comparing transcriptional profiles from two or
+            more matched tissues across individuals.  Here, the MIxT system is
+            applied to tumor and blood transcriptional profiles from breast
+            cancer patients from the Norwegian Women and Cancer study.
+            </p> 
+        </div> 
+
+       <div class="row">
+           <div class="col-md-6">
+               <h3> Network view </h3> 
+               <p>
+                <img src="holder.js/100px200?text=Placeholder image"></br>
+
+               </p> 
+           </div> 
+
+           <div class="col-md-6">
+               <h3> Modules </h3> 
+               <p>
+                <img src="holder.js/100px200?text=Placeholder image"></br>
+
+               To explore the system-level changes across tumor and the systemic
+               response of patients, we constructed tight coexpression gene
+               networks (modules) in tumor and blood tissue, respectively. MIxT
+               enables the exploration of module content, expression profiles,
+               and functional enrichment. Visualizes how module expression
+               orders patients to identify clinicopathological variables
+               associated with each module.  Allows to explore blood module
+               expression in breast cancer patients compared to healthy
+               controls.
+               </p> 
+           </div> 
+       </div> 
+
+       <div class="row">
+           <div class="col-md-6">
+               <h3> Compare Tissues </h3> 
+               <p>
+               <img src="holder.js/100px200?text=Placeholder image"></br>
+               Displays significance of gene overlap between modules across
+               tissues as such an overlap may suggest a very simple “mirrored”
+               type of co-expression patterns.  Visualizes expression of genes
+               in common between modules across tissues.  Displays significance
+               of interactions between modules defined by the correlation
+               between patient orderings induced by modules. Allows selection of
+               a particular subtype. Visualizes expression of genes in modules
+               interacting between tissues across all patients or within a
+               subtype of interest.
+               </p> 
+           </div> 
+       
+            <div class="col-md-6">
+               <h3> Link to Clinical Variables </h3> 
+               <p>
+                <img src="holder.js/100px200?text=Placeholder image"></br>
+
+               Displays significance of associations between module expression
+               and clinical variables. Allows selection of a particular subtype
+               and exploration of module expression profiles of interest.
+               </p> 
+           </div> 
+       </div> 
+
+       <div class="row">
+         <div class="col-md-6">
+             <h3> Submit your own gene list</h3> 
+             <p>
+                <img src="holder.js/100px200?text=Placeholder image"></br>
+
+                Given a gene list of interest, return modules in which the gene
+                list is enriched for.
+             </p>
+         </div>
+         <div class="col-md-6">
+              <h3>Search</h3> 
+             <p>
+                <img src="holder.js/100px200?text=Placeholder image"></br>
+
+             Search for a gene or pathway and return modules in which the gene
+             or pathway is present or enriched. Investigate which genes are
+             co-expressed with your gene of interest in blood and tumor from
+             breast cancer patients.
+             </p>
+         </div> 
+       </div> 
+
     </div> 
 {{ end }}

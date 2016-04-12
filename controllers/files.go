@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 	"github.com/gorilla/mux"
+"bitbucket.org/vdumeaux/mixt/mixt"
 )
 
 func FileHandler(w http.ResponseWriter, r *http.Request) {

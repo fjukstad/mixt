@@ -5,9 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"text/template"
-
-	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
-
+"bitbucket.org/vdumeaux/mixt/mixt"
 	"github.com/gorilla/mux"
 )
 

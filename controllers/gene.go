@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
-	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
-
+"bitbucket.org/vdumeaux/mixt/mixt"
 	"github.com/fjukstad/kvik/genecards"
 	"github.com/gorilla/mux"
 )

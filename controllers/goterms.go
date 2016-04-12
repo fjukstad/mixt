@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"bitbucket.org/vdumeaux/mixt/mixt"
 
-	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
 )
 
 type GOTerm struct {

@@ -11,8 +11,8 @@ import (
 
 	"github.com/scalingdata/gcfg"
 
-	"bitbucket.org/vdumeaux/mixt/mixt/controllers"
-	"bitbucket.org/vdumeaux/mixt/mixt/mixt"
+	"bitbucket.org/vdumeaux/mixt/controllers"
+	"bitbucket.org/vdumeaux/mixt/mixt"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"

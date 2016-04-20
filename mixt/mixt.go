@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"sort"
@@ -739,6 +740,12 @@ func ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB string) (Analys
 }
 
 func GetTOMGraph(tissue, what string) ([]byte, error) {
+
+	if tissue == "bnblood" {
+		fmt.Println("TOM graph not available for bnblood")
+		return nil, errors.New("TOM graph not available for bnblood")
+	}
+
 	if what == "nodes" {
 		what = "Nodes"
 	} else {

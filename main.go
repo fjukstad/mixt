@@ -130,6 +130,8 @@ func main() {
 
 	r.HandleFunc("/modules", controllers.ModulesHandler)
 	r.HandleFunc("/modules/{tissue}/{modules}", controllers.ModuleHandler)
+	
+	r.HandleFunc("/network", controllers.NetworkHandler)
 
 	r.HandleFunc("/public/{folder}/{file}", PublicHandler)
 

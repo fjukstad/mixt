@@ -42,7 +42,7 @@ function TOMGraph(s, tissue){
                     s.startForceAtlas2();
                     setTimeout(function(){
                         s.killForceAtlas2();
-                    }, 1000);
+                    }, 5000);
                         
 
                     console.log("refreshing") 

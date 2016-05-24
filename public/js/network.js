@@ -3,11 +3,12 @@
 function TOMGraph(s, tissue){
     //s.graph = s.graph.clear() 
 
-    var h = $("#module-selector").height();
-    var w = $("#module-selector").width();
+    var h = 700//$("#tab-"+tissue).height();
+    var w = $("#nettabs").width();
  
-    $("#graph-container-"+tissue).height(300)
-    $("#graph-container-"+tissue).width(500)
+    $("#graph-container-"+tissue).height(h)
+    $("#graph-container-"+tissue).width(w)
+
    //s.bind("overNode", function(d){
    //    filter.neighborsOf(d.data.node.id).apply();
    //})
@@ -31,7 +32,9 @@ function TOMGraph(s, tissue){
                         nodes[i].label = nodes[i].id + " ("+nodes[i].color+")"
                         nodes[i].module = nodes[i].color 
                         nodes[i].color = getHexColor(nodes[i].color)
-                        nodes[i].size = 1; 
+                        nodes[i].size = 1;
+                        nodes[i].x = nodes[i].x// * 100;
+                        nodes[i].y = nodes[i].y// * 100; 
                     }
 
                     s.graph.read({
@@ -39,16 +42,16 @@ function TOMGraph(s, tissue){
                         edges: edges
                     })
 
-                    s.startForceAtlas2();
-                    setTimeout(function(){
-                        s.killForceAtlas2();
-                    }, 5000);
+                    //s.startForceAtlas2();
+                    //setTimeout(function(){
+                    //    s.killForceAtlas2();
+                    //}, 5000);
                         
 
-                    console.log("refreshing") 
+                    //console.log("refreshing") 
 
                     s.refresh(); 
-                    console.log("all refreshed") 
+                    //console.log("all refreshed") 
 
                     // nasty window resize hack
                     window.dispatchEvent(new Event('resize'))

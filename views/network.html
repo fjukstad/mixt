@@ -1,0 +1,63 @@
+{{ define "content" }} 
+    <script src="/public/js/sigma.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/js/sigma.parsers.json.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/js/sigma.layout.forceAtlas2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/js/sigma.plugins.filter.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <div class="container">
+        <div class="row">
+            <h1>Network View</h1> 
+            <p> 
+            </p>
+        </div> 
+        <div class="row">
+                <ul class="nav nav-tabs" role="tablist" id="nettabs">
+                    {{ range .Tissues  }} 
+                    <li role="presentation"><a href="#tab-{{.}}"
+                                               aria-controls="tab-{{.}}"
+                                               role="tab"
+                                               data-toggle="tab">{{.}}</a> </li> 
+                    {{ end }} 
+                </ul> 
+                <div class="tab-content" id="nettabs">
+                {{ range .Tissues }} 
+                    <div role="tabpanel" class="tab-pane" id="tab-{{.}}"> 
+                        <div id="graph-container-{{.}}"  style="position: absolute;"> 
+                        </div> 
+                    </div> 
+                {{ end }}
+                </div> 
+        </div> 
+    </div> 
+    <script src="/public/js/network.js" type="text/javascript" charset="utf-8"></script>
+        <script>
+        var sigmas = [];
+        {{ range .Tissues }} 
+             var s = new sigma({
+                container: 'graph-container-{{.}}',
+                settings: {
+                    edgeColor: "#ccc",// "source",
+                    defaultEdgeColor: "#999", 
+                    defaultNodeColor: "#fab" ,
+                    labelThreshold: 12,
+                    maxNodeSize: 2, 
+                    batchEdgesDrawing: true, 
+                    defaultEdgeType: "curve", 
+                }
+            });
+            sigmas.push(s) 
+            TOMGraph(s, "{{.}}")
+        {{ end }}
+
+
+        // view first tab, e.g. blood 
+        $("#nettabs li:eq(0) a").tab('show'); 
+        $("a").on("click",function(){
+            window.setTimeout(function(){
+                window.dispatchEvent(new Event('resize'))
+            } , 10);
+        })
+    </script> 
+
+{{ end }}

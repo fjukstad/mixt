@@ -74,6 +74,15 @@ func ModulesHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Could not get modules")
 		http.Error(w, err.Error(), 503)
 	}
+
+	var cleanTissues []string
+	for _, i := range m.Tissues {
+		if i != "nblood" && i != "bnblood" {
+			cleanTissues = append(cleanTissues, i)
+		}
+	}
+	m.Tissues = cleanTissues
+
 	modulesTemplate.Execute(w, m)
 }
 

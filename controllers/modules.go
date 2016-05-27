@@ -5,7 +5,9 @@ import (
 	"net/http"
 	"strings"
 	"text/template"
-"bitbucket.org/vdumeaux/mixt/mixt"
+
+	"bitbucket.org/vdumeaux/mixt/mixt"
+
 	"github.com/gorilla/mux"
 )
 
@@ -28,6 +30,7 @@ var clinicalComparisonTemplate = template.Must(template.ParseFiles("views/base.h
 type ModulesOverview struct {
 	Modules map[string][]mixt.Module
 	Tissues []string
+	Cohorts []string
 }
 
 type Modules struct {
@@ -39,13 +42,16 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	mods := vars["modules"]
 	tissue := vars["tissue"]
+	cohort := vars["cohort"]
 
 	moduleString := strings.Split(mods, "+")
+
+	fmt.Println("Selected cohort", cohort)
 
 	var modules []mixt.Module
 
 	for _, module := range moduleString {
-		m, err := mixt.GetModule(module, tissue)
+		m, err := mixt.GetModule(module, tissue, cohort)
 		if err != nil {
 			fmt.Println("Could not get module")
 			http.Error(w, err.Error(), 503)
@@ -88,7 +94,13 @@ func retrieveModulesOverview() (ModulesOverview, error) {
 		modules[tissue] = m
 	}
 
-	m := ModulesOverview{modules, tissues}
+	cohorts, err := mixt.GetCohorts()
+	if err != nil {
+		fmt.Println("Could not get cohorts")
+		return ModulesOverview{}, err
+	}
+
+	m := ModulesOverview{modules, tissues, cohorts}
 	return m, nil
 }
 
@@ -111,14 +123,14 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ma, err := mixt.GetModule(moduleA, tissueA)
+	ma, err := mixt.GetModule(moduleA, tissueA, "all")
 	if err != nil {
 		fmt.Println("Could not get module", moduleA)
 		http.Error(w, err.Error(), 503)
 		return
 	}
 
-	mb, err := mixt.GetModule(moduleB, tissueB)
+	mb, err := mixt.GetModule(moduleB, tissueB, "all")
 	if err != nil {
 		fmt.Println("Could not get module", moduleB)
 		http.Error(w, err.Error(), 503)

@@ -37,6 +37,13 @@ func HeatmapReOrder(tissue, module, orderByTissue, orderByModule string) (string
 	return plot(pkg, fun, args)
 }
 
+func CohortHeatmap(tissue, module, cohort string) (string, error) {
+	pkg := "mixt"
+	fun := "cohort_heatmap"
+	args := "tissue='" + tissue + "', module='" + module + "', cohort='" + cohort + "'"
+	return plot(pkg, fun, args)
+}
+
 func plot(pkg, fun, args string) (string, error) {
 
 	key, err := R.Call(pkg, fun, args)
@@ -265,13 +272,13 @@ func (a ByName) Less(i, j int) bool {
 	return a[i].Name < a[j].Name
 }
 
-func GetModule(name string, tissue string) (Module, error) {
+func GetModule(name, tissue, cohort string) (Module, error) {
 
 	if name == "grey" {
 		return Module{}, nil
 	}
 
-	heatmapUrl, err := Heatmap(tissue, name)
+	heatmapUrl, err := CohortHeatmap(tissue, name, cohort)
 	if err != nil {
 		fmt.Println("heatmap")
 		return Module{}, err

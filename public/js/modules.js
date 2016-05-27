@@ -5,7 +5,10 @@ $("#module-select-btn").click(function(){
      var tissue = $("ul#tissue-tab li.active").attr("tissue")
      modules = $("#"+tissue+"-module-select").val();
      str = modules.join([separator = '+']); 
-    location.assign(location.href+"/"+tissue+"/"+str)
+
+    cohort= $("#cohort-select").val();
+
+    location.assign(location.href+"/"+tissue+"/"+str+"/cohort/"+cohort)
 }); 
 
 // sigma instance

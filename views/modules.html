@@ -4,7 +4,9 @@
             <h1>Modules</h1> 
             <p> 
                 Select one or more modules from the list below and click
-                <i>start</i> to start exploring the different modules 
+                <i>start</i> to start exploring the different modules. To view
+                a module from a specific cohort, click one or more from the
+                panel on the right. 
             </p>
         </div> 
         <div class="row">
@@ -35,6 +37,21 @@
                 </div> 
             </div> 
 
+            <div class="col-sm-6 col-md-6 col-lg-6" id="cohort-selector">
+            <ul class="nav nav-tabs" role="tablist" id="tissue-tab">
+                <li role="presentation" class="active"> <a href="cohorts" aria-controls="cohort"
+                                                          role="tab"
+                                                          data-toggle="tab">Cohorts</a></li>
+            </ul> 
+                <div role="tabpanel" class="tab-pane"
+                    id="cohort">
+                    <select class="form-control" id="cohort-select">
+                        {{range .Cohorts}}
+                            <option>{{ . }} </option>
+                        {{ end }} 
+                    </select> 
+                </div> 
+            </div>
         </div> 
     </div> 
     <script src="/public/js/modules.js" type="text/javascript" charset="utf-8"></script>

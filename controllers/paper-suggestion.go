@@ -23,7 +23,7 @@ func PaperSuggestionHandler(w http.ResponseWriter, r *http.Request) {
 	tissue := vars["tissue"]
 	module := vars["module"]
 
-	m, err := mixt.GetModule(module, tissue)
+	m, err := mixt.GetModule(module, tissue, "all")
 	if err != nil {
 		fmt.Println("Could not get module")
 		http.Error(w, err.Error(), 503)

@@ -143,7 +143,7 @@ func main() {
 
 	r.HandleFunc("/geneset/abstract/{geneset}", controllers.GeneSetAbstractHandler)
 
-	r.HandleFunc("/compare/{tissueA}/{tissueB}/{moduleA}/{moduleB}", controllers.CompareModulesHandler)
+	r.HandleFunc("/compare/{tissueA}/{tissueB}/{moduleA}/{moduleB}/cohort/{cohort}", controllers.CompareModulesHandler)
 
 	r.HandleFunc("/clinical-comparison", controllers.ModuleClinicalHandler)
 	r.HandleFunc("/clinical-comparison/{tissue}/{analysis}", controllers.ModuleClinicalAnalysisHandler)

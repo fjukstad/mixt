@@ -199,7 +199,8 @@ function heatmap(url, tissueA, tissueB) {
                     if (tissueB == "") {
                         return "/modules/" + tissueA + "/" + xname
                     } else {
-                        return "/compare/" + tissueA + "/" + tissueB + "/" + yname + "/" + xname
+                        cohort= $("#cohort-select").val();
+                        return "/compare/" + tissueA + "/" + tissueB + "/" + yname + "/" + xname + "/cohort/"+cohort
                     }
                 })
                 .append("rect")

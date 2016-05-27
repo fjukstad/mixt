@@ -14,6 +14,9 @@ text.label-heatmap {
     font-size: 20;
     font-weight: normal
 }
+button#cohortSelectButton {
+    float: right;
+}
 </style>
 
 
@@ -44,21 +47,15 @@ text.label-heatmap {
             </table>
             
             <h5> Scale (-log10)</h5> 
-            <div id="legend"> 
+            <div id="legend"> </div>
 
-
-            <div class="dropdown">
-              <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Select cohort (optional)
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dLabel">
+            Select cohort (optional)
+              <select class="form-control" id="cohort-select">
                   {{ range $cohort := .Cohorts }} 
-                  <input name="cohort" class="cohort-select" type="radio" aria-label="{{$cohort}}" id="{{$cohort}}" value="{{$cohort}}"> {{$cohort}}</input></br>
+                        <option>{{ . }} </option>
                   {{ end }} 
-              </ul>
-            </div>
-
+                </select>
+            <button id="cohortSelectButton" class="btn btn-default" type="submit">Select Cohort</button>
             </div> 
 
         </div>
@@ -72,11 +69,9 @@ text.label-heatmap {
 
     var cohort = "all" 
 
-    $("#"+cohort).prop("checked", true);
-    $(".cohort-select").click(function(){
-        cohort = $('input[name=cohort]:checked').val();
+    $("#cohortSelectButton").click(function(){
+         cohort= $("#cohort-select").val();
         loadRanksumHeatmap("{{.TissueA}}","{{.TissueB}}", cohort);
-
         $("#comp-header").text("Comparing tissues {{.TissueA}}  - {{.TissueB}} ("+cohort+" cohort)")
     })
 

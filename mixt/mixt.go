@@ -29,18 +29,18 @@ func Heatmap(tissue, module string) (string, error) {
 
 }
 
-func HeatmapReOrder(tissue, module, orderByTissue, orderByModule string) (string, error) {
+func HeatmapReOrder(tissue, module, orderByTissue, orderByModule, cohort string) (string, error) {
 
-	args := "tissue='" + tissue + "', module='" + module + "', re.order=TRUE, orderByModule='" + orderByModule + "', orderByTissue='" + orderByTissue + "'"
+	args := "tissue='" + tissue + "', module='" + module + "', orderByModule='" + orderByModule + "', orderByTissue='" + orderByTissue + "', cohort.name='" + cohort + "'"
 	pkg := "mixt"
-	fun := "heatmap"
+	fun := "cohort_heatmap"
 	return plot(pkg, fun, args)
 }
 
 func CohortHeatmap(tissue, module, cohort string) (string, error) {
 	pkg := "mixt"
 	fun := "cohort_heatmap"
-	args := "tissue='" + tissue + "', module='" + module + "', cohort='" + cohort + "'"
+	args := "tissue='" + tissue + "', module='" + module + "', cohort.name='" + cohort + "'"
 	return plot(pkg, fun, args)
 }
 

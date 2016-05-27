@@ -115,6 +115,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	moduleB := vars["moduleB"]
 	tissueA := vars["tissueA"]
 	tissueB := vars["tissueB"]
+	cohort := vars["cohort"]
 
 	analyses, err := mixt.ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB)
 	if err != nil {
@@ -123,21 +124,21 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ma, err := mixt.GetModule(moduleA, tissueA, "all")
+	ma, err := mixt.GetModule(moduleA, tissueA, cohort)
 	if err != nil {
 		fmt.Println("Could not get module", moduleA)
 		http.Error(w, err.Error(), 503)
 		return
 	}
 
-	mb, err := mixt.GetModule(moduleB, tissueB, "all")
+	mb, err := mixt.GetModule(moduleB, tissueB, cohort)
 	if err != nil {
 		fmt.Println("Could not get module", moduleB)
 		http.Error(w, err.Error(), 503)
 		return
 	}
 
-	reorderHeatmap, err := mixt.HeatmapReOrder(tissueB, moduleB, tissueA, moduleA)
+	reorderHeatmap, err := mixt.HeatmapReOrder(tissueB, moduleB, tissueA, moduleA, cohort)
 	if err != nil {
 		fmt.Println("Could not get re order heatmap")
 		http.Error(w, err.Error(), 503)
@@ -146,7 +147,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 
 	mb.HeatmapUrl = reorderHeatmap
 
-	ma.AlternativeHeatmapUrl, err = mixt.HeatmapReOrder(tissueA, moduleA, tissueB, moduleB)
+	ma.AlternativeHeatmapUrl, err = mixt.HeatmapReOrder(tissueA, moduleA, tissueB, moduleB, cohort)
 	if err != nil {
 		fmt.Println("Could not get re order heatmap")
 		http.Error(w, err.Error(), 503)
@@ -154,7 +155,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get alternative heatmaps for both modules
-	mb.AlternativeHeatmapUrl, err = mixt.Heatmap(tissueB, moduleB)
+	mb.AlternativeHeatmapUrl, err = mixt.CohortHeatmap(tissueB, moduleB, cohort)
 	if err != nil {
 		fmt.Println("Could not get heatmap", tissueB, moduleB)
 		http.Error(w, err.Error(), 503)

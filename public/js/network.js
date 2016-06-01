@@ -16,6 +16,14 @@ function TOMGraph(s, tissue){
    //s.bind("outNode", function(n){
    //    filter.undo().apply();
    //})
+   //
+   s.bind("clickNode", function(d){
+       var module = d.data.node.module; 
+       var path = "/modules/"+tissue+"/"+module+"/cohort/all"
+       var url = "http://"+window.location.host+path
+       window.location.href=url
+       console.log(url)
+   })
 
     
     $.get('/tomgraph/'+tissue+'/nodes',

@@ -20,6 +20,14 @@ img#module-heatmap {
     width: 100%;
 }
 
+img#alt-heatmap { 
+    width:100%;
+}
+
+img#boxplot {
+    width: 100%;
+}
+
 td.score-name { 
     width:100px;
     word-wrap:break-word;
@@ -64,4 +72,8 @@ hr.module {
 #analysis-results { 
     padding-left: 10%;
     padding-top: 1%; 
+}
+
+.popover{
+    max-width: 100%;
 }

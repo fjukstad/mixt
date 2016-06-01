@@ -30,7 +30,6 @@ func Heatmap(tissue, module string) (string, error) {
 }
 
 func HeatmapReOrder(tissue, module, orderByTissue, orderByModule, cohort string) (string, error) {
-
 	args := "tissue='" + tissue + "', module='" + module + "', orderByModule='" + orderByModule + "', orderByTissue='" + orderByTissue + "', cohort.name='" + cohort + "'"
 	pkg := "mixt"
 	fun := "cohort_heatmap"
@@ -41,6 +40,20 @@ func CohortHeatmap(tissue, module, cohort string) (string, error) {
 	pkg := "mixt"
 	fun := "cohort_heatmap"
 	args := "tissue='" + tissue + "', module='" + module + "', cohort.name='" + cohort + "'"
+	return plot(pkg, fun, args)
+}
+
+func CohortBoxplot(module, orderByTissue, orderByModule, cohort string) (string, error) {
+	pkg := "mixt"
+	fun := "cohort_boxplot"
+	args := "blood.module='" + module + "', orderByTissue='" + orderByTissue + "', orderByModule='" + orderByModule + "', cohort='" + cohort + "'"
+	return plot(pkg, fun, args)
+}
+
+func CohortScatterplot(tissueA, tissueB, moduleA, moduleB, cohort string) (string, error) {
+	pkg := "mixt"
+	fun := "cohort_scatterplot"
+	args := "x.tissue='" + tissueA + "', y.tiisue='" + tissueB + "', x.module='" + moduleA + "', y.module='" + moduleB + "', cohort.name='" + cohort + "'"
 	return plot(pkg, fun, args)
 }
 
@@ -188,6 +201,8 @@ type Module struct {
 	EnrichmentScores      EnrichmentScores
 	GOTerms               []GOTerm
 	Url                   string
+	ScatterplotUrl        string
+	BoxplotUrl            string
 }
 
 type Gene struct {
@@ -243,7 +258,7 @@ func GetModules(tissue string) ([]Module, error) {
 					return
 				}
 			*/
-			m := Module{moduleNames[i], tissue, "", "", nil, EnrichmentScores{}, []GOTerm{}, ""}
+			m := Module{moduleNames[i], tissue, "", "", nil, EnrichmentScores{}, []GOTerm{}, "", "", ""}
 			resChan <- m
 		}(i)
 	}
@@ -302,7 +317,22 @@ func GetModule(name, tissue, cohort string) (Module, error) {
 		return Module{}, err
 	}
 
-	module := Module{name, tissue, heatmapUrl, "", genes, scores, goterms, url}
+	alternativeHeatmapUrl := ""
+	if tissue == "blood" {
+		alternativeHeatmapUrl, err = CohortHeatmap("bnblood", name, cohort)
+		if err != nil {
+			fmt.Println("Couldt not get bnblood heatmap", err)
+			return Module{}, err
+		}
+	}
+
+	cohortBoxplot, err := CohortBoxplot(name, tissue, name, cohort)
+	if err != nil {
+		fmt.Println("Could not generate boxplot", err)
+		return Module{}, err
+	}
+
+	module := Module{name, tissue, heatmapUrl, alternativeHeatmapUrl, genes, scores, goterms, url, "", cohortBoxplot}
 	return module, nil
 }
 

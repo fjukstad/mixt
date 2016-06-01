@@ -52,6 +52,26 @@
               download="{{$module.Name}}-{{$module.Tissue}}-genelist.csv"
               target="_blank">Download gene list</a>
         </span>
+        {{ if eq $module.Tissue "blood"}} 
+        <span>
+        <a href="#" data-toggle="popover" data-trigger="focus" data-html="true" title="Blood normals
+        heatmap and boxplot" data-placement="bottom" data-content="
+            <img
+            src='/resources/{{$module.AlternativeHeatmapUrl}}/png/module-heatmap.png'
+            id='alt-heatmap'></img>
+            
+            <img
+            src='/resources/{{$module.BoxplotUrl}}/png/boxplot.png'
+            id='boxplot'></img>
+            
+            
+            "
+            
+            
+            
+            >Blood normals heatmap</a>
+        </span>
+        {{ end }} 
         </hr>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
@@ -252,6 +272,10 @@
 
         $("#goterms").tablesorter(); 
       });
+
+$("[data-toggle=popover]").popover();
+
+
     </script>
   </section>
   <hr class="module">

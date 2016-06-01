@@ -39,29 +39,29 @@ function loadEigengeneHeatmap(tissueA, tissueB, cohort="all") {
 }
 
 function loadGeneOverlapHeatmap(tissueA, tissueB, cohort="all") {
-    var url = "/tissues/" + tissueA + "/" + tissueB + "/overlap"+cohort
+    var url = "/tissues/" + tissueA + "/" + tissueB + "/overlap/"+cohort
     heatmap(url, tissueA, tissueB)
 }
 
 
 function loadROIHeatmap(tissueA, tissueB, cohort="all") {
-    var url = "/tissues/" + tissueA + "/" + tissueB + "/roi"+cohort
+    var url = "/tissues/" + tissueA + "/" + tissueB + "/roi/"+cohort
     heatmap(url, tissueA, tissueB)
 }
 
 
 function loadPatientRankHeatmap(tissueA, tissueB, cohort="all") {
-    var url = "/tissues/" + tissueA + "/" + tissueB + "/patientrank"+cohort
+    var url = "/tissues/" + tissueA + "/" + tissueB + "/patientrank/"+cohort
     heatmap(url, tissueA, tissueB)
 }
 
 function loadClinicalEigengeneHeatmap(tissue, cohort="all") {
-    var url = "/clinical-comparison/" + tissue + "/eigengene"+cohort
+    var url = "/clinical-comparison/" + tissue + "/eigengene/"+cohort
     heatmap(url, tissue, "")
 }
 
 function loadClinicalROIHeatmap(tissue, cohort="all") {
-    var url = "/clinical-comparison/" + tissue + "/roi"+cohort
+    var url = "/clinical-comparison/" + tissue + "/roi/"+cohort
     heatmap(url, tissue, "")
 }
 

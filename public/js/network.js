@@ -1,5 +1,3 @@
-
-
 function TOMGraph(s, tissue){
     //s.graph = s.graph.clear() 
 
@@ -9,20 +7,11 @@ function TOMGraph(s, tissue){
     $("#graph-container-"+tissue).height(h)
     $("#graph-container-"+tissue).width(w)
 
-   //s.bind("overNode", function(d){
-   //    filter.neighborsOf(d.data.node.id).apply();
-   //})
-
-   //s.bind("outNode", function(n){
-   //    filter.undo().apply();
-   //})
-   //
    s.bind("clickNode", function(d){
        var module = d.data.node.module; 
        var path = "/modules/"+tissue+"/"+module+"/cohort/all"
        var url = "http://"+window.location.host+path
        window.location.href=url
-       console.log(url)
    })
 
     
@@ -32,9 +21,6 @@ function TOMGraph(s, tissue){
             $.get('/tomgraph/'+tissue+'/edges',
                 function(data){
                     var edges = JSON.parse(data)
-
-                    console.log("edges:", edges) 
-                    console.log("nodes", nodes) 
 
                     for(var i = 0; i < nodes.length; i++){
                         nodes[i].label = nodes[i].id + " ("+nodes[i].color+")"
@@ -49,18 +35,8 @@ function TOMGraph(s, tissue){
                         nodes: nodes,
                         edges: edges
                     })
-
-                    //s.startForceAtlas2();
-                    //setTimeout(function(){
-                    //    s.killForceAtlas2();
-                    //}, 5000);
-                        
-
-                    //console.log("refreshing") 
-
                     s.refresh(); 
-                    //console.log("all refreshed") 
-
+                    //
                     // nasty window resize hack
                     window.dispatchEvent(new Event('resize'))
 

@@ -39,6 +39,18 @@
                   download="{{$module.Name}}-{{$module.Tissue}}-genelist.csv"
                   target="_blank">Download gene list</a> | 
               <a href="#" id="{{$module.Name}}-{{$module.Tissue}}-reorder">Inverse ordering </a> 
+                | 
+                <a href="#" data-toggle="popover" data-trigger="focus"
+                data-html="true" title="Scatter plot"
+                data-placement="bottom" data-content="
+                <img
+                src='/resources/{{$module.ScatterplotUrl}}/png/scatterplot.png'
+                id='alt-heatmap'></img><a
+                href='/resources/{{$module.ScatterplotUrl}}/pdf/scatterplot.pdf'>Download
+                scatterplot as pdf</a>">Scatterplot</a>
+
+
+
             </span>
                     </hr>
                 </div>
@@ -262,6 +274,9 @@
 
         $("#goterms-{{$module.Name}}-{{$module.Tissue}}").tablesorter(); 
       });
+
+        $("[data-toggle=popover]").popover();
+
     </script>
 
     </div> 

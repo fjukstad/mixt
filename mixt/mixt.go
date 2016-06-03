@@ -53,7 +53,7 @@ func CohortBoxplot(module, orderByTissue, orderByModule, cohort string) (string,
 func CohortScatterplot(tissueA, tissueB, moduleA, moduleB, cohort string) (string, error) {
 	pkg := "mixt"
 	fun := "cohort_scatterplot"
-	args := "x.tissue='" + tissueA + "', y.tiisue='" + tissueB + "', x.module='" + moduleA + "', y.module='" + moduleB + "', cohort.name='" + cohort + "'"
+	args := "x.tissue='" + tissueA + "', y.tissue='" + tissueB + "', x.module='" + moduleA + "', y.module='" + moduleB + "', cohort.name='" + cohort + "'"
 	return plot(pkg, fun, args)
 }
 

@@ -156,6 +156,23 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 
 	mb.HeatmapUrl = reorderHeatmap
 
+	scatterPlot, err := mixt.CohortScatterplot(tissueA, tissueB, moduleA, moduleB, cohort)
+	if err != nil {
+		fmt.Println("Could not get cohort scatterplot")
+		http.Error(w, err.Error(), 503)
+		return
+	}
+
+	ma.ScatterplotUrl = scatterPlot
+
+	scatterPlot, err = mixt.CohortScatterplot(tissueB, tissueA, moduleB, moduleA, cohort)
+	if err != nil {
+		fmt.Println("Could not get cohort scatterplot", err)
+		http.Error(w, err.Error(), 503)
+		return
+	}
+	mb.ScatterplotUrl = scatterPlot
+
 	ma.AlternativeHeatmapUrl, err = mixt.HeatmapReOrder(tissueA, moduleA, tissueB, moduleB, cohort)
 	if err != nil {
 		fmt.Println("Could not get re order heatmap")

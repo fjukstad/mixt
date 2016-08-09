@@ -65,6 +65,10 @@ function loadClinicalROIHeatmap(tissue, cohort="all") {
     heatmap(url, tissue, "")
 }
 
+function loadClinicalRanksumHeatmap(tissue, cohort="all") {
+    var url = "/clinical-comparison/" + tissue + "/ranksum/"+cohort
+    heatmap(url, tissue, "")
+}
 
 function heatmap(url, tissueA, tissueB) {
     svg = d3.select("#heatmap-" + tissueA + " svg").attr("id", tissueA)
@@ -86,7 +90,6 @@ function heatmap(url, tissueA, tissueB) {
     max = 0
 
     d3.csv(url, function(d) {
-
             if (tissueB == "") {
                 ynames.push(d.Clinical)
                 delete d.Clinical
@@ -101,8 +104,6 @@ function heatmap(url, tissueA, tissueB) {
                 if (num > 10 || isNaN(num)) {
                     num = 10;
                 }
-
-
                 return num
             });
 
@@ -157,8 +158,6 @@ function heatmap(url, tissueA, tissueB) {
                 .orient("left")
                 .ticks(ynames.length);
 
-            console.log(min,max) 
-
             color = d3.scale.quantize()
                 .domain([0,  max])
                 .range(["#D4D4D4", "#D4D4D4","#D4D4D4","#D4D4D4", "#D4D4D4","#D4D4D4", "#D0AAB1", "#8E063B"])
@@ -197,7 +196,7 @@ function heatmap(url, tissueA, tissueB) {
                     xname = xnames[i];
                     yname = ynames[d.index];
                     if (tissueB == "") {
-                        return "/modules/" + tissueA + "/" + xname
+                        return "/modules/" + tissueA + "/" + xname + "/cohort/all"
                     } else {
                         cohort= $("#cohort-select").val();
                         return "/compare/" + tissueA + "/" + tissueB + "/" + yname + "/" + xname + "/cohort/"+cohort
@@ -409,8 +408,6 @@ function heatmap(url, tissueA, tissueB) {
 
                     y2 = height - 1
                     x2 = x
-
-                    console.log(t,x,y,x2,y2) 
 
                     svg.append("line")
                         .attr("id", "column-select") 

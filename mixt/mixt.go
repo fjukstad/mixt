@@ -453,8 +453,6 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, er
 	var scores []Score
 	err = json.Unmarshal(res, &scores)
 	if err != nil {
-		fmt.Println("Unm", err)
-		fmt.Println(res)
 		return EnrichmentScores{}, err
 	}
 
@@ -727,6 +725,11 @@ func ClinicalEigengene(tissue string) ([]byte, error) {
 func ClinicalROI(tissue string) ([]byte, error) {
 	args := "tissue='" + tissue + "'"
 	return analysis("roiClinicalRelation", args)
+}
+
+func ClinicalRanksum(tissue string) ([]byte, error) {
+	args := "tissue='" + tissue + "'"
+	return analysis("clinicalRanksum", args)
 }
 
 func PatientRankSum(tissueA, tissueB, cohort string) ([]byte, error) {

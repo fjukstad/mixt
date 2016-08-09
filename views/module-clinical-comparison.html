@@ -47,8 +47,7 @@ text.label-heatmap {
                 <th> Select analysis </th>
             </thead>
             <tbody>
-            <tr id="{{$tissue}}-eigengene"><td class="analysis-select"> Eigengene correlation (cor & anova) </td> </tr>
-                <tr id="{{$tissue}}-roi"><td class="analysis-select"> ROI (fisher & anova) </td> </tr>
+                <tr id="{{$tissue}}-ranksum"><td class="analysis-select">Ranksum </td> </tr>
             </tbody> 
             </table>
             
@@ -68,24 +67,16 @@ text.label-heatmap {
     {{ range $tissue := .Tissues }} 
     $('#heatmap-tabs a[href="#{{$tissue}}"]').on("click", function(e){
               console.log("shit storm", e);
-              loadClinicalEigengeneHeatmap("{{$tissue}}") 
-                $("tr#{{$tissue}}-eigengene").addClass("info") 
-              //$(this).tab('show')
+              loadClinicalRanksumHeatmap("{{$tissue}}") 
+                $("tr#{{$tissue}}-ranksum").addClass("info") 
                 
         }); 
 
-        $("tr#{{$tissue}}-eigengene").click(function(){
-            loadClinicalEigengeneHeatmap("{{$tissue}}") 
+        $("tr#{{$tissue}}-ranksum").click(function(){
+            loadClinicalRanksumHeatmap("{{$tissue}}") 
             $(this).addClass("info") 
             $(this).siblings().removeClass("info") 
         });
-
-        $("tr#{{$tissue}}-roi").click(function(){
-            loadClinicalROIHeatmap("{{$tissue}}") 
-            $(this).addClass("info") 
-            $(this).siblings().removeClass("info") 
-        });
-
     {{ end }} 
 
   </script> 

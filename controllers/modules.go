@@ -6,9 +6,9 @@ import (
 	"strings"
 	"text/template"
 
-	"bitbucket.org/vdumeaux/mixt/mixt"
-
 	"github.com/gorilla/mux"
+
+	"bitbucket.org/vdumeaux/mixt/mixt"
 )
 
 var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
@@ -214,15 +214,20 @@ func ModuleClinicalAnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tissue := vars["tissue"]
 	analysis := vars["analysis"]
+	//cohort := vars["cohort"]
 
 	var res []byte
 	var err error
 
 	if analysis == "eigengene" {
 		res, err = mixt.ClinicalEigengene(tissue)
-	} else {
+	} else if analysis == "eigengene" {
 		res, err = mixt.ClinicalROI(tissue)
+	} else if analysis == "ranksum" {
+		res, err = mixt.ClinicalRanksum(tissue)
 	}
+
+	fmt.Println("Clinical results", string(res))
 
 	if err != nil {
 		fmt.Println("Could not run analysis", tissue, analysis)

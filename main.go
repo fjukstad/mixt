@@ -146,7 +146,7 @@ func main() {
 	r.HandleFunc("/compare/{tissueA}/{tissueB}/{moduleA}/{moduleB}/cohort/{cohort}", controllers.CompareModulesHandler)
 
 	r.HandleFunc("/clinical-comparison", controllers.ModuleClinicalHandler)
-	r.HandleFunc("/clinical-comparison/{tissue}/{analysis}", controllers.ModuleClinicalAnalysisHandler)
+	r.HandleFunc("/clinical-comparison/{tissue}/{analysis}/{cohort}", controllers.ModuleClinicalAnalysisHandler)
 
 	r.HandleFunc("/tissues", controllers.TissuesHandler)
 	r.HandleFunc("/tissues/{tissueA}/{tissueB}", controllers.TissueComparisonHandler)

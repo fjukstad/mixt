@@ -14,10 +14,10 @@ import (
 	"github.com/fjukstad/kvik/r"
 )
 
-var R r.Server
+var R r.Client
 
 func Init(addr, username, password string) {
-	R = r.Server{addr, username, password}
+	R = r.Client{addr, username, password}
 	return
 }
 

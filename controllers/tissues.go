@@ -131,8 +131,6 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func TOMGraphHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HANDLING THIS FUCKER")
-
 	vars := mux.Vars(r)
 	tissue := vars["tissue"]
 	what := vars["what"]

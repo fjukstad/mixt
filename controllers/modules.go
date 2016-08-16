@@ -105,7 +105,7 @@ func retrieveModulesOverview() (ModulesOverview, error) {
 
 	cohorts, err := mixt.GetCohorts()
 	if err != nil {
-		fmt.Println("Could not get cohorts")
+		fmt.Println("Could not get cohorts", err)
 		return ModulesOverview{}, err
 	}
 

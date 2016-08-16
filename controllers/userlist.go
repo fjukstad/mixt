@@ -28,7 +28,6 @@ func UserListHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserListSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Handling result")
 
 	file, header, err := r.FormFile("file")
 	if err != nil {
@@ -61,8 +60,6 @@ func UserListResultHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	genes := vars["genes"]
 	listname := vars["listname"]
-
-	fmt.Println(genes, listname)
 
 	genelist := strings.Split(genes, "+")
 
@@ -105,8 +102,6 @@ func UserListCommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-
-	fmt.Println("COMMON", commonGenes)
 
 	if format == "json" {
 		common := Common{commonGenes}

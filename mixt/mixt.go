@@ -178,7 +178,7 @@ func GetTissues() ([]string, error) {
 
 	resp, err := R.Get(key, "json")
 	if err != nil {
-		fmt.Println("error:", err)
+		fmt.Println("Get tissues failed.", err)
 		return []string{""}, err
 	}
 
@@ -186,6 +186,7 @@ func GetTissues() ([]string, error) {
 	err = json.Unmarshal([]byte(resp), &tissues)
 	if err != nil {
 		fmt.Println("cannot unmarshal json response", err)
+		fmt.Println(string(resp))
 		return nil, err
 	}
 
@@ -396,8 +397,6 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 		genes = append(genes, g)
 	}
 
-	fmt.Println("WE GOT", len(genes), "genes")
-
 	return genes, key, nil
 
 }
@@ -553,7 +552,8 @@ func GetEnrichmentForTissue(tissue, geneset string) ([]Score, error) {
 	var modulescores []Score
 	err = json.Unmarshal(res, &modulescores)
 	if err != nil {
-		fmt.Println("Shit went sour", string(resp))
+		fmt.Println("Enrichment for tissue:.", err)
+		return []Score{}, err
 	}
 	return modulescores, err
 
@@ -800,8 +800,6 @@ func GetTOMGraph(tissue, what string) ([]byte, error) {
 		fmt.Println("Could not get TOM graph nodes")
 		return nil, err
 	}
-	fmt.Println("call success:", key)
-
 	return R.Get(key, "json")
 
 }
@@ -817,7 +815,7 @@ func GetCohorts() ([]string, error) {
 
 	key, err := R.Call(pkg, fun, args)
 	if err != nil {
-		fmt.Println("Could not get cohorts")
+		fmt.Println("Could not get cohorts", err)
 		return []string{}, err
 	}
 

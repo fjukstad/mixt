@@ -74,9 +74,12 @@ func UserListResultHandler(w http.ResponseWriter, r *http.Request) {
 
 	for i, tissue := range tissues {
 		if i < 2 {
-			fmt.Println(tissue, "running analysisis for it")
 			sc, err := mixt.UserEnrichmentScores(tissue, genelist)
-			fmt.Println(sc, err)
+			if err != nil {
+				fmt.Println("Userlist enrichment bad", err)
+				http.Error(w, err.Error(), 500)
+				return
+			}
 			scores[tissue] = sc
 		}
 	}

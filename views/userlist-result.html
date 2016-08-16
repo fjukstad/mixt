@@ -29,7 +29,7 @@
                     {{ range $index, $score := $scores }} 
                     <tr>
                     <td class="module"> <a
-                            href="/modules/{{$tissue}}/{{$score.Module}}">{{$score.Module}}</a></td>
+                            href="/modules/{{$tissue}}/{{$score.Module}}/cohort/all">{{$score.Module}}</a></td>
                     <td class="pval"> {{$score.PValue}} </td> 
                     <td class="common">
                         <a href="#" data-toggle="tooltip" title = "{{print $score.Common}}">

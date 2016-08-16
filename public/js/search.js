@@ -36,27 +36,10 @@ $(function() {
             $(this).trigger("enterKey");
         }
     }) 
+    
+    $("input#search").on( "autocompleteselect", function( event, ui ) {
+        searchterm = $('input#search').val()
+        window.location = window.location.origin+"/search/results/"+searchterm
+    } );
 
-    $('input#search').on('focus', function(){
-        $(this).animate({
-            width: '100%'
-            }, 400, function(){
-            }); 
-        $(".ui-widget").animate({
-            width: '500px'
-        }, 400, function(){
-        }); 
-    })
-
-
-    $('input#search').on('blur', function(){
-        $(this).animate({
-            width: '100%'
-            }, 400, function(){
-            }); 
-        $(".ui-widget").animate({
-            width: '10%'
-        }, 400, function(){
-        }); 
-    })
 });

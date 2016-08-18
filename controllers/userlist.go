@@ -32,13 +32,13 @@ func UserListSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 	genes := strings.Split(string(data), "\n")
@@ -66,7 +66,7 @@ func UserListResultHandler(w http.ResponseWriter, r *http.Request) {
 	tissues, err := mixt.GetTissues()
 	if err != nil {
 		fmt.Println("getting tissues went bad:", err)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -77,7 +77,7 @@ func UserListResultHandler(w http.ResponseWriter, r *http.Request) {
 			sc, err := mixt.UserEnrichmentScores(tissue, genelist)
 			if err != nil {
 				fmt.Println("Userlist enrichment bad", err)
-				http.Error(w, err.Error(), 500)
+				errorHandler(w, r, err)
 				return
 			}
 			scores[tissue] = sc
@@ -102,7 +102,7 @@ func UserListCommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 	commonGenes, err := mixt.GetCommonUserERGenes(module, tissue, genelist)
 	if err != nil {
 		fmt.Println("Could get common user enrichment genes")
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -111,7 +111,7 @@ func UserListCommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 		b, err := json.Marshal(common)
 		if err != nil {
 			fmt.Println("Could not marshal common go term genes")
-			http.Error(w, err.Error(), 500)
+			errorHandler(w, r, err)
 			return
 		}
 

@@ -27,13 +27,15 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	result, err := SearchForGene(term)
 	if err != nil {
 		fmt.Println("Search went bad:", err)
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
+		return
 	}
 
 	setres, err := SearchForGeneSet(term)
 	if err != nil {
 		fmt.Println("Searching for gene sets bad", err)
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
+		return
 	}
 
 	result = append(result, setres...)
@@ -41,7 +43,8 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	GOTermNames, err := SearchForGOTerms(term)
 	if err != nil {
 		fmt.Println("Searching for go terms went bad", err)
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
+		return
 	}
 
 	result = append(result, GOTermNames...)
@@ -129,22 +132,23 @@ func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
 
 	genes, tissues, err := GeneResults(searchTerms)
 	if err != nil {
-		http.Error(w, err.Error(), 503)
+		fmt.Println("gene results error", err)
+		errorHandler(w, r, err)
 		return
 	}
 
 	geneSets, err := SetResults(searchTerms)
 
 	if err != nil {
-		fmt.Println("ERROR", err)
-		http.Error(w, err.Error(), 500)
+		fmt.Println("set results", err)
+		errorHandler(w, r, err)
 		return
 	}
 
 	goterms, err := GOTermResults(searchTerms)
 	if err != nil {
-		fmt.Println("ERROR", err)
-		http.Error(w, err.Error(), 500)
+		fmt.Println("go term results", err)
+		errorHandler(w, r, err)
 		return
 	}
 

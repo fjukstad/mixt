@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-"bitbucket.org/vdumeaux/mixt/mixt"
+
+	"bitbucket.org/vdumeaux/mixt/mixt"
 	"github.com/fjukstad/kvik/genecards"
 	"github.com/gorilla/mux"
 )
@@ -91,6 +92,7 @@ func CommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 	commonGenes, err := mixt.GetCommonGenes(tissue, module, geneset, status)
 	if err != nil {
 		fmt.Println("Could not get common genes", err)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -100,6 +102,7 @@ func CommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 		b, err := json.Marshal(common)
 		if err != nil {
 			fmt.Println("Could not marshal common genes", err)
+			errorHandler(w, r, err)
 			return
 		}
 

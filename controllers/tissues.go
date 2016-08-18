@@ -30,7 +30,8 @@ func TissuesHandler(w http.ResponseWriter, r *http.Request) {
 	tissues, err := mixt.GetTissues()
 	if err != nil {
 		fmt.Println("getting tissues went bad:", err)
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
+		return
 	}
 
 	var result []Tissue
@@ -63,7 +64,7 @@ func TissueComparisonHandler(w http.ResponseWriter, r *http.Request) {
 	cohorts, err := mixt.GetCohorts()
 	if err != nil {
 		fmt.Println("Could not get cohorts")
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -88,7 +89,7 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 		result, err = mixt.PatientRankSum(tissueA, tissueB, cohort)
 		if err != nil {
 			fmt.Println("Could not get patient rank sum correlation")
-			http.Error(w, err.Error(), 500)
+			errorHandler(w, r, err)
 			return
 		}
 	}
@@ -97,7 +98,7 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 		result, err = mixt.EigengeneCorrelation(tissueA, tissueB)
 		if err != nil {
 			fmt.Println("Could not do eigen gene correlation", err)
-			http.Error(w, err.Error(), 500)
+			errorHandler(w, r, err)
 			return
 		}
 	}
@@ -105,7 +106,7 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	if analysis == "overlap" {
 		result, err = mixt.ModuleHypergeometricTest(tissueA, tissueB)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			errorHandler(w, r, err)
 			return
 		}
 	}
@@ -113,7 +114,7 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	if analysis == "roi" {
 		result, err = mixt.ROITest(tissueA, tissueB)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			errorHandler(w, r, err)
 			return
 		}
 	}
@@ -121,7 +122,7 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	if analysis == "patientrank" {
 		result, err = mixt.PatientRankCorrelation(tissueA, tissueB)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			errorHandler(w, r, err)
 			return
 		}
 	}
@@ -137,7 +138,8 @@ func TOMGraphHandler(w http.ResponseWriter, r *http.Request) {
 
 	res, err := mixt.GetTOMGraph(tissue, what)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
+		return
 	}
 	w.Write(res)
 

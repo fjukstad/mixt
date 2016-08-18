@@ -16,7 +16,7 @@ func NetworkHandler(w http.ResponseWriter, r *http.Request) {
 	tissues, err := mixt.GetTissues()
 	if err != nil {
 		fmt.Println("Could not get tissues")
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
 		return
 	}
 

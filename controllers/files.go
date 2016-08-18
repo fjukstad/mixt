@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"bitbucket.org/vdumeaux/mixt/mixt"
@@ -15,7 +14,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	//name := vars["name"]
 	body, err := mixt.Get(key, filetype)
 	if err != nil {
-		fmt.Println("Could not read all", err)
+		errorHandler(w, r, err)
 		return
 	}
 	w.Write(body)

@@ -49,7 +49,11 @@ button#cohortSelectButton {
             </table>
             
             <h5> Scale (-log10)</h5> 
-            <div id="legend"> </div>
+            <div id="legend"> 
+                <p id="legendmin" style="display:inline; margin-right:1em;"></p>
+                <svg id="legend-{{.TissueA}}"></svg>
+                <p id="legendmax" style="display:inline; margin-left:1em;"></p>
+            </div> 
 
             Select cohort (optional)
               <select class="form-control" id="cohort-select">

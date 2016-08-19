@@ -53,9 +53,10 @@ text.label-heatmap {
             
             <h5> Scale (-log10)</h5> 
             <div id="legend"> 
-                <svg></svg>
+                <p id="legendmin" style="display:inline; margin-right:1em;"></p>
+                <svg id="legend-{{$tissue}}"></svg>
+                <p id="legendmax" style="display:inline; margin-left:1em;"></p>
             </div> 
-
         </div>
             </div> 
           {{ end }} 

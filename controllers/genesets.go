@@ -7,7 +7,7 @@ import (
 	"github.com/fjukstad/kvik/gsea"
 	"github.com/gorilla/mux"
 
-"bitbucket.org/vdumeaux/mixt/mixt"
+	"bitbucket.org/vdumeaux/mixt/mixt"
 )
 
 type GeneSet struct {
@@ -41,25 +41,39 @@ func SetResults(searchTerms []string) ([]GeneSet, error) {
 	}
 
 	var gs []GeneSet
+	setResults := make(chan GeneSet, 10)
 
 	// fetch enrichment scores for the genesets in the
 	for _, geneSetName := range geneSetNames {
-		ts := make(map[string][]ModuleEnrichment)
-		for _, tissue := range tissues {
-			var mes []ModuleEnrichment
-			sc, err := mixt.GetEnrichmentForTissue(tissue, geneSetName)
-			if err != nil {
-				fmt.Println("Could not get enrichment for tissue", err)
-				return []GeneSet{}, err
-			}
+		go func(geneSetName string) {
+			ts := make(map[string][]ModuleEnrichment)
+			for _, tissue := range tissues {
+				var mes []ModuleEnrichment
+				sc, err := mixt.GetEnrichmentForTissue(tissue, geneSetName)
+				if err != nil {
+					fmt.Println("Could not get enrichment for tissue", err)
+					setResults <- GeneSet{}
+					return
+				}
 
-			for _, s := range sc {
-				abstract, _ := gsea.Abstract(s.Name)
-				mes = append(mes, ModuleEnrichment{s.Name, s.UpDownPvalue, abstract})
+				for _, s := range sc {
+					abstract, _ := gsea.Abstract(s.Name)
+					mes = append(mes, ModuleEnrichment{s.Name, s.UpDownPvalue, abstract})
+				}
+				ts[tissue] = mes
 			}
-			ts[tissue] = mes
+			setResults <- GeneSet{geneSetName, ts}
+			//gs = append(gs, GeneSet{geneSetName, ts})
+		}(geneSetName)
+	}
+
+	for range geneSetNames {
+		geneset := <-setResults
+		if geneset.Name == "" {
+			fmt.Println("Could not get enrichment for tissue", err)
+			return []GeneSet{}, err
 		}
-		gs = append(gs, GeneSet{geneSetName, ts})
+		gs = append(gs, geneset)
 	}
 
 	return gs, nil

@@ -38,7 +38,9 @@ button#cohortSelectButton {
             </thead>
             <tbody>
                 <tr id="ranksum"><td class="analysis-select">Ranksum</td> </tr>
-                <tr id="overlap"><td class="analysis-select"> Gene overlap (hyper-p) </td> </tr>
+                {{ if ne .TissueA .TissueB }} 
+                    <tr id="overlap"><td class="analysis-select"> Gene overlap (hyper-p) </td> </tr>
+                {{ end }} 
  <!--               
                 <tr id="eigengene"><td class="analysis-select"> Eigengene correlation (student-p) </td> </tr>
                 <tr id="roi"><td class="analysis-select"> ROI association (FET-p) </td> </tr>

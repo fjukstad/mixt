@@ -22,7 +22,7 @@ var cellHeight,
     yg,
     legend;
 
-
+var retry = true; 
 
 cellHeight = 15;
 cellWidth = cellHeight;
@@ -126,7 +126,11 @@ function heatmap(url, tissueA, tissueB) {
 
         function(error, csvRows) {
             if (csvRows.length < 1) {
-                heatmap(url, tissueA, tissueB)
+                if(retry) { 
+                    retry =false; 
+                    heatmap(url, tissueA, tissueB)
+                }
+                
             }
 
             $("#heatmap-" + tissueA + " svg").html("")

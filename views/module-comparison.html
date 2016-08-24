@@ -4,10 +4,8 @@
 <div class="container-fluid">
     <div class="row" id="analysis-results">
          <dl class="dl-horizontal"> 
-             <dt> Eigengene correlation: </dt> <dd> {{ index .Analyses.Eigen 0 }} </dd>
-            <dt> Overlap </dt> <dd> {{ index .Analyses.Overlap 0 }} </dd>
-            <dt> Rank  </dt><dd> {{ index .Analyses.Rank 0 }} </dd>
-            <dt> ROI  </dt><dd> {{ index .Analyses.ROI 0 }}  </dd>
+            <dt> Patient ranksum:  </dt><dd> {{ index .Analyses.Ranksum 0 }} </dd>
+            <dt> Overlap: </dt> <dd> {{ index .Analyses.Overlap 0 }} </dd>
             <dt> Common genes: </dt><dd> {{ .Analyses.Common }} </dd>
         </dl>
     </div>
@@ -48,9 +46,6 @@
                 <img
                 src='/resources/{{$module.ScatterplotUrl}}/png/scatterplot.png'
                 id='alt-heatmap'></img></a>">Scatterplot</a>
-
-
-
             </span>
                     </hr>
                 </div>

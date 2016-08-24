@@ -104,7 +104,7 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if analysis == "overlap" {
-		result, err = mixt.ModuleHypergeometricTest(tissueA, tissueB)
+		result, err = mixt.GeneOverlapTest(tissueA, tissueB)
 		if err != nil {
 			errorHandler(w, r, err)
 			return

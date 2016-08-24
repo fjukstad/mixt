@@ -26,16 +26,19 @@ text.label-heatmap {
       <!-- Nav tabs -->
       <ul class="nav nav-pills nav-stacked col-md-2" role="tablist">
           {{ range $tissue := .Tissues }} 
+              {{ if ne $tissue "nblood" }}
               <li role="presentation"><a href="#{{$tissue}}" aria-controls="{{$tissue}}"
               role="tab" data-toggle="tab">{{$tissue}}</a></li>
+              {{ end }} 
           {{ end }} 
         </ul> 
 
         <div class="tab-content"> 
           {{ range $tissue := .Tissues }} 
-            <div role="tabpanel" class="tab-pane" id="{{$tissue}}">
+          {{ if ne $tissue "nblood" }}
             
-           <div class="col-md-7">
+            <div role="tabpanel" class="tab-pane" id="{{$tissue}}">
+            <div class="col-md-7">
                <div id="heatmap-{{$tissue}}">
                    <svg></svg>
                 </div>
@@ -59,6 +62,7 @@ text.label-heatmap {
             </div> 
         </div>
             </div> 
+          {{ end }} 
           {{ end }} 
         </div> 
       </div> 

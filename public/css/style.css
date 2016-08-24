@@ -163,3 +163,12 @@ p#error-message {
     border-radius: 0.2em;
     font-size: 16;
 }
+
+img#bcilogo {
+    height: 9em;
+     display:block;
+    margin:auto;
+}
+h1#welcome{
+    margin-bottom: 0.7em;
+}

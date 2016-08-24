@@ -14,10 +14,10 @@ import (
 	"github.com/fjukstad/kvik/r"
 )
 
-var R r.Server
+var R r.Client
 
 func Init(addr, username, password string) {
-	R = r.Server{addr, username, password}
+	R = r.Client{addr, username, password}
 	return
 }
 
@@ -178,7 +178,7 @@ func GetTissues() ([]string, error) {
 
 	resp, err := R.Get(key, "json")
 	if err != nil {
-		fmt.Println("error:", err)
+		fmt.Println("Get tissues failed.", err)
 		return []string{""}, err
 	}
 
@@ -186,6 +186,7 @@ func GetTissues() ([]string, error) {
 	err = json.Unmarshal([]byte(resp), &tissues)
 	if err != nil {
 		fmt.Println("cannot unmarshal json response", err)
+		fmt.Println(string(resp))
 		return nil, err
 	}
 
@@ -329,7 +330,7 @@ func GetModule(name, tissue, cohort string) (Module, error) {
 	cohortBoxplot, err := CohortBoxplot(name, tissue, name, cohort)
 	if err != nil {
 		fmt.Println("Could not generate boxplot", err)
-		return Module{}, err
+		//return Module{}, err
 	}
 
 	module := Module{name, tissue, heatmapUrl, alternativeHeatmapUrl, genes, scores, goterms, url, "", cohortBoxplot}
@@ -396,8 +397,6 @@ func GetGeneList(module, tissue string) (genes []Gene, url string,
 		genes = append(genes, g)
 	}
 
-	fmt.Println("WE GOT", len(genes), "genes")
-
 	return genes, key, nil
 
 }
@@ -407,7 +406,7 @@ type Score struct {
 	Name         string  `json:"_row"`
 	Size         int     `json:"sig.size,string"`
 	UpDownCommon int     `json:"updn.common,string"`
-	UpDownPvalue float64 `json:"updn.pval"`
+	UpDownPvalue float64 `json:"updn.pval,string"`
 	UpCommon     int     `json:"up.common,string"`
 	UpPvalue     float64 `json:"up.pval,string"`
 	DownCommon   int     `json:"dn.common,string"`
@@ -453,8 +452,6 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, er
 	var scores []Score
 	err = json.Unmarshal(res, &scores)
 	if err != nil {
-		fmt.Println("Unm", err)
-		fmt.Println(res)
 		return EnrichmentScores{}, err
 	}
 
@@ -510,9 +507,6 @@ func GetGOTermNames() ([]string, error) {
 }
 
 func GetSlice(pkg, fun, args string) ([]string, error) {
-
-	fmt.Println(pkg, fun, args)
-
 	key, err := R.Call(pkg, fun, args)
 	if err != nil {
 		return []string{}, err
@@ -526,10 +520,9 @@ func GetSlice(pkg, fun, args string) ([]string, error) {
 
 	res := []byte(resp)
 
-	fmt.Println("Result:", string(res))
-
 	var names []string
 	err = json.Unmarshal(res, &names)
+
 	return names, err
 
 }
@@ -558,6 +551,10 @@ func GetEnrichmentForTissue(tissue, geneset string) ([]Score, error) {
 
 	var modulescores []Score
 	err = json.Unmarshal(res, &modulescores)
+	if err != nil {
+		fmt.Println("Enrichment for tissue:.", err)
+		return []Score{}, err
+	}
 	return modulescores, err
 
 }
@@ -730,6 +727,11 @@ func ClinicalROI(tissue string) ([]byte, error) {
 	return analysis("roiClinicalRelation", args)
 }
 
+func ClinicalRanksum(tissue string) ([]byte, error) {
+	args := "tissue='" + tissue + "'"
+	return analysis("clinicalRanksum", args)
+}
+
 func PatientRankSum(tissueA, tissueB, cohort string) ([]byte, error) {
 	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "',cohort='" + cohort + "'"
 	return analysis("patientRankSum", args)
@@ -798,8 +800,6 @@ func GetTOMGraph(tissue, what string) ([]byte, error) {
 		fmt.Println("Could not get TOM graph nodes")
 		return nil, err
 	}
-	fmt.Println("call success:", key)
-
 	return R.Get(key, "json")
 
 }
@@ -815,7 +815,7 @@ func GetCohorts() ([]string, error) {
 
 	key, err := R.Call(pkg, fun, args)
 	if err != nil {
-		fmt.Println("Could not get cohorts")
+		fmt.Println("Could not get cohorts", err)
 		return []string{}, err
 	}
 

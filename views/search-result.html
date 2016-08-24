@@ -25,7 +25,7 @@
                     <td class="col-md-3"> {{.Summary}}  </td>
                     {{ range $index, $name := .Modules }}
                     <td class="col-md-2">
-                        <a href="/modules/{{index $.Tissues $index}}/{{$name}}">
+                        <a href="/modules/{{index $.Tissues $index}}/{{$name}}/cohort/all">
                             {{$name}} 
                         </a>
                     </td>

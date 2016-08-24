@@ -22,7 +22,7 @@ var cellHeight,
     yg,
     legend;
 
-
+var retry = true; 
 
 cellHeight = 15;
 cellWidth = cellHeight;
@@ -65,10 +65,14 @@ function loadClinicalROIHeatmap(tissue, cohort="all") {
     heatmap(url, tissue, "")
 }
 
+function loadClinicalRanksumHeatmap(tissue, cohort="all") {
+    var url = "/clinical-comparison/" + tissue + "/ranksum/"+cohort
+    heatmap(url, tissue, "")
+}
 
 function heatmap(url, tissueA, tissueB) {
     svg = d3.select("#heatmap-" + tissueA + " svg").attr("id", tissueA)
-    legend = d3.select("#legend-" + tissueA + " svg").attr("id", tissueA)
+    //legend = d3.select("#legend-" + tissueA + " svg").attr("id", tissueA)
     
     xlabel = tissueB
     
@@ -86,7 +90,6 @@ function heatmap(url, tissueA, tissueB) {
     max = 0
 
     d3.csv(url, function(d) {
-
             if (tissueB == "") {
                 ynames.push(d.Clinical)
                 delete d.Clinical
@@ -101,8 +104,6 @@ function heatmap(url, tissueA, tissueB) {
                 if (num > 10 || isNaN(num)) {
                     num = 10;
                 }
-
-
                 return num
             });
 
@@ -125,7 +126,11 @@ function heatmap(url, tissueA, tissueB) {
 
         function(error, csvRows) {
             if (csvRows.length < 1) {
-                heatmap(url, tissueA, tissueB)
+                if(retry) { 
+                    retry =false; 
+                    heatmap(url, tissueA, tissueB)
+                }
+                
             }
 
             $("#heatmap-" + tissueA + " svg").html("")
@@ -157,11 +162,9 @@ function heatmap(url, tissueA, tissueB) {
                 .orient("left")
                 .ticks(ynames.length);
 
-            console.log(min,max) 
-
             color = d3.scale.quantize()
-                .domain([0,  max])
-                .range(["#D4D4D4", "#D4D4D4","#D4D4D4","#D4D4D4", "#D4D4D4","#D4D4D4", "#D0AAB1", "#8E063B"])
+                .domain([0,1.30103,2,3,4])
+                .range(["#D4D4D4", "#C7A3AA", "#B87A86", "#8E063B"])
 
             svg.attr("width", width + margin * 2)
                 .attr("height", height + margin)
@@ -197,7 +200,7 @@ function heatmap(url, tissueA, tissueB) {
                     xname = xnames[i];
                     yname = ynames[d.index];
                     if (tissueB == "") {
-                        return "/modules/" + tissueA + "/" + xname
+                        return "/modules/" + tissueA + "/" + xname + "/cohort/all"
                     } else {
                         cohort= $("#cohort-select").val();
                         return "/compare/" + tissueA + "/" + tissueB + "/" + yname + "/" + xname + "/cohort/"+cohort
@@ -297,7 +300,7 @@ function heatmap(url, tissueA, tissueB) {
                 .call(yAxis);
 
             var scale = d3.range(min, max, (max - min) / 10);
-
+/*
             legend.attr("width", function() {
                     var w = scale.length + 2
                     w = w * cellWidth
@@ -346,7 +349,7 @@ function heatmap(url, tissueA, tissueB) {
                     return ""
                 })
                 
-                
+                */
                 ytrans = (height + margin) / 2.5
                 svg.append("g")
                     .attr("transform","translate(15,"+ytrans+") rotate(-90)")
@@ -410,8 +413,6 @@ function heatmap(url, tissueA, tissueB) {
                     y2 = height - 1
                     x2 = x
 
-                    console.log(t,x,y,x2,y2) 
-
                     svg.append("line")
                         .attr("id", "column-select") 
                         .attr("x1", x)
@@ -443,11 +444,8 @@ function heatmap(url, tissueA, tissueB) {
                     d3.select(this).selectAll("text").attr("font-weight", "")
                 }) 
 
+            plotScale(tissueA)
         })
-
-
-
-
 
 
 }
@@ -475,4 +473,35 @@ function toFloats(strings) {
         floats.push(parseFloat(strings[i]))
     }
     return floats
+}
+
+function plotScale(tissue){
+    console.log("color", color) 
+    console.log(max)
+
+    steps = [0,1.30103,2,3,4]
+    
+    var svg = d3.select("svg#legend-"+tissue);
+
+    svg.attr("height", cellHeight);
+    svg.attr("width", steps.length*cellMargin);
+
+    var square = svg.selectAll("rect").data(steps)
+
+    square.enter().append("rect"); 
+
+    square.attr("width", cellHeight)
+        .attr("height", cellWidth)
+        .attr("x", function(d,i){
+            return i*cellMargin ;
+        })
+        .attr("fill", function(d){
+            return color(d);
+        })
+        .append("title").text(function(d){
+            return d;
+        }) 
+    
+    d3.selectAll("p#legendmin").text("0")
+    d3.selectAll("p#legendmax").text("4")
 }

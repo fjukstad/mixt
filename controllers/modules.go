@@ -6,9 +6,9 @@ import (
 	"strings"
 	"text/template"
 
-	"bitbucket.org/vdumeaux/mixt/mixt"
-
 	"github.com/gorilla/mux"
+
+	"bitbucket.org/vdumeaux/mixt/mixt"
 )
 
 var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
@@ -53,8 +53,8 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 	for _, module := range moduleString {
 		m, err := mixt.GetModule(module, tissue, cohort)
 		if err != nil {
-			fmt.Println("Could not get module")
-			http.Error(w, err.Error(), 503)
+			fmt.Println("Could not get module", err)
+			errorHandler(w, r, err)
 			return
 		}
 		modules = append(modules, m)
@@ -62,7 +62,9 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 
 	overview, err := retrieveModulesOverview()
 	if err != nil {
-		http.Error(w, err.Error(), 503)
+		fmt.Println("Modules overview error", err)
+		errorHandler(w, r, err)
+		return
 	}
 
 	moduleTemplate.Execute(w, Modules{modules, overview})
@@ -72,7 +74,8 @@ func ModulesHandler(w http.ResponseWriter, r *http.Request) {
 	m, err := retrieveModulesOverview()
 	if err != nil {
 		fmt.Println("Could not get modules")
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
+		return
 	}
 
 	var cleanTissues []string
@@ -105,7 +108,7 @@ func retrieveModulesOverview() (ModulesOverview, error) {
 
 	cohorts, err := mixt.GetCohorts()
 	if err != nil {
-		fmt.Println("Could not get cohorts")
+		fmt.Println("Could not get cohorts", err)
 		return ModulesOverview{}, err
 	}
 
@@ -129,28 +132,28 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	analyses, err := mixt.ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB)
 	if err != nil {
 		fmt.Println("Could not get module comparison analyses")
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
 	ma, err := mixt.GetModule(moduleA, tissueA, cohort)
 	if err != nil {
 		fmt.Println("Could not get module", moduleA)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
 	mb, err := mixt.GetModule(moduleB, tissueB, cohort)
 	if err != nil {
 		fmt.Println("Could not get module", moduleB)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
 	reorderHeatmap, err := mixt.HeatmapReOrder(tissueB, moduleB, tissueA, moduleA, cohort)
 	if err != nil {
 		fmt.Println("Could not get re order heatmap")
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -159,7 +162,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	scatterPlot, err := mixt.CohortScatterplot(tissueA, tissueB, moduleA, moduleB, cohort)
 	if err != nil {
 		fmt.Println("Could not get cohort scatterplot")
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -168,7 +171,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	scatterPlot, err = mixt.CohortScatterplot(tissueB, tissueA, moduleB, moduleA, cohort)
 	if err != nil {
 		fmt.Println("Could not get cohort scatterplot", err)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 	mb.ScatterplotUrl = scatterPlot
@@ -176,7 +179,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	ma.AlternativeHeatmapUrl, err = mixt.HeatmapReOrder(tissueA, moduleA, tissueB, moduleB, cohort)
 	if err != nil {
 		fmt.Println("Could not get re order heatmap")
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -184,7 +187,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	mb.AlternativeHeatmapUrl, err = mixt.CohortHeatmap(tissueB, moduleB, cohort)
 	if err != nil {
 		fmt.Println("Could not get heatmap", tissueB, moduleB)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -202,7 +205,7 @@ func ModuleClinicalHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Println("Could not get tissues")
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -214,19 +217,25 @@ func ModuleClinicalAnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tissue := vars["tissue"]
 	analysis := vars["analysis"]
+	//cohort := vars["cohort"]
 
 	var res []byte
 	var err error
 
 	if analysis == "eigengene" {
 		res, err = mixt.ClinicalEigengene(tissue)
-	} else {
+	} else if analysis == "eigengene" {
 		res, err = mixt.ClinicalROI(tissue)
+	} else if analysis == "ranksum" {
+		res, err = mixt.ClinicalRanksum(tissue)
 	}
+
+	fmt.Println("Clinical results", string(res))
 
 	if err != nil {
 		fmt.Println("Could not run analysis", tissue, analysis)
-		http.Error(w, err.Error(), 503)
+		errorHandler(w, r, err)
+		return
 	}
 
 	w.Write(res)

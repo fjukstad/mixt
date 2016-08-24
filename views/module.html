@@ -38,6 +38,25 @@
   </div>
 
   {{ range $module := .Modules }}
+    <div class="row">
+           {{ if eq $module.Tissue "blood"}} 
+        <span id="download-link">
+        <a href="#" data-toggle="popover" data-trigger="focus" data-html="true" title="Blood normals
+        heatmap and boxplot" data-placement="right" data-content="
+            <img
+            src='/resources/{{$module.AlternativeHeatmapUrl}}/png/module-heatmap.png'
+            id='alt-heatmap'></img>
+            
+            <img
+            src='/resources/{{$module.BoxplotUrl}}/png/boxplot.png'
+            id='boxplot'></img>
+            "
+            >Blood normals heatmap</a>
+        </span>
+        {{ end }} 
+    </div>
+
+
   <section id="{{$module.Name}}" class="module">
     <div class="row" id="{{$module.Name}}-module">
       <div class="col-sm-5 col-md-5 col-lg-5">
@@ -47,36 +66,11 @@
             target="_blank">
           <img src="/resources/{{$module.HeatmapUrl}}/png/module-heatmap.png" id="module-heatmap"></img>
         </a>
-        <span id="download-link">
-          <a href="/resources/{{$module.Url}}/csv/genelist.csv" 
-              download="{{$module.Name}}-{{$module.Tissue}}-genelist.csv"
-              target="_blank">Download gene list</a>
-        </span>
-        {{ if eq $module.Tissue "blood"}} 
-        <span>
-        <a href="#" data-toggle="popover" data-trigger="focus" data-html="true" title="Blood normals
-        heatmap and boxplot" data-placement="bottom" data-content="
-            <img
-            src='/resources/{{$module.AlternativeHeatmapUrl}}/png/module-heatmap.png'
-            id='alt-heatmap'></img>
-            
-            <img
-            src='/resources/{{$module.BoxplotUrl}}/png/boxplot.png'
-            id='boxplot'></img>
-            
-            
-            "
-            
-            
-            
-            >Blood normals heatmap</a>
-        </span>
-        {{ end }} 
         </hr>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6" id="module-table">
         <div class="table-responsive" id="genes">
-          <table class="table table-hover" id="gene-table">
+                 <table class="table table-hover" id="gene-table">
             <thead>
               <th> Rank </th> 
               <th> Gene ({{len $module.Genes}}) </th>
@@ -99,6 +93,14 @@
         </div>
       </div>
     </div>
+    <div class="row">
+        <span id="download-link">
+          <a href="/resources/{{$module.Url}}/csv/genelist.csv" 
+              download="{{$module.Name}}-{{$module.Tissue}}-genelist.csv"
+              target="_blank">Download gene list</a>
+        </span>
+    </div>
+
     <section id="{{$module.Name}}-enrichment">
       <div class="row" id="{{$module.Name}}-enrichment">
         <div class="col-sm-11 col-md-11 col-lg-11" id="set-table" role="tabpanel">

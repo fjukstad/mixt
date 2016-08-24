@@ -25,8 +25,8 @@ func PaperSuggestionHandler(w http.ResponseWriter, r *http.Request) {
 
 	m, err := mixt.GetModule(module, tissue, "all")
 	if err != nil {
-		fmt.Println("Could not get module")
-		http.Error(w, err.Error(), 503)
+		fmt.Println("Could not get module", err)
+		errorHandler(w, r, err)
 		return
 	}
 

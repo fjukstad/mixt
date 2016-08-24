@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"bitbucket.org/vdumeaux/mixt/mixt"
-
+	"github.com/gorilla/mux"
 )
 
 type GOTerm struct {
@@ -68,7 +67,7 @@ func CommonGOTermGenesHandler(w http.ResponseWriter, r *http.Request) {
 	genes, err := mixt.GetCommonGOTermGenes(module, tissue, id)
 	if err != nil {
 		fmt.Println("Could not common go term genes")
-		http.Error(w, err.Error(), 500)
+		errorHandler(w, r, err)
 		return
 	}
 
@@ -77,7 +76,7 @@ func CommonGOTermGenesHandler(w http.ResponseWriter, r *http.Request) {
 		b, err := json.Marshal(common)
 		if err != nil {
 			fmt.Println("Could not marshal common go term genes")
-			http.Error(w, err.Error(), 500)
+			errorHandler(w, r, err)
 			return
 		}
 

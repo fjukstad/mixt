@@ -37,17 +37,29 @@ button#cohortSelectButton {
                 <th> Select analysis </th>
             </thead>
             <tbody>
-                <tr id="ranksum"><td class="analysis-select">Ranksum</td> </tr>
+                {{ if eq .TissueA "blood" "biopsy" }} 
+                    {{ if eq .TissueB "blood" "biopsy" }} 
+                        <tr id="ranksum"><td class="analysis-select">Ranksum</td> </tr>
+                    {{ end }} 
+                {{ end }} 
+                {{ if ne .TissueA .TissueB }} 
+                    <tr id="overlap"><td class="analysis-select"> Gene overlap (hyper-p) </td> </tr>
+                {{ end }} 
+ <!--               
                 <tr id="eigengene"><td class="analysis-select"> Eigengene correlation (student-p) </td> </tr>
-                <tr id="overlap"><td class="analysis-select"> Gene overlap (hyper-p) </td> </tr>
                 <tr id="roi"><td class="analysis-select"> ROI association (FET-p) </td> </tr>
                 <tr id="patientrank"><td class="analysis-select"> Patient rank correlation
                         (student-p)</td> </tr>
+ -->
             </tbody> 
             </table>
             
             <h5> Scale (-log10)</h5> 
-            <div id="legend"> </div>
+            <div id="legend"> 
+                <p id="legendmin" style="display:inline; margin-right:1em;"></p>
+                <svg id="legend-{{.TissueA}}"></svg>
+                <p id="legendmax" style="display:inline; margin-left:1em;"></p>
+            </div> 
 
             Select cohort (optional)
               <select class="form-control" id="cohort-select">
@@ -70,44 +82,34 @@ button#cohortSelectButton {
     var cohort = "all" 
 
     $("#cohortSelectButton").click(function(){
-         cohort= $("#cohort-select").val();
-        loadRanksumHeatmap("{{.TissueA}}","{{.TissueB}}", cohort);
+        cohort= $("#cohort-select").val();
+        test = $("tr.info").attr('id')
+        if(test == "overlap") { 
+            loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
+        } else { 
+            loadRanksumHeatmap("{{.TissueA}}","{{.TissueB}}", cohort);
+        }
         $("#comp-header").text("Comparing tissues {{.TissueA}}  - {{.TissueB}} ("+cohort+" cohort)")
     })
-
-
-    
-    loadRanksumHeatmap("{{.TissueA}}", "{{.TissueB}}", cohort) 
-    $("tr#ranksum").addClass("info") 
-    
+    {{ if eq .TissueA "blood" "biopsy" }} 
+            {{ if eq .TissueB "blood" "biopsy" }} 
+                loadRanksumHeatmap("{{.TissueA}}", "{{.TissueB}}", cohort) 
+                $("tr#ranksum").addClass("info") 
+            {{ else }}
+                loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
+                $("tr#overlap").addClass("info") 
+            {{ end }} 
+    {{ else }} 
+        loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
+        $("tr#overlap").addClass("info") 
+    {{ end }} 
     $("tr#ranksum").click(function(){
             loadRanksumHeatmap("{{.TissueA}}","{{.TissueB}}", cohort)
             $(this).addClass("info") 
             $(this).siblings().removeClass("info") 
     })
-
-
     $("tr#overlap").click(function(){
             loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
-            $(this).addClass("info") 
-            $(this).siblings().removeClass("info") 
-    })
-
-    $("tr#eigengene").click(function(){
-            loadEigengeneHeatmap("{{.TissueA}}","{{.TissueB}}")
-            $(this).addClass("info") 
-            $(this).siblings().removeClass("info") 
-    })
-
-
-    $("tr#roi").click(function(){
-            loadROIHeatmap("{{.TissueA}}","{{.TissueB}}")
-            $(this).addClass("info") 
-            $(this).siblings().removeClass("info") 
-    })
-
-    $("tr#patientrank").click(function(){
-            loadPatientRankHeatmap("{{.TissueA}}","{{.TissueB}}")
             $(this).addClass("info") 
             $(this).siblings().removeClass("info") 
     })

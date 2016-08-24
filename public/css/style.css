@@ -172,3 +172,10 @@ img#bcilogo {
 h1#welcome{
     margin-bottom: 0.7em;
 }
+
+img.demo{
+    height: 20em;
+    display:block;
+    margin:auto;
+    margin-top:2em;
+}

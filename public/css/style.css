@@ -179,3 +179,12 @@ img.demo{
     margin:auto;
     margin-top:2em;
 }
+
+path.domain {
+    stroke: #fff;
+} 
+
+g.tick line { 
+    stroke: #fff;
+}
+

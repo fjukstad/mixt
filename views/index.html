@@ -1,108 +1,121 @@
 {{ define "content" }} 
-
-<script src="https://cdn.rawgit.com/imsky/holder/master/holder.js"></script> 
-
-    <div class="container">
-       <div class="row">
-            <h1>Welcome to the MIxT blood-tumor web application</h1> 
-            <div class="col-md-2">
-                <img id="bcilogo" src="public/img/bci-logo.png"></img> 
-            </div> 
-            <div class="col-md-10">
-                <p class="lead"> The Matched Interaction Across Tissues (MIxT)
-                is a system designed for exploring and comparing transcriptional
-                profiles from two or more matched tissues across individuals.
-                Here, the MIxT system is applied to tumor and blood
-                transcriptional profiles from breast cancer patients from the
-                Norwegian Women and Cancer study.  
-                </p>
-            </div>
+<div class="container">
+   <div class="row">
+        <h1>Welcome to the MIxT blood-tumor web application</h1> 
+        <div class="col-md-2">
+            <img id="bcilogo" src="public/img/bci-logo.png"></img> 
         </div> 
-        <hr></hr> 
-       <div class="row">
-           <div class="col-md-6">
-               <h3> Network View </h3> 
-               <p>
-                <img class="demo" src="/public/img/network.gif"></br>
-                
-                In a network, genes can be represented by nodes colored by their module membership.
-                A pair of nodes is connected with an edge if there is a significant co-expresson 
-                relationship between them (topological overlap > 0.1). In both tissues, the edges that 
-                span between modules reflect natural overlaps between cellular processes enriched in modules.
-               </p> 
-           </div> 
-
-           <div class="col-md-6">
-               <h3> Modules </h3> 
-               <p>
-                <img class="demo" src="/public/img/module.gif"></br>
-
-               To explore the system-level changes across tumor and the systemic
-               response of patients, we constructed tight coexpression gene sets 
-               (also called modules) in tumor and blood tissue, respectively. MIxT
-               enables the exploration of module content, expression profiles,
-               and functional enrichment. Visualizes how module expression
-               orders patients to identify clinicopathological variables
-               associated with each module.  Allows to explore blood module
-               expression in breast cancer patients compared to healthy
-               controls.
-               </p> 
-           </div> 
-       </div> 
-
-       <div class="row">
-           <div class="col-md-6">
-               <h3> Compare Tissues </h3> 
-               <p>
-               <img class="demo" src="/public/img/tissue-comp.gif"></br>
-               Displays significance of gene overlap between modules across
-               tissues as such an overlap may suggest a very simple “mirrored”
-               type of co-expression patterns.  Visualizes expression of genes
-               in common between modules across tissues.  Displays significance
-               of interactions between modules defined by the correlation
-               between patient orderings induced by modules. Allows selection of
-               a particular subtype. Visualizes expression of genes in modules
-               interacting between tissues across all patients or within a
-               subtype of interest.
-               </p> 
-           </div> 
-       
-            <div class="col-md-6">
-               <h3> Link to Clinical Variables </h3> 
-               <p>
-                <img class="demo" src="/public/img/clinical-comp.gif"></br>
-
-               Displays significance of associations between module expression
-               and clinical variables. Allows selection of a particular subtype
-               and exploration of module expression profiles of interest.
-               </p> 
-           </div> 
-       </div> 
-
-       <div class="row">
-         <div class="col-md-6">
-             <h3> Submit your own gene list</h3> 
-             <p>
-                <img class="demo" src="/public/img/userlist.gif"></br>
-
-                Given a gene list of interest, return modules in which the gene
-                list is enriched for.
-             </p>
-         </div>
-         <div class="col-md-6">
-             <h3>Search 
-              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-             </h3> 
-             <p>
-                <img class="demo" src="/public/img/search.gif"></br>
-
-             Search for a gene or pathway and return modules in which the gene
-             or pathway is present or enriched. Investigate which genes are
-             co-expressed with your gene of interest in blood and tumor from
-             breast cancer patients.
-             </p>
-         </div> 
-       </div> 
-
+        <div class="col-md-10">
+            <p class="lead"> The Matched Interaction Across Tissues (MIxT)
+            is a system designed for exploring and comparing transcriptional
+            profiles from two or more matched tissues across individuals.
+            Here, the MIxT system is applied to tumor and blood
+            transcriptional profiles from breast cancer patients from the
+            Norwegian Women and Cancer study.  
+            </p>
+        </div>
     </div> 
+    <hr></hr> 
+   <div class="row">
+       <div class="col-md-6" id="network">
+           <h3> Network View </h3> 
+           <p>
+            <img class="demo" src="/public/img/network.png"></br>
+            
+            In a network, genes can be represented by nodes colored by their module membership.
+            A pair of nodes is connected with an edge if there is a significant co-expresson 
+            relationship between them (topological overlap > 0.1). In both tissues, the edges that 
+            span between modules reflect natural overlaps between cellular processes enriched in modules.
+           </p> 
+       </div> 
+
+       <div class="col-md-6" id="module">
+           <h3> Modules </h3> 
+           <p>
+            <img class="demo" src="/public/img/module.png"></br>
+
+           To explore the system-level changes across tumor and the systemic
+           response of patients, we constructed tight coexpression gene sets 
+           (also called modules) in tumor and blood tissue, respectively. MIxT
+           enables the exploration of module content, expression profiles,
+           and functional enrichment. Visualizes how module expression
+           orders patients to identify clinicopathological variables
+           associated with each module.  Allows to explore blood module
+           expression in breast cancer patients compared to healthy
+           controls.
+           </p> 
+       </div> 
+   </div> 
+
+   <div class="row">
+       <div class="col-md-6" id="tissue-comp">
+           <h3> Compare Tissues </h3> 
+           <p>
+           <img class="demo" src="/public/img/tissue-comp.png"></br>
+           Displays significance of gene overlap between modules across
+           tissues as such an overlap may suggest a very simple “mirrored”
+           type of co-expression patterns.  Visualizes expression of genes
+           in common between modules across tissues.  Displays significance
+           of interactions between modules defined by the correlation
+           between patient orderings induced by modules. Allows selection of
+           a particular subtype. Visualizes expression of genes in modules
+           interacting between tissues across all patients or within a
+           subtype of interest.
+           </p> 
+       </div> 
+   
+        <div class="col-md-6" id="clinical-comp">
+           <h3> Link to Clinical Variables </h3> 
+           <p>
+            <img class="demo" src="/public/img/clinical-comp.png"></br>
+
+           Displays significance of associations between module expression
+           and clinical variables. Allows selection of a particular subtype
+           and exploration of module expression profiles of interest.
+           </p> 
+       </div> 
+   </div> 
+
+   <div class="row">
+     <div class="col-md-6" id="userlist">
+         <h3> Submit your own gene list</h3> 
+         <p>
+            <img class="demo" src="/public/img/userlist.png"></br>
+
+            Given a gene list of interest, return modules in which the gene
+            list is enriched for.
+         </p>
+     </div>
+     <div class="col-md-6" id="search">
+         <h3>Search 
+          <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+         </h3> 
+         <p>
+            <img class="demo" src="/public/img/search.png"></br>
+
+         Search for a gene or pathway and return modules in which the gene
+         or pathway is present or enriched. Investigate which genes are
+         co-expressed with your gene of interest in blood and tumor from
+         breast cancer patients.
+         </p>
+     </div> 
+   </div> 
+
+</div> 
+
+<script> 
+
+e = ["network", "module", "tissue-comp", "clinical-comp","userlist","search"]; 
+for(var i = 0; i < e.length; i++){
+    console.log(i) 
+    $("div #"+e[i]).mouseover(function(i){
+        return function(){
+            $("#"+e[i] + " img").attr("src", "/public/img/"+e[i]+".gif")
+        }}(i))
+    $("div #"+e[i]).mouseout(function(i){
+        return function(){
+            $("#"+e[i] + " img").attr("src", "/public/img/"+e[i]+".png")
+        }}(i))
+}
+</script> 
 {{ end }}

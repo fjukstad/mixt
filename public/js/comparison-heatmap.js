@@ -1,4 +1,4 @@
-var log = d3.scale.log()
+var log = d3.scaleLog()
 
 var xnames;
 var ynames = []
@@ -144,27 +144,26 @@ function heatmap(url, tissueA, tissueB) {
                 height = cellMargin * ynames.length;
 
 
-            xScale = d3.scale.ordinal()
+            xScale = d3.scaleOrdinal()
                 .domain(xnames)
-                .rangePoints([0, width - cellWidth]);
+                .range([0, width - cellWidth]);
 
-            yScale = d3.scale.ordinal()
+            yScale = d3.scaleOrdinal()
                 .domain(ynames)
-                .rangePoints([0, height - cellHeight]);
-
-            xAxis = d3.svg.axis().scale(xScale)
-                .orient("bottom")
+                .range([0, height - cellHeight]);
+            
+            xAxis= d3.axisBottom(xScale)
                 .ticks(xnames.length)
-                .innerTickSize(2)
-                .outerTickSize(0)
+                .tickSizeInner(2)
+                .tickSizeOuter(0)
 
-            yAxis = d3.svg.axis().scale(yScale)
-                .orient("left")
+            yAxis = d3.axisLeft(yScale)
                 .ticks(ynames.length);
 
-            color = d3.scale.quantize()
+
+            color = d3.scaleThreshold()
                 .domain([0,1.30103,2,3,4])
-                .range(["#D4D4D4", "#C7A3AA", "#B87A86", "#8E063B"])
+                .range(["#D4D4D4", "#D4D4D4", "#C7A3AA", "#B87A86", "#8E063B", "#8E063B"])
 
             svg.attr("width", width + margin * 2)
                 .attr("height", height + margin)
@@ -286,70 +285,22 @@ function heatmap(url, tissueA, tissueB) {
                 .attr("transform", "translate(" + (margin + cellWidth / 2) + "," + height + ")")
                 .call(xAxis)
 
+
             xg.selectAll("text")
                 .style("text-anchor", "end")
                 .attr("dx", "-.8em")
                 .attr("dy", ".15em")
-                .attr("transform", function(d) {
+                .attr("transform", function(d,i) {
                     return "rotate(-65)"
                 });
 
             yg = svg.append("g")
                 .attr("class", "y axis")
-                .attr("transform", "translate(" + margin + "," + cellHeight / 2 + ")")
+                .attr("transform", "translate(" + (margin-1) + "," + cellHeight / 2 + ")")
                 .call(yAxis);
 
             var scale = d3.range(min, max, (max - min) / 10);
-/*
-            legend.attr("width", function() {
-                    var w = scale.length + 2
-                    w = w * cellWidth
-                    return w
-                })
-                .attr("height", cellHeight);
 
-            legendg = legend.selectAll("g")
-                .data(scale)
-                .enter()
-                .append("g")
-                .attr("transform", function(d, i) {
-                    return "translate(" + i * cellWidth + ",0)"
-                })
-
-            legendg.append("rect")
-                .attr("width", cellWidth)
-                .attr("height", cellHeight)
-                .style("fill", function(d) {
-                    return color(d)
-                })
-
-            legendg.append("text")
-                .attr("transform", function(d, i) {
-                    if (i == 0) {
-                        return "translate(3," + 13 + ")"
-                    }
-                    if (i == scale.length - 1) {
-                        var l = max.toFixed(1).toString().length
-                        l = -3 * l
-                        return "translate(" + l + "," + 13 + ")"
-                    }
-                })
-                .style("fill", function(d, i) {
-                    //if (i == scale.length - 1) {
-                    //    return "white"
-                    //}
-                })
-                .text(function(d, i) {
-                    if (i == 0) {
-                        return min.toFixed(0)
-                    }
-                    if (i == scale.length - 1) {
-                        return max.toFixed(1)
-                    }
-                    return ""
-                })
-                
-                */
                 ytrans = (height + margin) / 2.5
                 svg.append("g")
                     .attr("transform","translate(15,"+ytrans+") rotate(-90)")
@@ -359,7 +310,7 @@ function heatmap(url, tissueA, tissueB) {
                 
                 ytrans = height + margin - 10; 
                 xtrans = (width + margin*1.25) / 2 
-                    
+
                 svg.append("g")
                     .attr("transform","translate("+xtrans+","+ytrans+")")
                     .append("text")
@@ -367,14 +318,19 @@ function heatmap(url, tissueA, tissueB) {
                     .text(xlabel)
 
 
-            d3.selectAll("g.y.axis g")  
+            d3.selectAll("#"+tissueA+" g.y.axis g")  
+                .attr("transform", function(d, i){
+                    console.log(d,i) 
+                    return "translate(0,"+(i*cellMargin)+")"
+                }) 
                 .on("mouseover", function(){
 
                     d3.select(this).selectAll("text").attr("font-weight", "bold")
                         
-                    t = d3.transform(d3.select(this).attr("transform")) 
-                    x = t.translate[0] + margin,
-                    y = t.translate[1] - 1;
+                    t = getTranslation(d3.select(this).attr("transform")) 
+
+                    x = t[0] + margin,
+                    y = t[1] - 1;
 
                     x2 = width + margin - 1
                     y2 = y 
@@ -402,13 +358,15 @@ function heatmap(url, tissueA, tissueB) {
                     d3.select(this).selectAll("text").attr("font-weight", "")
                 })
                 
-            d3.selectAll("g.x.axis g")
+            d3.selectAll("#"+tissueA+" g.x.axis g")
+                .attr("transform", function(d, i){
+                    return "translate("+(i*cellMargin)+",0)"
+                }) 
                 .on("mouseover", function(){
                     d3.select(this).selectAll("text").attr("font-weight", "bold")
-
-                    t = d3.transform(d3.select(this).attr("transform")) 
-                    x = t.translate[0] + margin - 1,
-                    y = t.translate[1];
+                    t = getTranslation(d3.select(this).attr("transform")) 
+                    x = t[0] + margin - 1,
+                    y = t[1];
 
                     y2 = height - 1
                     x2 = x
@@ -425,7 +383,6 @@ function heatmap(url, tissueA, tissueB) {
                     x = x + cellWidth
                     x2 = x
 
-
                     svg.append("line")
                         .attr("id", "column-select") 
                         .attr("x1", x)
@@ -434,10 +391,6 @@ function heatmap(url, tissueA, tissueB) {
                         .attr("y2", y2)
                         .attr("stroke-width", 1) 
                         .attr("stroke", "black") 
-
-
-
-
                 })
                 .on("mouseout", function(){
                     d3.selectAll("line#column-select").remove() 
@@ -488,13 +441,13 @@ function plotScale(tissue){
 
     var square = svg.selectAll("rect").data(steps)
 
-    square.enter().append("rect"); 
-
-    square.attr("width", cellHeight)
+    square.enter().append("rect")
+        .attr("width", cellHeight)
         .attr("height", cellWidth)
         .attr("x", function(d,i){
             return i*cellMargin ;
         })
+        .attr("y",0)
         .attr("fill", function(d){
             return color(d);
         })
@@ -505,3 +458,22 @@ function plotScale(tissue){
     d3.selectAll("p#legendmin").text("0")
     d3.selectAll("p#legendmax").text("4")
 }
+
+function getTranslation(transform) {
+  // Create a dummy g for calculation purposes only. This will never
+  // be appended to the DOM and will be discarded once this function 
+  // returns.
+  var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  
+  // Set the transform attribute to the provided string value.
+  g.setAttributeNS(null, "transform", transform);
+  
+  // consolidate the SVGTransformList containing all transformations
+  // to a single SVGTransform of type SVG_TRANSFORM_MATRIX and get
+  // its SVGMatrix. 
+  var matrix = g.transform.baseVal.consolidate().matrix;
+  
+  // As per definition values e and f are the ones for the translation.
+  return [matrix.e, matrix.f];
+}
+

@@ -31,7 +31,7 @@ $("#module-download-btn").click(function(){
 }); 
 
 
-// sigma instance
+//// sigma instance
 //var s, filter; 
 //
 //$(function(){
@@ -50,31 +50,31 @@ $("#module-download-btn").click(function(){
 //}); 
 
 
-// module selected 
-$("select").click(function(){
-    filter.undo().apply();
-        
-     var tissue = $("ul#tissue-tab li.active").attr("tissue")
-    modules = $("#"+tissue+"-module-select").val();
-     if(modules != null){ 
-        filter.nodesBy(function(n){
-            if($.inArray(n.module, modules) != -1){
-                return true
-            } else {
-                return false
-            }
-        }).apply();
-     }
-})
-
-
-
-// select tissue 
-$("ul#tissue-tab li").mouseup(function(){
-    setTimeout(function(){
-        var tissue = $("ul#tissue-tab li.active").attr("tissue")
-        TOMGraph(s, tissue) 
-    }, 10);
-})
+//// module selected 
+//$("select").click(function(){
+//    filter.undo().apply();
+//        
+//     var tissue = $("ul#tissue-tab li.active").attr("tissue")
+//    modules = $("#"+tissue+"-module-select").val();
+//     if(modules != null){ 
+//        filter.nodesBy(function(n){
+//            if($.inArray(n.module, modules) != -1){
+//                return true
+//            } else {
+//                return false
+//            }
+//        }).apply();
+//     }
+//})
+//
+//
+//
+//// select tissue 
+//$("ul#tissue-tab li").mouseup(function(){
+//    setTimeout(function(){
+//        var tissue = $("ul#tissue-tab li.active").attr("tissue")
+//        TOMGraph(s, tissue) 
+//    }, 10);
+//})
 
 

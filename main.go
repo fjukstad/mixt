@@ -129,6 +129,7 @@ func main() {
 	r.HandleFunc("/login", LoginHandler)
 
 	r.HandleFunc("/modules", controllers.ModulesHandler)
+	r.HandleFunc("/modules/{tissue}/{module}/genes", controllers.GeneList)
 	r.HandleFunc("/modules/{tissue}/{modules}/cohort/{cohort}", controllers.ModuleHandler)
 
 	r.HandleFunc("/network", controllers.NetworkHandler)

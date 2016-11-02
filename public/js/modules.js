@@ -1,3 +1,8 @@
+// Open first tissue tab 
+$("#tissue-tab li:eq(0) a").tab('show'); 
+
+
+
 $("#module-select-btn").click(function(){
     console.log("button clicked");
      var str = "";
@@ -11,23 +16,38 @@ $("#module-select-btn").click(function(){
     location.assign(location.href+"/"+tissue+"/"+str+"/cohort/"+cohort)
 }); 
 
-// sigma instance
-var s, filter; 
 
-$(function(){
- $('#tissue-tab a:first').tab('show')
-    var h = $("#module-selector").height();
-    var w = $("#module-selector").width();
- 
-    $("#graph-container").height(h)
-    $("#graph-container").width(w)
+$("#module-download-btn").click(function(){
+    var str = "";
 
-    filter = new sigma.plugins.filter(s);
     var tissue = $("ul#tissue-tab li.active").attr("tissue")
-    TOMGraph(s, tissue); 
+    modules = $("#"+tissue+"-module-select").val();
 
-
+    baseUrl = location.href+"/"+tissue+"/"; 
+    
+    for (i = 0; i < modules.length; i++) { 
+        window.open(baseUrl + modules[i]+"/genes");
+    }
 }); 
+
+
+// sigma instance
+//var s, filter; 
+//
+//$(function(){
+// $('#tissue-tab a:first').tab('show')
+//    var h = $("#module-selector").height();
+//    var w = $("#module-selector").width();
+// 
+//    $("#graph-container").height(h)
+//    $("#graph-container").width(w)
+//
+//    filter = new sigma.plugins.filter(s);
+//    var tissue = $("ul#tissue-tab li.active").attr("tissue")
+//    TOMGraph(s, tissue); 
+//
+//
+//}); 
 
 
 // module selected 

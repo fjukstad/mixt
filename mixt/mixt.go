@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"sort"
@@ -12,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/fjukstad/kvik/r"
+	"github.com/pkg/errors"
 )
 
 var R r.Client
@@ -132,8 +132,7 @@ func GetCommonGenes(tissue, module, geneset, status string) ([]string, error) {
 	geneNames := make([]string, 0)
 	err = json.Unmarshal([]byte(resp), &geneNames)
 	if err != nil {
-		fmt.Println("Could not unmarshal gene names", err)
-		return []string{}, err
+		return []string{}, errors.Wrap(err, "get common genes unmarshal")
 	}
 	return geneNames, nil
 
@@ -158,8 +157,7 @@ func GetAllModuleNames(gene string) ([]string, error) {
 	moduleNames := make([]string, 0)
 	err = json.Unmarshal([]byte(resp), &moduleNames)
 	if err != nil {
-		fmt.Println("cannot unmarshal json response", err)
-		return nil, err
+		return nil, errors.Wrap(err, "getallmodulenames unmarshal")
 	}
 
 	return moduleNames, nil
@@ -178,16 +176,13 @@ func GetTissues() ([]string, error) {
 
 	resp, err := R.Get(key, "json")
 	if err != nil {
-		fmt.Println("Get tissues failed.", err)
-		return []string{""}, err
+		return []string{""}, errors.Wrap(err, "get tissues r.get failed")
 	}
 
 	tissues := make([]string, 0)
 	err = json.Unmarshal([]byte(resp), &tissues)
 	if err != nil {
-		fmt.Println("cannot unmarshal json response", err)
-		fmt.Println(string(resp))
-		return nil, err
+		return nil, errors.Wrap(err, "gettissues unmarshal")
 	}
 
 	return tissues, nil
@@ -238,10 +233,7 @@ func GetModules(tissue string) ([]Module, error) {
 	moduleNames := make([]string, 0)
 	err = json.Unmarshal([]byte(resp), &moduleNames)
 	if err != nil {
-		fmt.Println("cannot unmarshal json response", err)
-		fmt.Println(resp)
-		return nil, err
-
+		return nil, errors.Wrap(err, "get modules unmarshal error"+string(resp))
 	}
 
 	var modules []Module
@@ -335,6 +327,19 @@ func GetModule(name, tissue, cohort string) (Module, error) {
 
 	module := Module{name, tissue, heatmapUrl, alternativeHeatmapUrl, genes, scores, goterms, url, "", cohortBoxplot}
 	return module, nil
+}
+
+func GeneListCSV(module, tissue string) ([]byte, error) {
+	pkg := "mixt"
+	fun := "getGeneList"
+	args := "tissue='" + tissue + "', module='" + module + "'"
+
+	key, err := R.Call(pkg, fun, args)
+	if err != nil {
+		return nil, err
+	}
+
+	return R.Get(key, "csv")
 }
 
 func GetGeneList(module, tissue string) (genes []Gene, url string,
@@ -472,7 +477,7 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, er
 
 func GetEnrichmentScore(module, tissue, geneset string) (Score, error) {
 
-	pkg := "mxit"
+	pkg := "mixt"
 	fun := "getEnrichmentScores"
 	args := "tissue='" + tissue + "', module='" + module + "', geneset='" + geneset + "'"
 
@@ -737,6 +742,11 @@ func PatientRankSum(tissueA, tissueB, cohort string) ([]byte, error) {
 	return analysis("patientRankSum", args)
 }
 
+func GeneOverlapTest(tissueA, tissueB string) ([]byte, error) {
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "'"
+	return analysis("geneOverlapTest", args)
+}
+
 func analysis(fun, args string) ([]byte, error) {
 	pkg := "mixt"
 	key, err := R.Call(pkg, fun, args)
@@ -749,11 +759,8 @@ func analysis(fun, args string) ([]byte, error) {
 }
 
 type Analyses struct {
-	RankSum []float64 `json:"ranksum"`
-	Eigen   []float64 `json:"eigen"`
-	Rank    []float64 `json:"rank"`
+	Ranksum []float64 `json:"ranksum"`
 	Overlap []float64 `json:"overlap"`
-	ROI     []float64 `json:"roi"`
 	Common  []string  `json:"common"`
 }
 
@@ -816,19 +823,21 @@ func GetCohorts() ([]string, error) {
 	key, err := R.Call(pkg, fun, args)
 	if err != nil {
 		fmt.Println("Could not get cohorts", err)
-		return []string{}, err
+		return []string{}, errors.Wrap(err, "get cohort r call fail"+pkg+fun+args)
 	}
 
 	resp, err := R.Get(key, "json")
 
 	if err != nil {
-		fmt.Println("Could not get cohorts", err)
-		return []string{}, err
+		return []string{}, errors.Wrap(err, "could not get cohort"+key)
 	}
 
 	cohorts := []string{}
 
 	err = json.Unmarshal(resp, &cohorts)
-	return cohorts, err
+	if err != nil {
+		return []string{}, errors.Wrap(err, "get cohort unmarshal error"+string(resp))
+	}
+	return cohorts, nil
 
 }

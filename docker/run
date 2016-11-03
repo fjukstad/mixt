@@ -2,8 +2,8 @@ docker run -v /home/core/kvik:/go/src/github.com/fjukstad/kvik \
     -v /home/core/mixt/:/go/src/bitbucket.org/vdumeaux/mixt/ \
     -p 80:80 \
     -p 8004:8004 \
-    --name mixt \
-    --link=kvikr:kvikr \
+    --name mixt-blood-tumor \
+    --link=kvik-r:kvik-r \
     --restart='always' \
-    -ti mixt \
+    -ti mixt-blood-tumor \
     -port=:80

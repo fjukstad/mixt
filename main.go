@@ -166,7 +166,7 @@ func main() {
 
 	r.HandleFunc("/tomgraph/{tissue}/{what}", controllers.TOMGraphHandler)
 
-	addr := "kvikr:80"
+	addr := "kvik-r:80"
 	username := "biopsy@mcgill"
 	password := "van-mi-ka-al"
 

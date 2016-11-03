@@ -329,17 +329,24 @@ func GetModule(name, tissue, cohort string) (Module, error) {
 	return module, nil
 }
 
-func GeneListCSV(module, tissue string) ([]byte, error) {
-	pkg := "mixt"
-	fun := "getGeneList"
-	args := "tissue='" + tissue + "', module='" + module + "'"
-
-	key, err := R.Call(pkg, fun, args)
-	if err != nil {
-		return nil, err
+func GeneListCSV(modules []string, tissue string) ([]byte, error) {
+	header := "module, genes \n"
+	lines := header
+	sep := " "
+	for _, module := range modules {
+		genes, _, err := GetGeneList(module, tissue)
+		if err != nil {
+			return nil, err
+		}
+		line := module + ", "
+		for _, gene := range genes {
+			line = line + gene.Name + sep
+		}
+		lines = lines + line + "\n"
 	}
 
-	return R.Get(key, "csv")
+	fmt.Println(lines)
+	return []byte(lines), nil
 }
 
 func GetGeneList(module, tissue string) (genes []Gene, url string,

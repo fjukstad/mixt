@@ -24,10 +24,8 @@ $("#module-download-btn").click(function(){
     modules = $("#"+tissue+"-module-select").val();
 
     baseUrl = location.href+"/"+tissue+"/"; 
-    
-    for (i = 0; i < modules.length; i++) { 
-        window.open(baseUrl + modules[i]+"/genes");
-    }
+    str = modules.join([separator = '+']); 
+    window.open(baseUrl + str + "/genes");
 }); 
 
 

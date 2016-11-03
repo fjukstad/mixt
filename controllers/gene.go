@@ -125,14 +125,16 @@ func CommonGenesHandler(w http.ResponseWriter, r *http.Request) {
 
 func GeneList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	module := vars["module"]
+	modules := vars["modules"]
 	tissue := vars["tissue"]
-	csv, err := mixt.GeneListCSV(module, tissue)
+
+	parsedModules := strings.Split(modules, "+")
+	csv, err := mixt.GeneListCSV(parsedModules, tissue)
 	if err != nil {
 		errorHandler(w, r, err)
 		return
 	}
-	filename := tissue + "-" + module + ".csv"
+	filename := tissue + "-" + modules + ".csv"
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Write(csv)
 	return

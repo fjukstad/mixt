@@ -24,7 +24,8 @@ RUN go get github.com/PuerkitoBio/goquery && \
     go get github.com/gorilla/mux && \
     go get github.com/gorilla/securecookie && \
     go get github.com/scalingdata/gcfg && \
-    go get github.com/codegangsta/negroni
+    go get github.com/codegangsta/negroni && \
+    go get github.com/pkg/errors
 
 RUN mkdir -p /go/src/github.com/fjukstad
 RUN mkdir -p /go/src/bitbucket.org/vdumeaux/mixt
@@ -38,5 +39,5 @@ VOLUME /go/src/bitbucket.org/vdumeaux/mixt
 
 EXPOSE 8080
 
-WORKDIR /go/src/bitbucket.org/vdumeaux/mixt/mixt/
-#ENTRYPOINT go run main.go
+WORKDIR /go/src/bitbucket.org/vdumeaux/mixt
+ENTRYPOINT go run main.go -port=:80

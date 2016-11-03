@@ -1,1 +1,9 @@
-docker run -v /home/core/kvik:/go/src/github.com/fjukstad/kvik -v /home/core/mixt/:/go/src/bitbucket.org/vdumeaux/mixt/ -p 80:80 --name mixt --link=gor:gor -ti mixt /bin/bash
+docker run -v /home/core/kvik:/go/src/github.com/fjukstad/kvik \
+    -v /home/core/mixt/:/go/src/bitbucket.org/vdumeaux/mixt/ \
+    -p 80:80 \
+    -p 8004:8004 \
+    --name mixt \
+    --link=kvikr:kvikr \
+    --restart='always' \
+    -ti mixt \
+    -port=:80

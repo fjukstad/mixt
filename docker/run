@@ -3,7 +3,7 @@ docker run -v /home/core/kvik:/go/src/github.com/fjukstad/kvik \
     -p 80:80 \
     -p 8004:8004 \
     --name mixt-blood-tumor \
-    --link=kvik-r:kvik-r \
+    --link=kvikr:kvikr \
     --restart='always' \
     -ti mixt-blood-tumor \
     -port=:80

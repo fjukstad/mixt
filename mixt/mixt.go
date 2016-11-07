@@ -739,8 +739,8 @@ func ClinicalROI(tissue string) ([]byte, error) {
 	return analysis("roiClinicalRelation", args)
 }
 
-func ClinicalRanksum(tissue string) ([]byte, error) {
-	args := "tissue='" + tissue + "'"
+func ClinicalRanksum(tissue, cohort string) ([]byte, error) {
+	args := "tissue='" + tissue + "'" + ", cohort='" + cohort + "'"
 	return analysis("clinicalRanksum", args)
 }
 

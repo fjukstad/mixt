@@ -67,7 +67,11 @@ func ModuleHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	moduleTemplate.Execute(w, Modules{modules, overview})
+	err = moduleTemplate.Execute(w, Modules{modules, overview})
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 func ModulesHandler(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +90,11 @@ func ModulesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	m.Tissues = cleanTissues
 
-	modulesTemplate.Execute(w, m)
+	err = modulesTemplate.Execute(w, m)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 func retrieveModulesOverview() (ModulesOverview, error) {
@@ -193,11 +201,15 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 
 	modules := []mixt.Module{ma, mb}
 
-	compareModulesTemplate.Execute(w, ModuleComparison{modules, analyses})
+	err = compareModulesTemplate.Execute(w, ModuleComparison{modules, analyses})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 type Clinical struct {
 	Tissues []string
+	Cohorts []string
 }
 
 func ModuleClinicalHandler(w http.ResponseWriter, r *http.Request) {
@@ -209,15 +221,30 @@ func ModuleClinicalHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := Clinical{tissues}
-	clinicalComparisonTemplate.Execute(w, c)
+	cohorts, err := mixt.GetCohorts()
+	if err != nil {
+		fmt.Println("Could not get cohorts", err)
+		errorHandler(w, r, err)
+		return
+	}
+
+	c := Clinical{tissues, cohorts}
+	err = clinicalComparisonTemplate.Execute(w, c)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 func ModuleClinicalAnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	tissue := vars["tissue"]
 	analysis := vars["analysis"]
-	//cohort := vars["cohort"]
+	cohort := vars["cohort"]
+
+	if cohort == "" {
+		cohort = "all"
+	}
 
 	var res []byte
 	var err error
@@ -227,10 +254,8 @@ func ModuleClinicalAnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	} else if analysis == "eigengene" {
 		res, err = mixt.ClinicalROI(tissue)
 	} else if analysis == "ranksum" {
-		res, err = mixt.ClinicalRanksum(tissue)
+		res, err = mixt.ClinicalRanksum(tissue, cohort)
 	}
-
-	fmt.Println("Clinical results", string(res))
 
 	if err != nil {
 		fmt.Println("Could not run analysis", tissue, analysis)

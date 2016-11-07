@@ -15,13 +15,17 @@ text.label-heatmap {
     font-size: 20;
     font-weight: normal
 }
+
+h3#comp-header {
+    padding-left: 35%;
+}
+
 </style>
 
 <div class="container">
     <div class="row">
         <h2>Select tissue</h2> 
     </div>
-
     <div class="row" id="heatmap-tabs">
       <!-- Nav tabs -->
       <ul class="nav nav-pills nav-stacked col-md-2" role="tablist">
@@ -35,10 +39,11 @@ text.label-heatmap {
           {{ end }} 
         </ul> 
 
+
         <div class="tab-content"> 
           {{ range $tissue := .Tissues }} 
           {{ if ne $tissue "nblood" }}
-            
+          <h3 id="comp-header"></h3> 
             <div role="tabpanel" class="tab-pane" id="{{$tissue}}">
             <div class="col-md-7">
                <div id="heatmap-{{$tissue}}">
@@ -62,6 +67,15 @@ text.label-heatmap {
                 <svg id="legend-{{$tissue}}"></svg>
                 <p id="legendmax" style="display:inline; margin-left:1em;"></p>
             </div> 
+            </br> 
+            Select cohort (optional)
+            <select class="form-control" id="cohort-select-{{$tissue}}">
+                {{ range $cohort := $.Cohorts }} 
+                      <option> {{ . }} </option>
+                {{ end }} 
+             </select>
+             <button id="cohortSelectButton-{{$tissue}}" class="btn btn-default" type="submit">Select Cohort</button>
+
         </div>
             </div> 
           {{ end }} 
@@ -71,12 +85,15 @@ text.label-heatmap {
   </div>
 
   <script> 
+
+
+
     {{ range $tissue := .Tissues }} 
     $('#heatmap-tabs a[href="#{{$tissue}}"]').on("click", function(e){
-              console.log("shit storm", e);
               loadClinicalRanksumHeatmap("{{$tissue}}") 
-                $("tr#{{$tissue}}-ranksum").addClass("info") 
+              $("tr#{{$tissue}}-ranksum").addClass("info") 
                 
+            $("#comp-header").text("all cohorts")
         }); 
 
         $("tr#{{$tissue}}-ranksum").click(function(){
@@ -84,6 +101,14 @@ text.label-heatmap {
             $(this).addClass("info") 
             $(this).siblings().removeClass("info") 
         });
+
+$("#cohortSelectButton-{{$tissue}}").click(function(){
+            cohort= $("#cohort-select-{{$tissue}}").val();
+            test = $("tr.info").attr('id')
+            loadClinicalRanksumHeatmap("{{$tissue}}", cohort);
+            $("#comp-header").text(cohort+" cohort")
+        })
+
     {{ end }} 
 
   </script> 

@@ -58,11 +58,6 @@ func GeneResults(genes []string) ([]Gene, []string, error) {
 }
 
 func GeneSummaryHandler(w http.ResponseWriter, r *http.Request) {
-	if !LoggedIn(r) {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	vars := mux.Vars(r)
 	geneName := vars["gene"]
 

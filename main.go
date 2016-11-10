@@ -6,18 +6,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"text/template"
-
-	"github.com/scalingdata/gcfg"
 
 	"github.com/fjukstad/mixt-blood-tumor/controllers"
 	"github.com/fjukstad/mixt-blood-tumor/mixt"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/securecookie"
-
-	"github.com/codegangsta/negroni"
 )
 
 var outsideTemplate = template.Must(template.ParseFiles("views/base.html",
@@ -28,16 +22,7 @@ var indexTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/header.html", "views/navbar.html",
 	"views/index.html", "views/footer.html"))
 
-var s = securecookie.New(
-	securecookie.GenerateRandomKey(64),
-	securecookie.GenerateRandomKey(32))
-
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	if controllers.GetUsername(r) == "" {
-		outsideTemplate.Execute(w, nil)
-		return
-	}
-
 	indexTemplate.Execute(w, nil)
 }
 
@@ -61,72 +46,14 @@ type Error struct {
 	Error string
 }
 
-type Config struct {
-	Login struct {
-		Username string
-		Password string
-	}
-}
-
-var cfg Config
-
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-
-	if username != "" && password != "" {
-		if username == cfg.Login.Username && password == cfg.Login.Password {
-			err := controllers.StartSession(username, w)
-			if err != nil {
-				fmt.Println(err)
-				http.Error(w, err.Error(), 503)
-				return
-			}
-			http.Redirect(w, r, "/", 302)
-		}
-	}
-	e := Error{"Wrong username or password"}
-	outsideTemplate.Execute(w, e)
-}
-
-func AuthMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	// any request to /public is open to anyone
-	if strings.HasPrefix(r.URL.Path, "/public") {
-		next(w, r)
-		return
-	}
-
-	// don't have to be logged in to log in...
-	if strings.HasPrefix(r.URL.Path, "/login") {
-		next(w, r)
-		return
-	}
-
-	// auth user
-	if controllers.LoggedIn(r) {
-		next(w, r)
-		return
-	} else {
-		e := Error{"Please log in."}
-		outsideTemplate.Execute(w, e)
-	}
-}
-
 func main() {
 
-	err := gcfg.ReadFileInto(&cfg, "config.gcfg")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 	port := flag.String("port", ":8004", "port to start the app on")
 	flag.Parse()
 
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", HomeHandler)
-
-	r.HandleFunc("/login", LoginHandler)
 
 	r.HandleFunc("/modules", controllers.ModulesHandler)
 	r.HandleFunc("/modules/{tissue}/{modules}/genes", controllers.GeneList)
@@ -174,10 +101,7 @@ func main() {
 
 	http.Handle("/", r)
 
-	n := negroni.New(negroni.HandlerFunc(AuthMiddleware))
-	n.UseHandler(r)
-
 	fmt.Println("Starting mixt app on", *port)
-	log.Fatal(http.ListenAndServe(*port, n))
+	log.Fatal(http.ListenAndServe(*port, r))
 
 }

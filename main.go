@@ -11,8 +11,8 @@ import (
 
 	"github.com/scalingdata/gcfg"
 
-	"bitbucket.org/vdumeaux/mixt/controllers"
-	"bitbucket.org/vdumeaux/mixt/mixt"
+	"github.com/fjukstad/mixt-blood-tumor/controllers"
+	"github.com/fjukstad/mixt-blood-tumor/mixt"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/securecookie"
@@ -166,7 +166,7 @@ func main() {
 
 	r.HandleFunc("/tomgraph/{tissue}/{what}", controllers.TOMGraphHandler)
 
-	addr := "kvikr:80"
+	addr := "mixt-blood-tumor.bci.mcgill.ca:8787"
 	username := "biopsy@mcgill"
 	password := "van-mi-ka-al"
 

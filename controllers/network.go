@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"text/template"
 
-	"bitbucket.org/vdumeaux/mixt/mixt"
+	"github.com/fjukstad/mixt-blood-tumor/mixt"
 )
 
 var networkTemplate = template.Must(template.ParseFiles("views/base.html",

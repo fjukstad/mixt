@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"bitbucket.org/vdumeaux/mixt/mixt"
+	"github.com/fjukstad/mixt-blood-tumor/mixt"
 )
 
 var moduleTemplate = template.Must(template.ParseFiles("views/base.html",

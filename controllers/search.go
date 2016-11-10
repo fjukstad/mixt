@@ -8,7 +8,7 @@ import (
 
 	"text/template"
 
-	"bitbucket.org/vdumeaux/mixt/mixt"
+	"github.com/fjukstad/mixt-blood-tumor/mixt"
 
 	"github.com/gorilla/mux"
 )

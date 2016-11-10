@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"bitbucket.org/vdumeaux/mixt/mixt"
 	"github.com/fjukstad/kvik/genecards"
+	"github.com/fjukstad/mixt-blood-tumor/mixt"
 	"github.com/gorilla/mux"
 )
 

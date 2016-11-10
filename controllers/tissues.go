@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"bitbucket.org/vdumeaux/mixt/mixt"
+	"github.com/fjukstad/mixt-blood-tumor/mixt"
 )
 
 type Tissues struct {

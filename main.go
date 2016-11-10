@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"text/template"
 
-	"github.com/fjukstad/mixt-blood-tumor/controllers"
-	"github.com/fjukstad/mixt-blood-tumor/mixt"
+	"github.com/fjukstad/mixt/controllers"
+	"github.com/fjukstad/mixt/mixt"
 
 	"github.com/gorilla/mux"
 )

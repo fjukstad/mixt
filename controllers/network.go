@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"text/template"
 
-	"github.com/fjukstad/mixt-blood-tumor/mixt"
+	"github.com/fjukstad/mixt/mixt"
 )
 
 var networkTemplate = template.Must(template.ParseFiles("views/base.html",

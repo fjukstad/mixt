@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/fjukstad/kvik/genecards"
-	"github.com/fjukstad/mixt-blood-tumor/mixt"
+	"github.com/fjukstad/mixt/mixt"
 	"github.com/gorilla/mux"
 )
 

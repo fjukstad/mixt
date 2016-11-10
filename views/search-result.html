@@ -48,30 +48,33 @@
                     {{$geneset.Name}}</a> 
                 </h3> 
                 {{ range $tissue, $modules := $geneset.TissueSets }} 
-                      <div class="col-md-4">
-                          <h4> {{ $tissue }} </h4> 
-                          <table class="table table-hover" id="er-{{$geneset.Name}}-{{$tissue}}"> 
-                            <thead> 
-                                <th> Module </th> 
-                                <th> p-value </th> 
-                            </thead> 
-                            <tbody>
-                            {{ range $index, $module := $modules }}
-                            <tr> 
-                                <td> <a
-                                        href="/modules/{{$tissue}}/{{$module.Name}}">{{$module.Name}}</a></td>
-                                <td> {{$module.Pvalue}} </td> 
-                            </tr> 
-                            {{ end }}
-                            </tbody> 
-                        </table> 
-                    </div> 
+                    {{ if eq $tissue "blood" "biopsy" }} 
 
-                    <script> 
-                        $(function(){
-                            $(document.getElementById('er-{{$geneset.Name}}-{{$tissue}}')).tablesorter();
-                        });
-                    </script> 
+                          <div class="col-md-4">
+                              <h4> {{ $tissue }} </h4> 
+                              <table class="table table-hover" id="er-{{$geneset.Name}}-{{$tissue}}"> 
+                                <thead> 
+                                    <th> Module </th> 
+                                    <th> p-value </th> 
+                                </thead> 
+                                <tbody>
+                                {{ range $index, $module := $modules }}
+                                <tr> 
+                                    <td> <a
+                                            href="/modules/{{$tissue}}/{{$module.Name}}/cohort/all">{{$module.Name}}</a></td>
+                                    <td> {{$module.Pvalue}} </td> 
+                                </tr> 
+                                {{ end }}
+                                </tbody> 
+                            </table> 
+                        </div> 
+
+                        <script> 
+                            $(function(){
+                                $(document.getElementById('er-{{$geneset.Name}}-{{$tissue}}')).tablesorter();
+                            });
+                        </script> 
+                    {{ end }} 
                 {{ end }} 
             </div> 
             {{ end }} 
@@ -103,7 +106,7 @@
                             {{ range $index, $score := $scores }}
                             <tr> 
                                 <td> <a
-                                        href="/modules/{{$tissue}}/{{$score.Module}}">{{$score.Module}}</a></td>
+                                        href="/modules/{{$tissue}}/{{$score.Module}}/cohort/all">{{$score.Module}}</a></td>
                                 <td> {{$score.ClassicFisher}} </td> 
                                 <td> {{$score.Weight01Fisher}} </td> 
                             </tr> 

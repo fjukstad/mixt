@@ -1,5 +1,5 @@
 # MIxT
-The Matched Interaction Across Tissues (MIxT) is a system designed for exploring
+Matched Interaction Across Tissues (MIxT) is a system designed for exploring
 and comparing transcriptional profiles from two or more matched tissues across
 individuals. Here, the MIxT system is applied to tumor and blood transcriptional
 profiles from breast cancer patients from the Norwegian Women and Cancer study.

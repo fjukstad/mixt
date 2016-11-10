@@ -1,21 +1,6 @@
 FROM golang
 
-# update get packages
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    wget \
-    git \
-    pkg-config \
-    tar \
-    r-base \
-    libtool \ 
-    autoconf \
-    automake \
-    sshfs \ 
-    nfs-common \
-    vim 
-
-RUN go get github.com/fjukstad/mixt-blood-tumor 
+RUN go get github.com/fjukstad/mixt
 EXPOSE 80
-WORKDIR /
-ENTRYPOINT mixt-blood-tumor -port=:80
+WORKDIR $GOPATH/src/github.com/fjukstad/mixt
+ENTRYPOINT mixt -port=:80

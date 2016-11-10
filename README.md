@@ -14,23 +14,24 @@ The application runs at [mixt-blood-tumor.bci.mcgill.ca](http://mixt-blood-tumor
 ![Screenshot of the welcome page](public/img/screenshot.png) 
 
 # System
-MIxT blood-tumor consist of two main components: the web application and the
+MIxT consist of two main components: the web application and the
 compute backend. The compute backend provides data and analyses, and the web
 application allows users to view and explore the results. We use the *r* package
 in [Kvik](http://github.com/fjukstad/kvik) to run the compute backend. 
 
 # Install and run 
-There are two options for installing and running the MIxT Blood Tumor web
+There are two options for installing and running the MIxT web
 application, either compile and run on your machine, or use the Docker Image. 
 
 ## Compile and run 
 - First install [go](http://golang.org)
-- `$ go get github.com/fjukstad/mixt-blood-tumor`
-- `$ mixt-blood-tumor`
+- `$ go get github.com/fjukstad/mixt`
+- `$ cd $GOPATH/src/github.com/fjukstad/mixt`
+- `$ mixt `
 - Open [localhost:8004](localhost:8004) 
 
 ## Docker
 - Install [Docker](http://docker.com) 
-- `$ docker run -p 8004:80 fjukstad/mixt-blood-tumor` 
+- `$ docker run -p 8004:80 fjukstad/mixt` 
 - Open [localhost:8004](localhost:8004) 
 

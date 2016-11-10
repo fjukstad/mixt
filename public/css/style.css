@@ -215,3 +215,12 @@ hr.vertical {
 #bci-logo {
     text-align: center;
 }    
+
+#mixt-header {
+   text-align: center;
+   padding-bottom: 0.5em; 
+}
+
+#mixt-descr {
+    padding-top: 0.5em; 
+}

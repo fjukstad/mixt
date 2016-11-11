@@ -1,1 +1,1 @@
-web: mixt
+web: mixt -port=$PORT

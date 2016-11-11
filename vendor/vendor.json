@@ -1,0 +1,79 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "b2fhCQnbJ+xgt/4eSjmTKcMjGrM=",
+			"path": "github.com/PuerkitoBio/goquery",
+			"revision": "7f4291566cf7cac3be222a933e01a2bed97532b1",
+			"revisionTime": "2016-07-28T01:43:13Z"
+		},
+		{
+			"checksumSHA1": "YKJEHQmesxr6ExwGE4WZrpQsq4s=",
+			"path": "github.com/andybalholm/cascadia",
+			"revision": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48",
+			"revisionTime": "2015-07-30T17:44:59Z"
+		},
+		{
+			"checksumSHA1": "4o1/QV/xA7i14HS6TAZt1hH2CMM=",
+			"path": "github.com/fjukstad/gocache",
+			"revision": "8f7b772ffd76951fb36999eb4ea4c19f593fec0b",
+			"revisionTime": "2015-12-16T09:54:44Z"
+		},
+		{
+			"checksumSHA1": "O/NMkpjVuDjmQDyABT+nhtOHaIc=",
+			"path": "github.com/fjukstad/kvik/eutils",
+			"revision": "627a9bdf245cd6112f88e26a09c9bde5142492b7",
+			"revisionTime": "2016-11-07T20:32:39Z"
+		},
+		{
+			"checksumSHA1": "6k+ba9wbZ6PUecVDkoDXi35JSHw=",
+			"path": "github.com/fjukstad/kvik/genecards",
+			"revision": "627a9bdf245cd6112f88e26a09c9bde5142492b7",
+			"revisionTime": "2016-11-07T20:32:39Z"
+		},
+		{
+			"checksumSHA1": "t2tfoPGGfDLA18U7z0rqPEUxRRw=",
+			"path": "github.com/fjukstad/kvik/gsea",
+			"revision": "627a9bdf245cd6112f88e26a09c9bde5142492b7",
+			"revisionTime": "2016-11-07T20:32:39Z"
+		},
+		{
+			"checksumSHA1": "YVPV3WblTg9W6tEMXwJIic3HcVc=",
+			"path": "github.com/fjukstad/kvik/r",
+			"revision": "627a9bdf245cd6112f88e26a09c9bde5142492b7",
+			"revisionTime": "2016-11-07T20:32:39Z"
+		},
+		{
+			"checksumSHA1": "iIUYZyoanCQQTUaWsu8b+iOSPt4=",
+			"path": "github.com/gorilla/context",
+			"revision": "14f550f51af52180c2eefed15e5fd18d63c0a64a",
+			"revisionTime": "2014-06-04T16:11:50Z"
+		},
+		{
+			"checksumSHA1": "ATHl/KcmYOhmdeKcpTh7fb4chgI=",
+			"path": "github.com/gorilla/mux",
+			"revision": "e444e69cbd2e2e3e0749a2f3c717cec491552bbf",
+			"revisionTime": "2014-09-26T15:38:14Z"
+		},
+		{
+			"checksumSHA1": "Hky3u+8Rqum+wB5BHMj0A8ZmT4g=",
+			"path": "github.com/pkg/errors",
+			"revision": "17b591df37844cde689f4d5813e5cea0927d8dd2",
+			"revisionTime": "2016-08-22T09:00:10Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "71a035914f99bb58fe82eac0f1289f10963d876c",
+			"revisionTime": "2016-09-12T21:59:12Z"
+		},
+		{
+			"checksumSHA1": "00eQaGynDYrv3tL+C7l9xH0IDZg=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "71a035914f99bb58fe82eac0f1289f10963d876c",
+			"revisionTime": "2016-09-12T21:59:12Z"
+		}
+	],
+	"rootPath": "github.com/fjukstad/mixt"
+}

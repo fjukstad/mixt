@@ -94,8 +94,8 @@ func main() {
 	r.HandleFunc("/tomgraph/{tissue}/{what}", controllers.TOMGraphHandler)
 
 	addr := "mixt-blood-tumor.bci.mcgill.ca:8787"
-	username := "biopsy@mcgill"
-	password := "van-mi-ka-al"
+	username := ""
+	password := ""
 
 	mixt.Init(addr, username, password)
 

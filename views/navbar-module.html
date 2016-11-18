@@ -11,13 +11,6 @@
                         <ul class="col-sm-6 col-sm-offset-3"> 
                         <p>
                             <h4><a href="/modules">Select multiple</a></h4> 
-                            {{ range $module := .Modules }} 
-                            <h7><a
-                                   href="/suggest-papers/{{$module.Tissue}}/{{$module.Name}}"
-                                   target="_blank">Suggest
-                                    papers for the {{$module.Name}}
-                                    module</a></h7> 
-                            {{ end }} 
                         </p> 
                         </ul> 
                     </div>

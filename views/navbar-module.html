@@ -2,9 +2,9 @@
 <div class="navbar yamm" id="topnav">
     <a class="navbar-brand" href="/">MIxT</a>
     <ul class="nav navbar-nav">
+        <li><a href="/network">Network View</a></li> 
         <li class="dropdown"><a data-toggle="dropdown" href="/modules">Modules</a>
             <ul class="dropdown-menu">
-                <li><a href="/network">Network View</a></li> 
                 <li> 
                 <div class="yamm-content">
                     <div class="row">
@@ -23,12 +23,14 @@
                     </div>
                         <div class="row">
                         {{ range $tissue, $modules := .Overview.Modules }}                 
-                        <ul class="col-sm-4 list-unstyled">
-                        <li><p><strong>{{$tissue}}</strong></p></li>
-                        {{ range $modules }} 
-                        <li><a href="/modules/{{ $tissue }}/{{ .Name }}/cohort/all"> {{ .Name }} </a></li>
-                        {{end }} 
-                        </ul> 
+                           {{ if eq $tissue "blood" "biopsy"}} 
+                            <ul class="col-sm-4 list-unstyled">
+                            <li><p><strong>{{$tissue}}</strong></p></li>
+                            {{ range $modules }} 
+                            <li><a href="/modules/{{ $tissue }}/{{ .Name }}/cohort/all"> {{ .Name }} </a></li>
+                            {{ end }} 
+                            </ul> 
+                          {{ end }} 
                        {{ end }} 
                    </div>
                </div>

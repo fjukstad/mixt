@@ -15,10 +15,10 @@ function TOMGraph(s, tissue){
    })
 
     
-    $.get('/tomgraph/'+tissue+'/nodes',
+    $.get('/tomgraph/'+tissue+'/nodes/json',
         function(data){
             var nodes = JSON.parse(data);
-            $.get('/tomgraph/'+tissue+'/edges',
+            $.get('/tomgraph/'+tissue+'/edges/json',
                 function(data){
                     var edges = JSON.parse(data)
 
@@ -52,3 +52,4 @@ function getHexColor(colorStr) {
     document.body.removeChild(a);
     return (colors.length >= 3) ? '#' + (((1 << 24) + (colors[0] << 16) + (colors[1] << 8) + colors[2]).toString(16).substr(1)) : false;
 }
+

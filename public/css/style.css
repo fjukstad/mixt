@@ -224,3 +224,7 @@ hr.vertical {
 #mixt-descr {
     padding-top: 0.5em; 
 }
+
+li#network-download { 
+    float: right
+}

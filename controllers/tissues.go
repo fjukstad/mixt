@@ -143,17 +143,3 @@ func AnalysisHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(result)
 
 }
-
-func TOMGraphHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	tissue := vars["tissue"]
-	what := vars["what"]
-
-	res, err := mixt.GetTOMGraph(tissue, what)
-	if err != nil {
-		errorHandler(w, r, err)
-		return
-	}
-	w.Write(res)
-
-}

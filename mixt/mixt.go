@@ -792,21 +792,21 @@ func ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB string) (Analys
 	return analyses, err
 }
 
-func GetTOMGraph(tissue, what string) ([]byte, error) {
+func GetTOMGraph(tissue, component, format string) ([]byte, error) {
 
 	if tissue == "bnblood" {
 		fmt.Println("TOM graph not available for bnblood")
 		return nil, errors.New("TOM graph not available for bnblood")
 	}
 
-	if what == "nodes" {
-		what = "Nodes"
+	if component == "nodes" {
+		component = "Nodes"
 	} else {
-		what = "Edges"
+		component = "Edges"
 	}
 
 	pkg := "mixt"
-	fun := "getTOMGraph" + what
+	fun := "getTOMGraph" + component
 	args := "tissue='" + tissue + "'"
 
 	key, err := R.Call(pkg, fun, args)
@@ -814,7 +814,7 @@ func GetTOMGraph(tissue, what string) ([]byte, error) {
 		fmt.Println("Could not get TOM graph nodes")
 		return nil, err
 	}
-	return R.Get(key, "json")
+	return R.Get(key, format)
 
 }
 

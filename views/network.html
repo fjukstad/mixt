@@ -4,6 +4,7 @@
     <script src="/public/js/sigma.layout.forceAtlas2.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/public/js/sigma.plugins.filter.min.js" type="text/javascript" charset="utf-8"></script>
 
+<script src="/public/js/network.js" type="text/javascript" charset="utf-8"></script>
 
     <div class="container">
         <div class="row">
@@ -17,9 +18,16 @@
                     <li role="presentation"><a href="#tab-{{.}}"
                                                aria-controls="tab-{{.}}"
                                                role="tab"
-                                               data-toggle="tab">{{.}}</a> </li> 
+                                               data-toggle="tab"
+                                               class="tissue-select"
+                                               >{{.}}</a> </li> 
                     {{ end }} 
+                      <li id="network-download">
+                          <a id="download" href="" download taget="_blank">Download</a>
+                      </li> 
                 </ul> 
+                
+
                 <div class="tab-content" id="nettabs">
                 {{ range .Tissues }} 
                     <div role="tabpanel" class="tab-pane" id="tab-{{.}}"> 
@@ -30,7 +38,6 @@
                 </div> 
         </div> 
     </div> 
-    <script src="/public/js/network.js" type="text/javascript" charset="utf-8"></script>
         <script>
         var sigmas = [];
         {{ range .Tissues }} 
@@ -53,10 +60,16 @@
 
         // view first tab, e.g. blood 
         $("#nettabs li:eq(0) a").tab('show'); 
-        $("a").on("click",function(){
+        $("a.tissue-select").on("click",function(){
             window.setTimeout(function(){
                 window.dispatchEvent(new Event('resize'))
             } , 10);
+        })
+
+        $("a#download").on("click", function(event){
+            var tissue = $("#nettabs li.active a")[0].innerHTML
+            var url = window.location.protocol + "//"+ window.location.host + "/tomgraph/"+tissue+"/edges/csv"
+            $("a#download").attr("href",url) 
         })
     </script> 
 

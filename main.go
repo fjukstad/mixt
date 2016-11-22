@@ -91,7 +91,7 @@ func main() {
 
 	r.HandleFunc("/suggest-papers/{tissue}/{module}", controllers.PaperSuggestionHandler)
 
-	r.HandleFunc("/tomgraph/{tissue}/{what}", controllers.TOMGraphHandler)
+	r.HandleFunc("/tomgraph/{tissue}/{component}/{format}", controllers.TOMGraphHandler)
 
 	addr := "mixt-blood-tumor.bci.mcgill.ca:8787"
 	username := ""

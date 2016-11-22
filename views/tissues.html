@@ -6,27 +6,26 @@
         <div class="row">
             <table class="table table-hover table-bordered">
                 <thead>
-                    <th>
-                    </th>
+                    <th></th> 
                     {{range .T}}
-                    <th>
-                        {{.Name}}
-                    </th> 
-                    {{end}}
+                        <th>
+                            {{.Name}}
+                        </th> 
+                    {{ end }}
                 </thead>
                 {{range $index, $tissue := .T}}
-                <tr>
-                    <th>
-                        {{$tissue.Name}}
-                    </th>
-                    {{range $indexB, $tissueB := $tissue.Comparisons}}
-                        {{ if ne $index $indexB }}
-                        <td class="success" id="comp" comp={{$tissueB}}></td>
-                        {{else}}
-                            <td class="info" id="comp" comp={{$tissueB}} ></td>
+                    <tr>
+                        <th>
+                            {{$tissue.Name}}
+                        </th>
+                        {{range $indexB, $tissueB := $tissue.Comparisons}}
+                            {{ if ne $index $indexB }}
+                                <td class="success" id="comp" comp={{$tissueB}}></td>
+                            {{else}}
+                                <td class="info" id="comp" comp={{$tissueB}} ></td>
+                            {{end}}
                         {{end}}
-                    {{end}}
-                </tr> 
+                    </tr> 
                 {{end}}
             </table>
         </div> 

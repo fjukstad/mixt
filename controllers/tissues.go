@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"text/template"
@@ -35,18 +36,27 @@ func TissuesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var result []Tissue
+
+	if len(tissues) < 2 {
+		err = errors.New("Could not get tissues.")
+		errorHandler(w, r, err)
+		return
+	}
+
+	tissues = tissues[0:2]
 	for _, t := range tissues {
 		comp := make([]string, len(tissues))
 		for j, u := range tissues {
-			//if i != j {
 			comp[j] = t + "/" + u
-			//}
 		}
 		tissue := Tissue{t, comp}
 		result = append(result, tissue)
 	}
 	res := Tissues{result}
-	tissuesTemplate.Execute(w, res)
+	err = tissuesTemplate.Execute(w, res)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 type TissueComparison struct {
@@ -68,7 +78,10 @@ func TissueComparisonHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tissueComparisonTemplate.Execute(w, TissueComparison{tissueA, tissueB, cohorts})
+	err = tissueComparisonTemplate.Execute(w, TissueComparison{tissueA, tissueB, cohorts})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func AnalysisHandler(w http.ResponseWriter, r *http.Request) {

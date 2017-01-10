@@ -46,6 +46,7 @@
                 <img
                 src='/resources/{{$module.ScatterplotUrl}}/png/scatterplot.png'
                 id='alt-heatmap'></img></a>">Scatterplot</a> | 
+                {{ if ne $module.BoxplotUrl "" }} 
                 <a href="#" data-toggle="popover" data-trigger="focus"
                 data-html="true" title="Boxplot"
                 data-placement="bottom" data-content="
@@ -54,7 +55,7 @@
                 <img
                 src='/resources/{{$module.BoxplotUrl}}/png/boxplot.png'
                 id='alt-heatmap'></img></a>">Boxplot</a>
-        
+                {{ end }} 
 
             </span>
                     </hr>

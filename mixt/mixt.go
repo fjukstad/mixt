@@ -644,7 +644,7 @@ func GetGOScoresForTissue(tissue, goterm string) ([]GOTerm, error) {
 }
 
 type UserScore struct {
-	PValue float64  `json:"p-value"`
+	PValue float64  `json:"p_values"`
 	Module string   `json:"module"`
 	Common []string `json:"common"`
 }

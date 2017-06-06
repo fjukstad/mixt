@@ -1,0 +1,17 @@
+User-agent: * 
+Disallow: /modules
+Disallow: /network
+Disallow: /public
+Disallow: /search
+Disallow: /gene
+Disallow: /common
+Disallow: /geneset
+Disallow: /compare
+Disallow: /clinical-comparison
+Disallow: /tissues
+Disallow: /resources
+Disallow: /userlist
+Disallow: /common-go
+Disallow: /suggest-papers
+Disallow: /tomgraph
+

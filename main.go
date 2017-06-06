@@ -23,6 +23,15 @@ var indexTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/index.html", "views/footer.html"))
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/robots.txt" {
+		f, err := ioutil.ReadFile("public/robots.txt")
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+		w.Write(f)
+		return
+	}
 	indexTemplate.Execute(w, nil)
 }
 
@@ -46,6 +55,9 @@ type Error struct {
 	Error string
 }
 
+func RobotHandler(w http.ResponseWriter, r *http.Request) {
+}
+
 func main() {
 
 	port := flag.String("port", ":8004", "port to start the app on")
@@ -54,6 +66,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", HomeHandler)
+	r.HandleFunc("/robots.txt", HomeHandler)
 
 	r.HandleFunc("/modules", controllers.ModulesHandler)
 	r.HandleFunc("/modules/{tissue}/{modules}/genes", controllers.GeneList)

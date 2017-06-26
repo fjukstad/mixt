@@ -1,4 +1,4 @@
-{{ define "content"}} 
+{{ define "content" }} 
 <script src="/public/js/dropzone.js" type="text/javascript" charset="utf-8"></script>
 <div class="container">
     <div class="row">
@@ -33,13 +33,14 @@
                                 });
         drop.on("drop", function(file){
             $(".dz-message").html("<h4>Analyzing...</h4>") 
-            })
+        })
 
         drop.on("success", function(a,url){
             window.location.replace(url) 
-            });
+        });
 
         $("#start-btn").click(function(){
+            loadStart();
             var genetext = $("#gene-text").val();
             genetext = genetext.replace(/\n/g, "+")
             window.location.href = "/userlist/result/userlist/"+genetext

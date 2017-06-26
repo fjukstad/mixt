@@ -15,11 +15,11 @@ import (
 )
 
 var listSubmitTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
+	"views/header.html", "views/navbar.html", "views/loader.html",
 	"views/userlist-submit.html", "views/footer.html"))
 
 var listResultTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
+	"views/header.html", "views/navbar.html", "views/loader.html",
 	"views/userlist-result.html", "views/footer.html"))
 
 func UserListHandler(w http.ResponseWriter, r *http.Request) {

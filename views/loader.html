@@ -2,6 +2,18 @@
 <div id="loaderwrapper" class="main"> 
     <div class="loader"></div>
     <p class="loadtext"> Please wait...</p> 
+    
+    <script> 
+        function loadStart(){
+            $("#loaderwrapper").css("display", "block");
+        }
+
+        function loadStop(){ 
+            $("#loaderwrapper").css("display", "none");
+        }
+
+    </script> 
+
 </div> 
 <style>
 #loaderwrapper { 
@@ -16,7 +28,7 @@
     display: none;
 }
 .loadtext {
-    color: #444;
+    color: #666;
     text-align: center;
     font-size: 1.5em;
 }

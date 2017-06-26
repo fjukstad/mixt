@@ -14,7 +14,7 @@ import (
 )
 
 var searchResultTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
+	"views/header.html", "views/navbar.html", "views/loader.html",
 	"views/search-result.html", "views/footer.html"))
 
 type SearchResponse struct {

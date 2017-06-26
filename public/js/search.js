@@ -28,6 +28,7 @@ $(function() {
 
     $('input#search').bind("enterKey", function(e){
         searchterm = $('input#search').val()
+        loadStart(); 
         window.location = window.location.origin+"/search/results/"+searchterm
     });
 
@@ -39,6 +40,7 @@ $(function() {
     
     $("input#search").on( "autocompleteselect", function( event, ui ) {
         searchterm = $('input#search').val()
+        loadStart(); 
         window.location = window.location.origin+"/search/results/"+searchterm
     } );
 

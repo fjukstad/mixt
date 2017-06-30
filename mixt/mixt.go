@@ -68,7 +68,7 @@ func plot(pkg, fun, args string) (string, error) {
 
 func GetGenes() ([]string, error) {
 
-	key, err := R.Call("mixt", "getAllGenes", "")
+	key, err := R.Call(pkg, "getAllGenes", "")
 	if err != nil {
 		return []string{}, err
 	}
@@ -500,11 +500,11 @@ func GetEnrichmentScore(module, tissue, geneset string) (Score, error) {
 }
 
 func GetGeneSetNames() ([]string, error) {
-	return GetSlice("mixt", "getGeneSetNames", "")
+	return GetSlice(pkg, "getGeneSetNames", "")
 }
 
 func GetGOTermNames() ([]string, error) {
-	return GetSlice("mixt", "getGOTermNames", "")
+	return GetSlice(pkg, "getGOTermNames", "")
 }
 
 func GetSlice(pkg, fun, args string) ([]string, error) {

@@ -15,6 +15,7 @@ import (
 )
 
 var R r.Client
+var pkg = "mixtbt"
 
 func Init(addr, username, password string) {
 	R = r.Client{addr, username, password}
@@ -22,7 +23,6 @@ func Init(addr, username, password string) {
 }
 
 func Heatmap(tissue, module string) (string, error) {
-	pkg := "mixt"
 	fun := "heatmap"
 	args := "tissue='" + tissue + "', module='" + module + "'"
 	return plot(pkg, fun, args)
@@ -31,27 +31,23 @@ func Heatmap(tissue, module string) (string, error) {
 
 func HeatmapReOrder(tissue, module, orderByTissue, orderByModule, cohort string) (string, error) {
 	args := "tissue='" + tissue + "', module='" + module + "', orderByModule='" + orderByModule + "', orderByTissue='" + orderByTissue + "', cohort.name='" + cohort + "'"
-	pkg := "mixt"
 	fun := "cohort_heatmap"
 	return plot(pkg, fun, args)
 }
 
 func CohortHeatmap(tissue, module, cohort string) (string, error) {
-	pkg := "mixt"
 	fun := "cohort_heatmap"
 	args := "tissue='" + tissue + "', module='" + module + "', cohort.name='" + cohort + "'"
 	return plot(pkg, fun, args)
 }
 
 func CohortBoxplot(module, orderByTissue, orderByModule, cohort string) (string, error) {
-	pkg := "mixt"
 	fun := "cohort_boxplot"
 	args := "blood.module='" + module + "', orderByTissue='" + orderByTissue + "', orderByModule='" + orderByModule + "', cohort='" + cohort + "'"
 	return plot(pkg, fun, args)
 }
 
 func CohortScatterplot(tissueA, tissueB, moduleA, moduleB, cohort string) (string, error) {
-	pkg := "mixt"
 	fun := "cohort_scatterplot"
 	args := "x.tissue='" + tissueA + "', y.tissue='" + tissueB + "', x.module='" + moduleA + "', y.module='" + moduleB + "', cohort.name='" + cohort + "'"
 	return plot(pkg, fun, args)
@@ -114,7 +110,6 @@ func GetCommonGenes(tissue, module, geneset, status string) ([]string, error) {
 		status = "updn.common"
 	}
 
-	pkg := "mixt"
 	fun := "getCommonGenes"
 	args := "tissue='" + tissue + "', module='" + module + "', geneset='" + geneset + "', status='" + status + "'"
 
@@ -139,7 +134,6 @@ func GetCommonGenes(tissue, module, geneset, status string) ([]string, error) {
 }
 
 func GetAllModuleNames(gene string) ([]string, error) {
-	pkg := "mixt"
 	fun := "getAllModules"
 	args := "gene='" + gene + "'"
 
@@ -165,7 +159,6 @@ func GetAllModuleNames(gene string) ([]string, error) {
 
 func GetTissues() ([]string, error) {
 
-	pkg := "mixt"
 	fun := "getAllTissues"
 	args := ""
 
@@ -215,7 +208,6 @@ type Response struct {
 
 func GetModules(tissue string) ([]Module, error) {
 
-	pkg := "mixt"
 	fun := "getModules"
 	args := "tissue='" + tissue + "'"
 
@@ -351,7 +343,6 @@ func GeneListCSV(modules []string, tissue string) ([]byte, error) {
 
 func GetGeneList(module, tissue string) (genes []Gene, url string,
 	err error) {
-	pkg := "mixt"
 	fun := "getGeneList"
 	args := "tissue='" + tissue + "', module='" + module + "'"
 
@@ -444,7 +435,6 @@ type Set struct {
 
 func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, err error) {
 
-	pkg := "mixt"
 	fun := "getEnrichmentScores"
 	args := "tissue='" + tissue + "', module='" + module + "'"
 
@@ -484,7 +474,6 @@ func GetEnrichmentScores(module, tissue string) (enrichment EnrichmentScores, er
 
 func GetEnrichmentScore(module, tissue, geneset string) (Score, error) {
 
-	pkg := "mixt"
 	fun := "getEnrichmentScores"
 	args := "tissue='" + tissue + "', module='" + module + "', geneset='" + geneset + "'"
 
@@ -545,7 +534,6 @@ type ModuleScores struct {
 
 func GetEnrichmentForTissue(tissue, geneset string) ([]Score, error) {
 
-	pkg := "mixt"
 	fun := "getEnrichmentForTissue"
 	args := "tissue='" + tissue + "', geneset='" + geneset + "'"
 
@@ -584,7 +572,6 @@ type GOTerm struct {
 }
 
 func GetGOTerms(module, tissue string, terms []string) ([]GOTerm, error) {
-	pkg := "mixt"
 	fun := "getGOTerms"
 	args := "tissue='" + tissue + "', module='" + module + "'"
 	if len(terms) > 1 {
@@ -621,7 +608,6 @@ func GetGOTerms(module, tissue string, terms []string) ([]GOTerm, error) {
 
 func GetGOScoresForTissue(tissue, goterm string) ([]GOTerm, error) {
 
-	pkg := "mixt"
 	fun := "getGOScoresForTissue"
 	args := "tissue='" + tissue + "', term='" + goterm + "'"
 
@@ -653,7 +639,6 @@ func UserEnrichmentScores(tissue string, genelist []string) ([]UserScore, error)
 
 	genes := parseGeneList(genelist)
 
-	pkg := "mixt"
 	fun := "userEnrichmentScores"
 	args := "tissue='" + tissue + "', genelist=" + genes
 
@@ -690,7 +675,6 @@ func parseGeneList(genelist []string) string {
 }
 
 func GetCommonGOTermGenes(module, tissue, id string) ([]string, error) {
-	pkg := "mixt"
 	fun := "getCommonGOTermGenes"
 	args := "tissue='" + tissue + "', module='" + module + "', gotermID='" + id + "'"
 
@@ -702,7 +686,6 @@ func GetCommonUserERGenes(module, tissue string, genelist []string) ([]string, e
 
 	genes := parseGeneList(genelist)
 
-	pkg := "mixt"
 	fun := "commonEnrichmentScoreGenes"
 	args := "tissue='" + tissue + "', module='" + module + "', genelist='" + genes + "'"
 
@@ -755,7 +738,6 @@ func GeneOverlapTest(tissueA, tissueB string) ([]byte, error) {
 }
 
 func analysis(fun, args string) ([]byte, error) {
-	pkg := "mixt"
 	key, err := R.Call(pkg, fun, args)
 	if err != nil {
 		fmt.Println("Could not run analysis:", err)
@@ -773,7 +755,6 @@ type Analyses struct {
 
 func ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB string) (Analyses, error) {
 
-	pkg := "mixt"
 	fun := "comparisonAnalyses"
 	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "', moduleA='" + moduleA + "', moduleB='" + moduleB + "'"
 	key, err := R.Call(pkg, fun, args)
@@ -805,7 +786,6 @@ func GetTOMGraph(tissue, component, format string) ([]byte, error) {
 		component = "Edges"
 	}
 
-	pkg := "mixt"
 	fun := "getTOMGraph" + component
 	args := "tissue='" + tissue + "'"
 
@@ -823,7 +803,6 @@ func Get(key, filetype string) ([]byte, error) {
 }
 
 func GetCohorts() ([]string, error) {
-	pkg := "mixt"
 	fun := "getCohorts"
 	args := ""
 

@@ -71,6 +71,8 @@ function loadClinicalRanksumHeatmap(tissue, cohort="all") {
 }
 
 function heatmap(url, tissueA, tissueB) {
+    loadStart() ;
+
     svg = d3.select("#heatmap-" + tissueA + " svg").attr("id", tissueA)
     //legend = d3.select("#legend-" + tissueA + " svg").attr("id", tissueA)
     
@@ -398,6 +400,8 @@ function heatmap(url, tissueA, tissueB) {
                 }) 
 
             plotScale(tissueA)
+
+            loadStop();
         })
 
 

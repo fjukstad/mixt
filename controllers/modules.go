@@ -12,19 +12,19 @@ import (
 )
 
 var moduleTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar-module.html",
+	"views/header.html", "views/navbar-module.html", "views/loader.html",
 	"views/module.html", "views/footer.html"))
 
 var modulesTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
+	"views/header.html", "views/navbar.html", "views/loader.html",
 	"views/modules.html", "views/footer.html"))
 
 var compareModulesTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
+	"views/header.html", "views/navbar.html", "views/loader.html",
 	"views/module-comparison.html", "views/footer.html"))
 
 var clinicalComparisonTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
+	"views/header.html", "views/navbar.html", "views/loader.html",
 	"views/module-clinical-comparison.html", "views/footer.html"))
 
 type ModulesOverview struct {

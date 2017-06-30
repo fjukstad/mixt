@@ -10,7 +10,7 @@ import (
 )
 
 var networkTemplate = template.Must(template.ParseFiles("views/base.html",
-	"views/header.html", "views/navbar.html",
+	"views/header.html", "views/navbar.html", "views/loader.html",
 	"views/network.html", "views/footer.html"))
 
 func NetworkHandler(w http.ResponseWriter, r *http.Request) {

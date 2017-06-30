@@ -14,6 +14,8 @@ function TOMGraph(s, tissue){
        window.location.href=url
    })
 
+
+    loadStart(); 
     
     $.get('/tomgraph/'+tissue+'/nodes/json',
         function(data){
@@ -39,7 +41,7 @@ function TOMGraph(s, tissue){
                     //
                     // nasty window resize hack
                     window.dispatchEvent(new Event('resize'))
-
+                    loadStop(); 
                 })
         })
 

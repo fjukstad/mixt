@@ -20,7 +20,9 @@ var outsideTemplate = template.Must(template.ParseFiles("views/base.html",
 
 var indexTemplate = template.Must(template.ParseFiles("views/base.html",
 	"views/header.html", "views/navbar.html",
-	"views/index.html", "views/footer.html"))
+	"views/loader.html",
+	"views/index.html",
+	"views/footer.html"))
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/robots.txt" {

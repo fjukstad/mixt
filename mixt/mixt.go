@@ -15,7 +15,7 @@ import (
 )
 
 var R r.Client
-var pkg = "mixtbt"
+var pkg = "mixtApp"
 
 func Init(addr, username, password string) {
 	R = r.Client{addr, username, password}
@@ -41,9 +41,9 @@ func CohortHeatmap(tissue, module, cohort string) (string, error) {
 	return plot(pkg, fun, args)
 }
 
-func CohortBoxplot(module, orderByTissue, orderByModule, cohort string) (string, error) {
+func CohortBoxplot(tissue, module, orderByTissue, orderByModule, cohort string) (string, error) {
 	fun := "cohort_boxplot"
-	args := "blood.module='" + module + "', orderByTissue='" + orderByTissue + "', orderByModule='" + orderByModule + "', cohort='" + cohort + "'"
+	args := "tissue='" + tissue + "', module='" + module + "', orderByTissue='" + orderByTissue + "', orderByModule='" + orderByModule + "', cohort='" + cohort + "'"
 	return plot(pkg, fun, args)
 }
 
@@ -311,7 +311,7 @@ func GetModule(name, tissue, cohort string) (Module, error) {
 		}
 	}
 
-	cohortBoxplot, err := CohortBoxplot(name, tissue, name, cohort)
+	cohortBoxplot, err := CohortBoxplot(tissue, name, tissue, name, cohort)
 	if err != nil {
 		fmt.Println("Could not generate boxplot", err)
 		//return Module{}, err

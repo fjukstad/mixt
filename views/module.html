@@ -39,9 +39,9 @@
 
   {{ range $module := .Modules }}
     <div class="row">
-           {{ if eq $module.Tissue "blood"}} 
         <span id="download-link">
-        <a href="#" data-toggle="popover" data-trigger="focus" data-html="true" title="Blood normals
+        <a href="#" data-toggle="popover" data-trigger="focus" data-html="true"
+        title="Normals
         heatmap and boxplot" data-placement="right" data-content="
         <a target='_blank'
             href='/resources/{{$module.AlternativeHeatmapUrl}}/pdf/heatmap.pdf'>
@@ -56,9 +56,8 @@
             id='boxplot'></img>
         </a> 
             "
-            >Blood normals heatmap</a>
+            >Normals heatmap</a>
         </span>
-        {{ end }} 
     </div>
 
 

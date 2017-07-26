@@ -48,7 +48,6 @@
                     {{$geneset.Name}}</a> 
                 </h3> 
                 {{ range $tissue, $modules := $geneset.TissueSets }} 
-                    {{ if eq $tissue "blood" "biopsy" }} 
 
                           <div class="col-md-4">
                               <h4> {{ $tissue }} </h4> 
@@ -74,7 +73,6 @@
                                 $(document.getElementById('er-{{$geneset.Name}}-{{$tissue}}')).tablesorter();
                             });
                         </script> 
-                    {{ end }} 
                 {{ end }} 
             </div> 
             {{ end }} 

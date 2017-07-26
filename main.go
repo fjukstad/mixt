@@ -63,6 +63,9 @@ func RobotHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	port := flag.String("port", ":8004", "port to start the app on")
+	computeService := flag.String("compute-service", "localhost:8787", "hostname:port of the compute service")
+	//databaseService := flag.String("database-service", "localhost:9999", "hostname:port of the database service")
+
 	flag.Parse()
 
 	r := mux.NewRouter()
@@ -108,7 +111,7 @@ func main() {
 
 	r.HandleFunc("/tomgraph/{tissue}/{component}/{format}", controllers.TOMGraphHandler)
 
-	addr := "mixt-blood-tumor.bci.mcgill.ca:8787"
+	addr := *computeService
 	username := ""
 	password := ""
 

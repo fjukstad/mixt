@@ -16,14 +16,12 @@
                     </div>
                         <div class="row">
                         {{ range $tissue, $modules := .Overview.Modules }}                 
-                           {{ if eq $tissue "blood" "biopsy"}} 
                             <ul class="col-sm-4 list-unstyled">
                             <li><p><strong>{{$tissue}}</strong></p></li>
                             {{ range $modules }} 
                             <li><a href="/modules/{{ $tissue }}/{{ .Name }}/cohort/all"> {{ .Name }} </a></li>
                             {{ end }} 
                             </ul> 
-                          {{ end }} 
                        {{ end }} 
                    </div>
                </div>

@@ -199,38 +199,35 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Only generate box plots if either tissue is blood
-	if tissueA == "blood" || tissueB == "blood" {
-		var bloodModule string
-		var comparisonModule string
-		var comparisonTissue string
+	var tissue string
+	var bloodModule string
+	var comparisonModule string
+	var comparisonTissue string
 
-		if tissueA == "blood" {
-			bloodModule = moduleA
-			comparisonModule = moduleB
-			comparisonTissue = tissueB
-		} else {
-			bloodModule = moduleB
-			comparisonModule = moduleA
-			comparisonTissue = tissueA
-		}
-
-		ma.BoxplotUrl, err = mixt.CohortBoxplot(bloodModule, comparisonTissue, comparisonModule, cohort)
-		if err != nil {
-			fmt.Println("Could not get boxplot", bloodModule, comparisonTissue, comparisonModule, cohort)
-			errorHandler(w, r, err)
-			return
-		}
-
-		mb.BoxplotUrl, err = mixt.CohortBoxplot(bloodModule, comparisonTissue, comparisonModule, cohort)
-		if err != nil {
-			fmt.Println("Could not get boxplot", bloodModule, comparisonTissue, comparisonModule, cohort)
-			errorHandler(w, r, err)
-			return
-		}
+	if tissueA == "blood" {
+		tissue = tissueA
+		bloodModule = moduleA
+		comparisonModule = moduleB
+		comparisonTissue = tissueB
 	} else {
-		ma.BoxplotUrl = ""
-		mb.BoxplotUrl = ""
+		tissue = tissueB
+		bloodModule = moduleB
+		comparisonModule = moduleA
+		comparisonTissue = tissueA
+	}
+
+	ma.BoxplotUrl, err = mixt.CohortBoxplot(tissue, bloodModule, comparisonTissue, comparisonModule, cohort)
+	if err != nil {
+		fmt.Println("Could not get boxplot", bloodModule, comparisonTissue, comparisonModule, cohort)
+		errorHandler(w, r, err)
+		return
+	}
+
+	mb.BoxplotUrl, err = mixt.CohortBoxplot(tissue, bloodModule, comparisonTissue, comparisonModule, cohort)
+	if err != nil {
+		fmt.Println("Could not get boxplot", bloodModule, comparisonTissue, comparisonModule, cohort)
+		errorHandler(w, r, err)
+		return
 	}
 
 	modules := []mixt.Module{ma, mb}

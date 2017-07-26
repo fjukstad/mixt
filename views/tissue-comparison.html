@@ -91,18 +91,8 @@ button#cohortSelectButton {
         }
         $("#comp-header").text("Comparing tissues {{.TissueA}}  - {{.TissueB}} ("+cohort+" cohort)")
     })
-    {{ if eq .TissueA "blood" "biopsy" }} 
-            {{ if eq .TissueB "blood" "biopsy" }} 
-                loadRanksumHeatmap("{{.TissueA}}", "{{.TissueB}}", cohort) 
-                $("tr#ranksum").addClass("info") 
-            {{ else }}
-                loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
-                $("tr#overlap").addClass("info") 
-            {{ end }} 
-    {{ else }} 
-        loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
-        $("tr#overlap").addClass("info") 
-    {{ end }} 
+    loadGeneOverlapHeatmap("{{.TissueA}}","{{.TissueB}}")
+    $("tr#overlap").addClass("info") 
     $("tr#ranksum").click(function(){
             loadRanksumHeatmap("{{.TissueA}}","{{.TissueB}}", cohort)
             $(this).addClass("info") 

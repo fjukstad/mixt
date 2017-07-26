@@ -8,7 +8,8 @@ Users can browse through all the results generated for this study, visualize
 gene co-expression networks and expression heatmaps, and search for genes, gene
 lists, and pathways. 
 
-The application runs at [mixt-blood-tumor.bci.mcgill.ca](http://mixt-blood-tumor.bci.mcgill.ca). 
+The application runs at
+[mixt-blood-tumor.bci.mcgill.ca](http://mixt-blood-tumor.bci.mcgill.ca). 
 
 
 ![Screenshot of the welcome page](public/img/screenshot.png) 
@@ -31,7 +32,38 @@ application, either compile and run on your machine, or use the Docker Image.
 - Open [localhost:8004](localhost:8004) 
 
 ## Docker
-- Install [Docker](http://docker.com) 
-- `$ docker run -p 8004:80 fjukstad/mixt` 
-- Open [localhost:8004](localhost:8004) 
+First, install [Docker](http://docker.com) then you can either start the two
+components separately or together using
+[docker-compose](https://docs.docker.com/compose). 
+
+### Docker 
+First start the compute-service 
+
+```
+$ docker run --name=compute -t fjukstad/mixt-compute-service 
+```
+
+then the web application 
+
+```
+$ docker run -p 8000:80 --link compute -e COMPUTE_SERVICE=compute:80 --name=mixt -t fjukstad/mixt-stroma 
+```
+
+which is now running on [localhost:8000](http://localhost:8000).
+
+
+### Docker Compose 
+
+Run 
+
+```
+$ git clone github.com/fjukstad/mixt
+$ cd mixt
+$ docker-compose up
+```
+
+and open [localhost:8000](http://localhost:8000). 
+
+
+
 

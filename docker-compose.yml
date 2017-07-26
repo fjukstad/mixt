@@ -1,0 +1,12 @@
+version: "2"
+services: 
+  web: 
+    image: fjukstad/mixt-stroma
+    ports: 
+      - "8000:80"
+    links: 
+      - compute
+    environment: 
+      - COMPUTE_SERVICE=compute:80
+  compute: 
+    image: "fjukstad/mixt-compute-service"

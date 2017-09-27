@@ -14,18 +14,22 @@
                     {{ end }}
                 </thead>
                 {{range $index, $tissue := .T}}
-                    <tr>
-                        <th>
-                            {{$tissue.Name}}
-                        </th>
-                        {{range $indexB, $tissueB := $tissue.Comparisons}}
-                            {{ if ne $index $indexB }}
-                                <td class="success" id="comp" comp={{$tissueB}}></td>
-                            {{else}}
-                                <td class="info" id="comp" comp={{$tissueB}} ></td>
+                    {{ if ne $tissue.Name "nblood" }}
+                        {{ if ne $tissue.Name "bnblood" }}
+                            <tr>
+                                <th>
+                                    {{$tissue.Name}}
+                                </th>
+                                {{range $indexB, $tissueB := $tissue.Comparisons}}
+                                    {{ if ne $index $indexB }}
+                                        <td class="success" id="comp" comp={{$tissueB}}></td>
+                                    {{else}}
+                                        <td class="info" id="comp" comp={{$tissueB}} ></td>
+                                    {{end}}
+                                {{end}}
+                            </tr> 
                             {{end}}
                         {{end}}
-                    </tr> 
                 {{end}}
             </table>
         </div> 

@@ -137,7 +137,7 @@ func CompareModulesHandler(w http.ResponseWriter, r *http.Request) {
 	tissueB := vars["tissueB"]
 	cohort := vars["cohort"]
 
-	analyses, err := mixt.ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB)
+	analyses, err := mixt.ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB, cohort)
 	if err != nil {
 		fmt.Println("Could not get module comparison analyses")
 		errorHandler(w, r, err)

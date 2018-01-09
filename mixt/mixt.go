@@ -753,10 +753,10 @@ type Analyses struct {
 	Common  []string  `json:"common"`
 }
 
-func ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB string) (Analyses, error) {
+func ModuleComparisonAnalyses(tissueA, tissueB, moduleA, moduleB, cohort string) (Analyses, error) {
 
 	fun := "comparisonAnalyses"
-	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "', moduleA='" + moduleA + "', moduleB='" + moduleB + "'"
+	args := "tissueA='" + tissueA + "', tissueB='" + tissueB + "', moduleA='" + moduleA + "', moduleB='" + moduleB + "', cohort='" + cohort + "'"
 	key, err := R.Call(pkg, fun, args)
 	if err != nil {
 		return Analyses{}, err

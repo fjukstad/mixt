@@ -111,7 +111,7 @@ func main() {
 
 	r.HandleFunc("/tomgraph/{tissue}/{component}/{format}", controllers.TOMGraphHandler)
 
-	addr := *computeService
+	addr := "mixt-tumor-stroma.bci.mcgill.ca:8080"
 	username := ""
 	password := ""
 

@@ -38,11 +38,12 @@ func GOTermResults(searchTerms []string) ([]GOTerm, error) {
 		set := make(map[string][]mixt.GOTerm)
 		var id string
 		for _, tissue := range tissues {
-			if tissue == "nblood" {
+			if tissue == "nblood" || tissue == "bnblood" {
 				continue
 			}
 			score, err := mixt.GetGOScoresForTissue(tissue, GOTermName)
 			if err != nil {
+				fmt.Println("Error:", err, "continuing search")
 				//return []GOTerm{}, err
 				continue
 			}

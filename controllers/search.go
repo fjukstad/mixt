@@ -24,6 +24,7 @@ type SearchResponse struct {
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	term := vars["term"]
+
 	result, err := SearchForGene(term)
 	if err != nil {
 		fmt.Println("Search went bad:", err)
@@ -96,16 +97,24 @@ func SearchForGOTerms(searchTerm string) ([]string, error) {
 			return []string{}, err
 		}
 	}
+
 	results := inSlice(searchTerm, GOTermNames)
 	return results, nil
 
 }
 
+// Searches for the string `s` in the slice of strings `words`. Must match
 func inSlice(s string, words []string) []string {
 	var result []string
 	for _, word := range words {
+
+		// lowercase and remove unnecessary characters used in go terms
 		a := strings.ToLower(word)
+		a = strings.Trim(a, "...")
+
 		b := strings.ToLower(s)
+		b = strings.Trim(b, "...")
+
 		if strings.Contains(a, b) {
 			wordFmt := strings.Trim(word, "\"")
 
@@ -128,7 +137,7 @@ type SearchResults struct {
 func SearchResultHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	term := vars["terms"]
-	searchTerms := strings.Split(term, " ")
+	searchTerms := strings.Split(term, "+")
 
 	genes, tissues, err := GeneResults(searchTerms)
 	if err != nil {

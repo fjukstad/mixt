@@ -16,6 +16,6 @@ WORKDIR $GOPATH/src/github.com/fjukstad/mixt/
 RUN go install 
 
 ENV PORT :80
-ENV COMPUTE_SERVICE mixt-tumor-stroma.bci.mcgill.ca:8080
+ENV COMPUTE_SERVICE compute-service:80
 
 ENTRYPOINT mixt -port=$PORT -compute-service=$COMPUTE_SERVICE
